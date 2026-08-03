@@ -1,198 +1,177 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Susut Nilai Pro - Log Masuk / Daftar</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Susut Nilai Pro - Portal Access</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
 
-        .auth-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 400px;
-            padding: 32px;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-        }
+    .card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
 
-        .brand-header {
-            text-align: center;
-            margin-bottom: 24px;
-        }
+    .brand-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-        .brand-header h1 {
-            color: #2563eb;
-            font-size: 26px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
+    .brand-header h1 {
+      color: #2c5364;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
 
-        .brand-header p {
-            color: #64748b;
-            font-size: 13px;
-            margin-top: 4px;
-        }
+    .brand-header p {
+      color: #666;
+      font-size: 13px;
+    }
 
-        .tab-group {
-            display: flex;
-            background: #f1f5f9;
-            border-radius: 10px;
-            padding: 4px;
-            margin-bottom: 24px;
-        }
+    .form-group {
+      margin-bottom: 18px;
+    }
 
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            color: #64748b;
-            font-size: 14px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #333;
+      font-weight: 600;
+    }
 
-        .tab-btn.active {
-            background: #ffffff;
-            color: #2563eb;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-        }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+    .form-group input:focus {
+      border-color: #2c5364;
+      outline: none;
+    }
 
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: #334155;
-            margin-bottom: 6px;
-            font-weight: 600;
-        }
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #2c5364;
+      border: none;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
 
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
+    .submit-btn:hover {
+      background-color: #203a43;
+    }
 
-        .form-group input:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
+    .switch-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #666;
+    }
 
-        .btn-primary {
-            width: 100%;
-            padding: 12px;
-            background: #2563eb;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 8px;
-        }
+    .switch-link a {
+      color: #2c5364;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
+    .switch-link a:hover {
+      text-decoration: underline;
+    }
 
-        .form-box {
-            display: none;
-        }
-
-        .form-box.active {
-            display: block;
-        }
-    </style>
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
 
-<div class="auth-card">
+  <div class="card">
     <div class="brand-header">
-        <h1>Susut Nilai Pro</h1>
-        <p>Pengurusan & Pengiraan Aset Pantas</p>
+      <h1>Susut Nilai Pro</h1>
+      <p id="subheading">Please enter your details to sign in.</p>
     </div>
 
-    <div class="tab-group">
-        <button class="tab-btn active" onclick="switchTab('login')">Log Masuk</button>
-        <button class="tab-btn" onclick="switchTab('signup')">Daftar</button>
-    </div>
-
-    <!-- Borang Log Masuk -->
-    <form id="login-form" class="form-box active" onsubmit="handleSubmit(event, 'Log Masuk')">
-        <div class="form-group">
-            <label for="login-name">Nama Pengguna</label>
-            <input type="text" id="login-name" placeholder="Masukkan nama pengguna" required>
-        </div>
-        <div class="form-group">
-            <label for="login-pass">Kata Laluan</label>
-            <input type="password" id="login-pass" placeholder="Masukkan kata laluan" required>
-        </div>
-        <button type="submit" class="btn-primary">Masuk</button>
+    <!-- Login Form -->
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginName">Name</label>
+        <input type="text" id="loginName" placeholder="Enter your name" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+      </div>
+      <button type="submit" class="submit-btn">Sign In</button>
+      <div class="switch-link">
+        Don't have an account? <a onclick="toggleForm('signUp')">Sign Up</a>
+      </div>
     </form>
 
-    <!-- Borang Daftar Akaun -->
-    <form id="signup-form" class="form-box" onsubmit="handleSubmit(event, 'Daftar Akaun')">
-        <div class="form-group">
-            <label for="signup-name">Nama Penuh</label>
-            <input type="text" id="signup-name" placeholder="Masukkan nama penuh anda" required>
-        </div>
-        <div class="form-group">
-            <label for="signup-pass">Kata Laluan</label>
-            <input type="password" id="signup-pass" placeholder="Cipta kata laluan baharu" required>
-        </div>
-        <button type="submit" class="btn-primary">Cipta Akaun</button>
+    <!-- Sign Up Form -->
+    <form id="signUpForm" class="hidden">
+      <div class="form-group">
+        <label for="signUpName">Full Name</label>
+        <input type="text" id="signUpName" placeholder="Enter your full name" required>
+      </div>
+      <div class="form-group">
+        <label for="signUpPassword">Password</label>
+        <input type="password" id="signUpPassword" placeholder="Create a password" required>
+      </div>
+      <button type="submit" class="submit-btn">Create Account</button>
+      <div class="switch-link">
+        Already have an account? <a onclick="toggleForm('login')">Sign In</a>
+      </div>
     </form>
-</div>
+  </div>
 
-<script>
-    function switchTab(tab) {
-        const loginForm = document.getElementById('login-form');
-        const signupForm = document.getElementById('signup-form');
-        const tabs = document.querySelectorAll('.tab-btn');
+  <script>
+    function toggleForm(view) {
+      const loginForm = document.getElementById('loginForm');
+      const signUpForm = document.getElementById('signUpForm');
+      const subheading = document.getElementById('subheading');
 
-        tabs.forEach(t => t.classList.remove('active'));
-
-        if (tab === 'login') {
-            tabs[0].classList.add('active');
-            loginForm.classList.add('active');
-            signupForm.classList.remove('active');
-        } else {
-            tabs[1].classList.add('active');
-            signupForm.classList.add('active');
-            loginForm.classList.remove('active');
-        }
+      if (view === 'signUp') {
+        loginForm.classList.add('hidden');
+        signUpForm.classList.remove('hidden');
+        subheading.innerText = 'Create an account to get started.';
+      } else {
+        signUpForm.classList.add('hidden');
+        loginForm.classList.remove('hidden');
+        subheading.innerText = 'Please enter your details to sign in.';
+      }
     }
-
-    function handleSubmit(e, type) {
-        e.preventDefault();
-        alert(`Borang ${type} berjaya dihantar!`);
-    }
-</script>
+  </script>
 
 </body>
 </html>
