@@ -21,7 +21,7 @@
 
     .top-bar {
       max-width: 1400px;
-      margin: 0 auto 30px auto;
+      margin: 0 auto 25px auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -50,7 +50,74 @@
       color: #0f172a;
     }
 
-    /* Container 5 Control Panel */
+    /* === Metrics Summary Bar (4 Kad Atas) === */
+    .metrics-grid {
+      max-width: 1400px;
+      margin: 0 auto 30px auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 22px 24px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'Consolas', 'Courier New', monospace;
+    }
+
+    .metric-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .metric-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Gaya Warna Khas Kad Atas */
+    /* 1. Total Asset Cost */
+    .m-cost .metric-value { color: #0f172a; }
+    .m-cost .metric-icon { background-color: #e6f7ed; color: #10b981; }
+
+    /* 2. Current Book Value */
+    .m-book .metric-value { color: #059669; }
+    .m-book .metric-icon { background-color: #e6f7ed; color: #10b981; }
+
+    /* 3. Accumulated Dep. */
+    .m-dep .metric-value { color: #e11d48; }
+    .m-dep .metric-icon { background-color: #ffe4e6; color: #e11d48; }
+
+    /* 4. Registered Assets */
+    .m-assets .metric-value { color: #0f172a; }
+    .m-assets .metric-icon { background-color: #e0e7ff; color: #4f46e5; }
+
+    /* === Control Panel Grid (5 Kad Bawah) === */
     .dashboard-grid {
       max-width: 1400px;
       margin: 0 auto;
@@ -59,7 +126,6 @@
       gap: 20px;
     }
 
-    /* Kad Utama */
     .card {
       background: #ffffff;
       border-radius: 20px;
@@ -70,7 +136,6 @@
       flex-direction: column;
       justify-content: space-between;
       transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
     }
 
     .card:hover {
@@ -78,7 +143,6 @@
       box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.05);
     }
 
-    /* Kad kedua yang highlighted/aktif mengikut gambar contoh */
     .card.highlighted {
       border: 1.5px solid #6366f1;
       box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08);
@@ -128,43 +192,88 @@
       gap: 10px;
     }
 
-    /* Warna Khas Mengikut Setiap Kad */
-    /* 1. Invoice Manager (Green) */
+    /* Warna Khas Control Panel */
     .theme-green .card-icon { background-color: #dcfce7; color: #16a34a; }
     .theme-green .card-action { color: #16a34a; }
 
-    /* 2. Register New Asset (Purple) */
     .theme-purple .card-icon { background-color: #e0e7ff; color: #4f46e5; }
     .theme-purple .card-title { color: #4f46e5; }
     .theme-purple .card-action { color: #4f46e5; }
 
-    /* 3. Asset Register (Blue) */
     .theme-blue .card-icon { background-color: #e0f2fe; color: #0284c7; }
     .theme-blue .card-action { color: #0284c7; }
 
-    /* 4. Service Report (Red/Pink) */
     .theme-red .card-icon { background-color: #ffe4e6; color: #e11d48; }
     .theme-red .card-action { color: #e11d48; }
 
-    /* 5. Depreciation Schedule (Amber) */
     .theme-amber .card-icon { background-color: #fef3c7; color: #d97706; }
     .theme-amber .card-action { color: #d97706; }
   </style>
 </head>
 <body>
 
+  <!-- Top Bar & Link to index.html -->
   <div class="top-bar">
     <h1>Susut Nilai Pro</h1>
     <a href="index.html" class="logout-btn">Log Out</a>
   </div>
 
+  <!-- Summary Metrics Bar (Bahagian Baru di Atas Control Panel) -->
+  <div class="metrics-grid">
+    
+    <!-- Metric 1: Total Asset Cost -->
+    <div class="metric-card m-cost">
+      <div>
+        <div class="metric-label">Total Asset Cost</div>
+        <div class="metric-value">RM 0.00</div>
+      </div>
+      <div class="metric-icon">
+        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 3.79 2 6v12c0 2.21 4.48 4 10 4s10-1.79 10-4V6c0-2.21-4.48-4-10-4zm0 3c4.14 0 7 1.13 7 2s-2.86 2-7 2-7-1.13-7-2 2.86-2 7-2zm0 15c-4.14 0-7-1.13-7-2v-2.18c1.78.75 4.26 1.18 7 1.18s5.22-.43 7-1.18V18c0 .87-2.86 2-7 2zm0-5c-4.14 0-7-1.13-7-2v-2.18c1.78.75 4.26 1.18 7 1.18s5.22-.43 7-1.18V13c0 .87-2.86 2-7 2z"/></svg>
+      </div>
+    </div>
+
+    <!-- Metric 2: Current Book Value -->
+    <div class="metric-card m-book">
+      <div>
+        <div class="metric-label">Current Book Value</div>
+        <div class="metric-value">RM 0.00</div>
+      </div>
+      <div class="metric-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+      </div>
+    </div>
+
+    <!-- Metric 3: Accumulated Dep. -->
+    <div class="metric-card m-dep">
+      <div>
+        <div class="metric-label">Accumulated Dep.</div>
+        <div class="metric-value">RM 0.00</div>
+      </div>
+      <div class="metric-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>
+      </div>
+    </div>
+
+    <!-- Metric 4: Registered Assets -->
+    <div class="metric-card m-assets">
+      <div>
+        <div class="metric-label">Registered Assets</div>
+        <div class="metric-value">0</div>
+      </div>
+      <div class="metric-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 5 Control Panels (Bahagian Asal) -->
   <div class="dashboard-grid">
 
     <!-- Card 1: Invoice Manager -->
     <div class="card theme-green">
       <div>
         <div class="card-icon">
-          <!-- Icon Document -->
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         </div>
         <div class="card-title">Invoice Manager</div>
@@ -179,7 +288,6 @@
     <div class="card theme-purple highlighted">
       <div>
         <div class="card-icon">
-          <!-- Icon Calculator -->
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
         </div>
         <div class="card-title">Register New Asset</div>
@@ -194,7 +302,6 @@
     <div class="card theme-blue">
       <div>
         <div class="card-icon">
-          <!-- Icon Book/Folder -->
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
         </div>
         <div class="card-title">Asset Register</div>
@@ -209,7 +316,6 @@
     <div class="card theme-red">
       <div>
         <div class="card-icon">
-          <!-- Icon Toolbox -->
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
         </div>
         <div class="card-title">Service Report</div>
@@ -224,7 +330,6 @@
     <div class="card theme-amber">
       <div>
         <div class="card-icon">
-          <!-- Icon List/Table -->
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
         </div>
         <div class="card-title">Depreciation Schedule</div>
