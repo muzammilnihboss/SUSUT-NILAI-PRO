@@ -9,7 +9,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         }
 
         body {
@@ -227,13 +227,12 @@
 
         function handleLogin(event) {
             event.preventDefault();
-            const name = document.getElementById('login-name').value;
-            alert(`Welcome back, ${name}! Logged in successfully.`);
+            // Redirect to dashboard page
+            window.location.href = "dashboard.html";
         }
 
         function handleSignUp(event) {
             event.preventDefault();
-            const name = document.getElementById('signup-name').value;
             const password = document.getElementById('signup-password').value;
             const confirmPassword = document.getElementById('signup-confirm-password').value;
 
@@ -242,7 +241,7 @@
                 return;
             }
 
-            alert(`Account created successfully for ${name}! Please log in.`);
+            alert("Account created successfully! Please log in.");
             switchTab('login');
         }
     </script>
