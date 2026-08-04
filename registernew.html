@@ -206,6 +206,7 @@
               <option value="Computer & Hardware">Computer & Hardware</option>
               <option value="Furniture & Fittings">Furniture & Fittings</option>
               <option value="Motor Vehicle">Motor Vehicle</option>
+              <option value="Electrical Installation">Electrical Installation</option>
               <option value="System & Development">System & Development</option>
               <option value="Renovation">Renovation</option>
               <option value="Shop Lot">Shop Lot</option>
@@ -218,7 +219,6 @@
             <input type="date" id="inpPurchaseDate" class="form-control" required>
           </div>
 
-          <!-- Other Category dynamic input -->
           <div id="otherCategoryGroup" class="form-group col-12 hidden">
             <label>Specify Other Asset Category <span>*</span></label>
             <input type="text" id="otherCategoryInput" class="form-control" placeholder="Enter custom category name">
@@ -283,7 +283,6 @@
   </div>
 
   <script>
-    // Set default purchase date to current date
     document.getElementById('inpPurchaseDate').valueAsDate = new Date();
 
     function calculateTotal() {
@@ -308,7 +307,6 @@
       }
     }
 
-    // Simpan ke LocalStorage tanpa sebarang data acah/demo
     function saveNewAsset(event) {
       event.preventDefault();
 
