@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Register - Susut Nilai Pro</title>
-    <!-- Include html2pdf library for PDF export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -21,7 +19,7 @@
             padding-bottom: 40px;
         }
 
-        /* Top Navigation Bar */
+        /* Navigation Header */
         header {
             background-color: #ffffff;
             padding: 16px 32px;
@@ -72,185 +70,118 @@
             background-color: #047857;
         }
 
-        /* Action Toolbar */
-        .toolbar-container {
-            max-width: 1300px;
-            margin: 0 auto 20px auto;
-            padding: 0 20px;
+        /* Container Layout */
+        .container {
+            max-width: 96%;
+            margin: 0 auto;
+        }
+
+        .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            margin-bottom: 16px;
         }
 
-        .tool-btns {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            padding: 10px 18px;
-            border-radius: 8px;
-            border: none;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-print {
-            background-color: #0f172a;
-            color: #ffffff;
-        }
-
-        .btn-print:hover {
-            background-color: #1e293b;
-        }
-
-        .btn-pdf {
-            background-color: #dc2626;
-            color: #ffffff;
-        }
-
-        .btn-pdf:hover {
-            background-color: #b91c1c;
-        }
-
-        /* Document Paper */
-        .doc-paper {
-            max-width: 1300px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-            border: 1px solid #e2e8f0;
-        }
-
-        .doc-header {
-            text-align: center;
-            margin-bottom: 24px;
-            border-bottom: 2px solid #0f172a;
-            padding-bottom: 12px;
-        }
-
-        .doc-header h1 {
-            font-size: 20px;
-            font-weight: 800;
+        .page-header h1 {
+            font-size: 22px;
             color: #0f172a;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            font-weight: 700;
         }
 
-        /* Table Styling */
+        /* Table Styling Exact to Screenshot */
         .table-responsive {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #cbd5e1;
             overflow-x: auto;
         }
 
-        table.asset-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 13px;
             text-align: left;
         }
 
-        table.asset-table th, table.asset-table td {
-            border: 1px solid #cbd5e1;
-            padding: 10px 8px;
+        th, td {
+            padding: 12px 10px;
+            border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
 
-        table.asset-table th {
+        th {
             background-color: #f1f5f9;
             color: #0f172a;
             font-weight: 700;
             text-align: center;
         }
 
-        table.asset-table td.center {
+        td {
             text-align: center;
         }
 
-        table.asset-table td.right {
-            text-align: right;
+        /* Column Specific Text Alignment */
+        td.text-left {
+            text-align: left;
         }
 
-        /* Action Buttons Inside Table */
-        .btn-group-actions {
+        /* Action Buttons */
+        .action-cells {
             display: flex;
             gap: 6px;
             justify-content: center;
+            align-items: center;
         }
 
-        .btn-action-sm {
-            padding: 5px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
+        .btn-action {
+            padding: 6px 12px;
             border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            color: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-action:hover {
+            opacity: 0.85;
         }
 
         .btn-edit {
-            background-color: #0284c7;
-            color: #ffffff;
-        }
-
-        .btn-edit:hover {
-            background-color: #0369a1;
+            background-color: #0284c7; /* Blue Edit button */
         }
 
         .btn-delete {
-            background-color: #ef4444;
-            color: #ffffff;
+            background-color: #ef4444; /* Red Delete button */
         }
 
-        .btn-delete:hover {
-            background-color: #dc2626;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .empty-state p {
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 16px;
-        }
-
-        /* Edit Modal Styling */
+        /* Modal Overlay for Edit */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6);
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.5);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            padding: 20px;
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-box {
-            background: #ffffff;
-            width: 100%;
-            max-width: 700px;
+        .modal-content {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 600px;
             border-radius: 12px;
-            padding: 28px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .modal-header {
@@ -259,39 +190,31 @@
             align-items: center;
             margin-bottom: 20px;
             border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
-        .modal-header h3 {
+        .modal-header h2 {
             font-size: 18px;
             color: #0f172a;
-        }
-
-        .close-modal {
-            background: transparent;
-            border: none;
-            font-size: 20px;
-            cursor: pointer;
-            color: #64748b;
         }
 
         .modal-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
+            gap: 12px;
         }
 
-        .modal-grid .full {
+        .modal-grid .full-width {
             grid-column: span 2;
         }
 
         .modal-grid label {
+            display: block;
             font-size: 11px;
             font-weight: 700;
             color: #64748b;
-            text-transform: uppercase;
-            display: block;
             margin-bottom: 4px;
+            text-transform: uppercase;
         }
 
         .modal-grid input {
@@ -302,31 +225,11 @@
             font-size: 13px;
         }
 
-        .modal-footer {
+        .modal-actions {
             margin-top: 20px;
             display: flex;
             justify-content: flex-end;
             gap: 10px;
-        }
-
-        /* Print styles */
-        @media print {
-            header, .toolbar-container, .btn-action-col, .btn-group-actions {
-                display: none !important;
-            }
-            body {
-                background: #ffffff;
-                padding: 0;
-            }
-            .doc-paper {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-                width: 100%;
-            }
-            table.asset-table th, table.asset-table td {
-                border: 1px solid #000000 !important;
-            }
         }
     </style>
 </head>
@@ -344,34 +247,19 @@
         </div>
     </header>
 
-    <!-- Toolbar for Export & Print -->
-    <div class="toolbar-container">
-        <h3 style="color: #334155;">Asset Register Records</h3>
-        <div class="tool-btns">
-            <button onclick="printRegister()" class="action-btn btn-print">
-                🖨️ Print Register
-            </button>
-            <button onclick="exportToPDF()" class="action-btn btn-pdf">
-                📄 Export to PDF
-            </button>
-        </div>
-    </div>
-
-    <!-- Main Printable Register Document -->
-    <div class="doc-paper" id="register-document">
-        
-        <div class="doc-header">
-            <h1>REGISTER OF PROPERTY, PLANT AND EQUIPMENT</h1>
+    <!-- Main Content Container -->
+    <div class="container">
+        <div class="page-header">
+            <h1>Asset Register Ledger</h1>
         </div>
 
-        <!-- Table View -->
         <div class="table-responsive">
-            <table class="asset-table">
+            <table>
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 35px;">No.</th>
+                        <th rowspan="2" style="width: 40px;">No.</th>
                         <th colspan="2">Date</th>
-                        <th rowspan="2">Particulars / Description</th>
+                        <th rowspan="2" style="min-width: 200px;">Particulars / Description</th>
                         <th rowspan="2">Ref. No.</th>
                         <th rowspan="2">Model</th>
                         <th rowspan="2">Useful Life (Yrs)</th>
@@ -381,7 +269,7 @@
                         <th rowspan="2">Location</th>
                         <th rowspan="2">Updated Date</th>
                         <th rowspan="2">Updated By</th>
-                        <th rowspan="2" class="btn-action-col">Actions</th>
+                        <th rowspan="2" style="width: 160px;">Actions</th>
                     </tr>
                     <tr>
                         <th>Purchase</th>
@@ -389,23 +277,23 @@
                     </tr>
                 </thead>
                 <tbody id="asset-table-body">
-                    <!-- Dynamic Rows Rendered via JS -->
+                    <!-- Data will be dynamically rendered here from LocalStorage -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- EDIT ASSET MODAL -->
+    <!-- Edit Modal Overlay -->
     <div class="modal-overlay" id="edit-modal">
-        <div class="modal-box">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>Edit Asset Record</h3>
-                <button class="close-modal" onclick="closeEditModal()">&times;</button>
+                <h2>✏️ Edit Asset Details</h2>
+                <button onclick="closeEditModal()" style="background:none; border:none; font-size: 20px; cursor:pointer;">&times;</button>
             </div>
-            <form onsubmit="saveEditedAsset(event)">
-                <input type="hidden" id="edit-id">
+            <form id="edit-asset-form" onsubmit="saveAssetEdit(event)">
+                <input type="hidden" id="edit-asset-id">
                 <div class="modal-grid">
-                    <div class="full">
+                    <div class="full-width">
                         <label>Asset Name / Description</label>
                         <input type="text" id="edit-name" required>
                     </div>
@@ -414,16 +302,8 @@
                         <input type="text" id="edit-category" required>
                     </div>
                     <div>
-                        <label>Ref. No. / Invoice No.</label>
-                        <input type="text" id="edit-ref" required>
-                    </div>
-                    <div>
-                        <label>Purchase Date</label>
-                        <input type="date" id="edit-purchase-date" required>
-                    </div>
-                    <div>
-                        <label>Disposal Date</label>
-                        <input type="text" id="edit-disposal-date" placeholder="-">
+                        <label>Ref / Invoice No.</label>
+                        <input type="text" id="edit-refNo" required>
                     </div>
                     <div>
                         <label>Model</label>
@@ -431,36 +311,28 @@
                     </div>
                     <div>
                         <label>Useful Life (Yrs)</label>
-                        <input type="number" id="edit-life" required>
+                        <input type="number" id="edit-usefulLife" required>
                     </div>
                     <div>
-                        <label>Unit</label>
-                        <input type="number" id="edit-unit" oninput="calculateModalTotal()" required>
+                        <label>Unit Quantity</label>
+                        <input type="number" id="edit-unit" min="1" required>
                     </div>
                     <div>
                         <label>Unit Price (RM)</label>
-                        <input type="number" step="0.01" id="edit-price" oninput="calculateModalTotal()" required>
-                    </div>
-                    <div>
-                        <label>Total Price (RM)</label>
-                        <input type="text" id="edit-total" readonly>
+                        <input type="number" step="0.01" id="edit-unitPrice" required>
                     </div>
                     <div>
                         <label>Location / Department</label>
                         <input type="text" id="edit-location" required>
                     </div>
                     <div>
-                        <label>Updated Date</label>
-                        <input type="date" id="edit-updated-date" required>
-                    </div>
-                    <div>
                         <label>Updated By</label>
-                        <input type="text" id="edit-updated-by" required>
+                        <input type="text" id="edit-updatedBy" required>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="action-btn" onclick="closeEditModal()">Cancel</button>
-                    <button type="submit" class="action-btn btn-primary">Save Changes</button>
+                <div class="modal-actions">
+                    <button type="button" class="btn-nav btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-nav btn-primary">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -468,164 +340,145 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // Fetch real registered assets from LocalStorage (Strictly NO DEMO DATA)
-        function getAssets() {
-            return JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
-        }
-
-        // Save assets back to LocalStorage
-        function saveAssets(assets) {
-            localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
-        }
-
-        // Render Table Data
-        function renderTable() {
-            const assets = getAssets();
+        // Load and render assets from LocalStorage
+        function renderAssetsTable() {
             const tbody = document.getElementById('asset-table-body');
-            tbody.innerHTML = "";
+            const assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
 
             if (assets.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="14" class="empty-state">
-                            <p>No assets registered yet in the system.</p>
-                            <a href="registernew.html" class="btn-nav btn-primary" style="display: inline-block;">+ Register First Asset Now</a>
+                        <td colspan="14" style="padding: 32px; color: #64748b;">
+                            No assets registered yet. Click <a href="registernew.html" style="color: #2563eb; font-weight: 600;">Register New Asset</a> to add your first record.
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            assets.forEach((item, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="center">${index + 1}</td>
-                    <td class="center">${item.purchaseDate}</td>
-                    <td class="center">${item.disposalDate || '-'}</td>
-                    <td><strong>${item.name}</strong><br><small style="color:#64748b;">${item.category}</small></td>
-                    <td class="center">${item.refNo}</td>
-                    <td class="center">${item.model || '-'}</td>
-                    <td class="center">${item.usefulLife}</td>
-                    <td class="center">${item.unit}</td>
-                    <td class="right">${parseFloat(item.unitPrice).toFixed(2)}</td>
-                    <td class="right"><strong>${parseFloat(item.total).toFixed(2)}</strong></td>
-                    <td>${item.location}</td>
-                    <td class="center">${item.updatedDate}</td>
-                    <td class="center">${item.updatedBy}</td>
-                    <td class="center btn-action-col">
-                        <div class="btn-group-actions">
-                            <button class="btn-action-sm btn-edit" onclick="openEditModal(${item.id})">✏️ Edit</button>
-                            <button class="btn-action-sm btn-delete" onclick="deleteAsset(${item.id})">🗑️ Delete</button>
-                        </div>
-                    </td>
+            tbody.innerHTML = assets.map((item, index) => {
+                const assetId = item.id || index;
+                const name = item.name || item.description || 'Unnamed Asset';
+                const category = item.category || '-';
+                const purchaseDate = item.purchaseDate || '-';
+                const disposalDate = item.disposalDate || '-';
+                const refNo = item.refNo || item.invoiceNo || '-';
+                const model = item.model || '-';
+                const usefulLife = item.usefulLife || item.useful_life || '-';
+                const unit = item.unit || 1;
+                const unitPrice = parseFloat(item.unitPrice || 0).toFixed(2);
+                const total = parseFloat(item.total || (unit * unitPrice)).toFixed(2);
+                const location = item.location || item.department || '-';
+                const updatedDate = item.updatedDate || new Date().toISOString().split('T')[0];
+                const updatedBy = item.updatedBy || item.supplier || 'Admin';
+
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${purchaseDate}</td>
+                        <td>${disposalDate}</td>
+                        <td class="text-left">
+                            <strong style="color: #0f172a; display: block;">${name}</strong>
+                            <span style="color: #64748b; font-size: 11px;">${category}</span>
+                        </td>
+                        <td>${refNo}</td>
+                        <td>${model}</td>
+                        <td>${usefulLife}</td>
+                        <td>${unit}</td>
+                        <td>${unitPrice}</td>
+                        <td><strong>${total}</strong></td>
+                        <td>${location}</td>
+                        <td>${updatedDate}</td>
+                        <td>${updatedBy}</td>
+                        <td>
+                            <div class="action-cells">
+                                <button class="btn-action btn-edit" onclick="openEditModal(${assetId})">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn-action btn-delete" onclick="deleteAsset(${assetId})">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
-            });
+            }).join('');
         }
 
-        // DELETE FUNCTION
+        // Delete Asset Function
         function deleteAsset(id) {
-            if (confirm("Are you sure you want to delete this asset record permanently?")) {
-                let assets = getAssets();
-                assets = assets.filter(item => item.id !== id);
-                saveAssets(assets);
-                renderTable();
+            let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+            
+            // Confirm delete dialog
+            if (confirm("Are you sure you want to delete this asset record?")) {
+                assets = assets.filter((item, index) => {
+                    const itemId = item.id !== undefined ? item.id : index;
+                    return itemId !== id;
+                });
+
+                localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+                renderAssetsTable();
             }
         }
 
-        // EDIT MODAL FUNCTIONS
+        // Open Edit Modal and populate existing data
         function openEditModal(id) {
-            const assets = getAssets();
-            const item = assets.find(a => a.id === id);
-            if (!item) return;
+            const assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+            const targetAsset = assets.find((item, index) => (item.id !== undefined ? item.id : index) === id);
 
-            document.getElementById('edit-id').value = item.id;
-            document.getElementById('edit-name').value = item.name;
-            document.getElementById('edit-category').value = item.category;
-            document.getElementById('edit-ref').value = item.refNo;
-            document.getElementById('edit-purchase-date').value = item.purchaseDate;
-            document.getElementById('edit-disposal-date').value = item.disposalDate || '';
-            document.getElementById('edit-model').value = item.model || '';
-            document.getElementById('edit-life').value = item.usefulLife;
-            document.getElementById('edit-unit').value = item.unit;
-            document.getElementById('edit-price').value = item.unitPrice;
-            document.getElementById('edit-total').value = parseFloat(item.total).toFixed(2);
-            document.getElementById('edit-location').value = item.location;
-            document.getElementById('edit-updated-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('edit-updated-by').value = item.updatedBy || 'User';
+            if (!targetAsset) return;
 
-            document.getElementById('edit-modal').classList.add('active');
+            document.getElementById('edit-asset-id').value = id;
+            document.getElementById('edit-name').value = targetAsset.name || targetAsset.description || '';
+            document.getElementById('edit-category').value = targetAsset.category || '';
+            document.getElementById('edit-refNo').value = targetAsset.refNo || targetAsset.invoiceNo || '';
+            document.getElementById('edit-model').value = targetAsset.model || '';
+            document.getElementById('edit-usefulLife').value = targetAsset.usefulLife || targetAsset.useful_life || '';
+            document.getElementById('edit-unit').value = targetAsset.unit || 1;
+            document.getElementById('edit-unitPrice').value = targetAsset.unitPrice || 0;
+            document.getElementById('edit-location').value = targetAsset.location || targetAsset.department || '';
+            document.getElementById('edit-updatedBy').value = targetAsset.updatedBy || '';
+
+            document.getElementById('edit-modal').style.display = 'flex';
         }
 
+        // Close Edit Modal
         function closeEditModal() {
-            document.getElementById('edit-modal').classList.remove('active');
+            document.getElementById('edit-modal').style.display = 'none';
         }
 
-        function calculateModalTotal() {
-            const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
-            const price = parseFloat(document.getElementById('edit-price').value) || 0;
-            document.getElementById('edit-total').value = (unit * price).toFixed(2);
-        }
+        // Save Edited Asset
+        function saveAssetEdit(event) {
+            event.preventDefault();
+            const id = document.getElementById('edit-asset-id').value;
+            let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
 
-        function saveEditedAsset(e) {
-            e.preventDefault();
-            const id = parseInt(document.getElementById('edit-id').value);
-            let assets = getAssets();
+            const index = assets.findIndex((item, idx) => (item.id !== undefined ? item.id : idx) == id);
 
-            const index = assets.findIndex(a => a.id === id);
             if (index !== -1) {
-                const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
-                const unitPrice = parseFloat(document.getElementById('edit-price').value) || 0;
+                const unitVal = parseFloat(document.getElementById('edit-unit').value) || 0;
+                const unitPriceVal = parseFloat(document.getElementById('edit-unitPrice').value) || 0;
 
-                assets[index] = {
-                    id: id,
-                    name: document.getElementById('edit-name').value,
-                    category: document.getElementById('edit-category').value,
-                    refNo: document.getElementById('edit-ref').value,
-                    purchaseDate: document.getElementById('edit-purchase-date').value,
-                    disposalDate: document.getElementById('edit-disposal-date').value || '-',
-                    model: document.getElementById('edit-model').value || '-',
-                    usefulLife: document.getElementById('edit-life').value,
-                    unit: unit,
-                    unitPrice: unitPrice,
-                    total: unit * unitPrice,
-                    location: document.getElementById('edit-location').value,
-                    updatedDate: document.getElementById('edit-updated-date').value,
-                    updatedBy: document.getElementById('edit-updated-by').value
-                };
+                assets[index].name = document.getElementById('edit-name').value;
+                assets[index].category = document.getElementById('edit-category').value;
+                assets[index].refNo = document.getElementById('edit-refNo').value;
+                assets[index].model = document.getElementById('edit-model').value;
+                assets[index].usefulLife = document.getElementById('edit-usefulLife').value;
+                assets[index].unit = unitVal;
+                assets[index].unitPrice = unitPriceVal;
+                assets[index].total = unitVal * unitPriceVal;
+                assets[index].location = document.getElementById('edit-location').value;
+                assets[index].updatedBy = document.getElementById('edit-updatedBy').value;
+                assets[index].updatedDate = new Date().toISOString().split('T')[0];
 
-                saveAssets(assets);
-                renderTable();
+                localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
                 closeEditModal();
-                alert('Asset record updated successfully!');
+                renderAssetsTable();
             }
         }
 
-        // PRINT & PDF EXPORT
-        function printRegister() {
-            window.print();
-        }
-
-        function exportToPDF() {
-            const element = document.getElementById('register-document');
-            const opt = {
-                margin:       [0.3, 0.3, 0.3, 0.3],
-                filename:     'Asset_Register_Report.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
-            };
-
-            const actionCols = document.querySelectorAll('.btn-action-col');
-            actionCols.forEach(col => col.style.display = 'none');
-
-            html2pdf().set(opt).from(element).save().then(() => {
-                actionCols.forEach(col => col.style.display = '');
-            });
-        }
-
-        // Load Table on page open
-        document.addEventListener('DOMContentLoaded', renderTable);
+        // Initialize table on load
+        document.addEventListener('DOMContentLoaded', renderAssetsTable);
     </script>
 </body>
 </html>
