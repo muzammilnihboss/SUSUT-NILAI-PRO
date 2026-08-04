@@ -90,7 +90,6 @@
         }
 
         .protocol-icon {
-            background-color: #dc2626; /* Match green/red protocol badge */
             background: #ecfdf5;
             color: #059669;
             width: 48px;
@@ -125,16 +124,15 @@
         .col-12 { grid-column: span 12; }
         .col-6  { grid-column: span 6; }
         .col-4  { grid-column: span 4; }
-        .col-3  { grid-column: span 3; }
         .col-2  { grid-column: span 2; }
 
         @media (max-width: 768px) {
-            .col-6, .col-4, .col-3, .col-2 {
+            .col-6, .col-4, .col-2 {
                 grid-column: span 12;
             }
         }
 
-        /* Labels & Input Controls */
+        /* Labels & Controls */
         label {
             display: block;
             font-size: 11px;
@@ -172,12 +170,12 @@
             font-weight: 600;
         }
 
-        /* Custom Category Field Hidden Container */
+        /* Custom Category Field (Hidden by default) */
         #custom-category-wrapper {
             display: none;
         }
 
-        /* Preventive Servicing Section Box */
+        /* Preventive Servicing Box */
         .servicing-box {
             background-color: #f8fafc;
             border: 1px solid #f1f5f9;
@@ -277,7 +275,7 @@
                 </div>
 
                 <!-- ASSET CLASSIFICATION CATEGORY -->
-                <div class="col-6" id="category-dropdown-container">
+                <div class="col-6">
                     <label for="asset-category">ASSET CLASSIFICATION CATEGORY</label>
                     <select id="asset-category" onchange="toggleCustomCategory()" required>
                         <option value="Office Equipment">Office Equipment</option>
@@ -291,16 +289,16 @@
                     </select>
                 </div>
 
-                <!-- PURCHASE DATE -->
+                <!-- PURCHASE DATE (Auto-filled with Current Malaysia Date) -->
                 <div class="col-6">
                     <label for="purchase-date">PURCHASE DATE</label>
-                    <input type="date" id="purchase-date" value="2026-08-01" required>
+                    <input type="date" id="purchase-date" required>
                 </div>
 
                 <!-- DYNAMIC CUSTOM CATEGORY (Appears only when "Other Asset" selected) -->
                 <div class="col-12" id="custom-category-wrapper">
                     <label for="custom-category-input">SPECIFY CUSTOM CATEGORY <span class="required">*</span></label>
-                    <input type="text" id="custom-category-input" placeholder="e.g. Specialized Machinery">
+                    <input type="text" id="custom-category-input" placeholder="e.g. Heavy Machinery">
                 </div>
 
                 <!-- DEPLOYMENT DEPARTMENT -->
@@ -330,21 +328,20 @@
                 <!-- ESTIMATED SALVAGE (RM) -->
                 <div class="col-4">
                     <label for="estimated-salvage">ESTIMATED SALVAGE (RM)</label>
-                    <input type="number" step="0.01" id="estimated-salvage" placeholder="0.00" value="0.00">
+                    <input type="number" step="0.01" id="estimated-salvage" placeholder="0.00">
                 </div>
 
-                <!-- ESTIMATED USEFUL LIFE (YRS) -->
+                <!-- ESTIMATED USEFUL LIFE (YRS) (Empty by default) -->
                 <div class="col-4">
-                    <label for="useful-life">ESTIMATED USEFUL LIFE (YRS)</label>
-                    <input type="number" id="useful-life" value="5" min="1" required>
+                    <label for="useful-life">ESTIMATED USEFUL LIFE (YRS) <span class="required">*</span></label>
+                    <input type="number" id="useful-life" placeholder="e.g. 5" min="1" required>
                 </div>
 
-                <!-- AMORTIZATION METHOD -->
+                <!-- AMORTIZATION METHOD (Straight Line Method Only) -->
                 <div class="col-4">
                     <label for="amortization-method">AMORTIZATION METHOD</label>
-                    <select id="amortization-method">
-                        <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
-                        <option value="Reducing Balance Method">Reducing Balance Method</option>
+                    <select id="amortization-method" disabled>
+                        <option value="Straight Line (Equal Amortization)" selected>Straight Line (Equal Amortization)</option>
                     </select>
                 </div>
 
@@ -355,9 +352,10 @@
                             <span>🔧</span> Preventive Servicing Intervals
                         </div>
                         <div class="form-grid">
+                            <!-- LAST SERVICE DATE (Auto-filled with Current Malaysia Date) -->
                             <div class="col-6">
                                 <label for="last-service-date">LAST SERVICE DATE</label>
-                                <input type="date" id="last-service-date" value="2026-08-01">
+                                <input type="date" id="last-service-date">
                             </div>
                             <div class="col-6">
                                 <label for="service-interval">SERVICE INTERVAL (MONTHS)</label>
@@ -381,7 +379,19 @@
 
     <!-- JavaScript Scripting -->
     <script>
-        // Toggle Custom Category Input Box when "Other Asset" is picked
+        // Set Today's Date dynamically in Malaysia Time (YYYY-MM-DD format)
+        function initCurrentDates() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const formattedCurrentDate = `${year}-${month}-${day}`;
+
+            document.getElementById('purchase-date').value = formattedCurrentDate;
+            document.getElementById('last-service-date').value = formattedCurrentDate;
+        }
+
+        // Toggle Custom Category Input Box when "Other Asset" is chosen
         function toggleCustomCategory() {
             const categorySelect = document.getElementById('asset-category');
             const customWrapper = document.getElementById('custom-category-wrapper');
@@ -409,7 +419,7 @@
         function handleSaveAsset(event) {
             event.preventDefault();
 
-            // Fetch existing stored assets
+            // Retrieve existing stored assets from LocalStorage
             let storedAssets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
 
             // Determine final category name
@@ -425,7 +435,7 @@
             const unitPriceNum = parseFloat(document.getElementById('unit-price').value) || 0;
             const totalNum = unitNum * unitPriceNum;
 
-            // Create new asset data object
+            // Build new asset object
             const newAssetObject = {
                 id: Date.now(),
                 name: document.getElementById('asset-name').value,
@@ -455,6 +465,11 @@
             alert(`Asset "${newAssetObject.name}" has been successfully saved to the Ledger Book!`);
             window.location.href = 'assetregister.html';
         }
+
+        // Initialize script on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            initCurrentDates();
+        });
     </script>
 </body>
 </html>
