@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asset Register - Susut Nilai Pro</title>
   
-  <!-- Pustaka html2pdf.js -->
+  <!-- html2pdf.js library -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -173,7 +173,7 @@
       color: #334155;
     }
 
-    /* Modal Edit */
+    /* Modal Edit Form */
     .modal {
       display: none;
       position: fixed;
@@ -264,7 +264,7 @@
     </div>
   </div>
 
-  <!-- Modal Sunting Asset -->
+  <!-- Modal Edit Asset -->
   <div class="modal" id="editModal">
     <div class="modal-content">
       <div class="modal-header">Edit Recorded Asset Details</div>
@@ -283,6 +283,7 @@
               <option value="Computer & Hardware">Computer & Hardware</option>
               <option value="Furniture & Fittings">Furniture & Fittings</option>
               <option value="Motor Vehicle">Motor Vehicle</option>
+              <option value="Electrical Installation">Electrical Installation</option>
               <option value="System & Development">System & Development</option>
               <option value="Renovation">Renovation</option>
               <option value="Shop Lot">Shop Lot</option>
@@ -340,7 +341,7 @@
   </div>
 
   <script>
-    // Ambil data sebenar dari Local Storage tanpa data acah
+    // Membaca data daripada simpanan pelayar (TIADA DEMO DATA)
     function getAssets() {
       return JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
     }
@@ -362,7 +363,6 @@
         return;
       }
 
-      // Kumpulkan mengikut Kategori yang didaftarkan
       const categories = [...new Set(assets.map(a => a.category))];
 
       categories.forEach(cat => {
