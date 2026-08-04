@@ -64,12 +64,12 @@
         }
 
         .btn-primary {
-            background-color: #2563eb;
+            background-color: #059669;
             color: #ffffff;
         }
 
         .btn-primary:hover {
-            background-color: #1d4ed8;
+            background-color: #047857;
         }
 
         /* Action Toolbar */
@@ -120,7 +120,7 @@
             background-color: #b91c1c;
         }
 
-        /* Document Container */
+        /* Document Paper */
         .doc-paper {
             max-width: 1300px;
             margin: 0 auto;
@@ -146,17 +146,7 @@
             text-transform: uppercase;
         }
 
-        .category-badge-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
-            font-size: 15px;
-            font-weight: 700;
-            color: #334155;
-        }
-
-        /* Table Styling matching Official Document */
+        /* Table Styling */
         .table-responsive {
             overflow-x: auto;
         }
@@ -189,20 +179,51 @@
             text-align: right;
         }
 
-        .btn-edit {
-            background-color: #0284c7;
-            color: #ffffff;
-            border: none;
-            padding: 5px 10px;
+        /* Action Buttons Inside Table */
+        .btn-group-actions {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .btn-action-sm {
+            padding: 5px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
+            border: none;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background-color: #0284c7;
+            color: #ffffff;
         }
 
         .btn-edit:hover {
             background-color: #0369a1;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 16px;
         }
 
         /* Edit Modal Styling */
@@ -288,9 +309,9 @@
             gap: 10px;
         }
 
-        /* PRINT STYLES - Hides non-printable elements */
+        /* Print styles */
         @media print {
-            header, .toolbar-container, .btn-action-col, .btn-edit {
+            header, .toolbar-container, .btn-action-col, .btn-group-actions {
                 display: none !important;
             }
             body {
@@ -328,7 +349,7 @@
         <h3 style="color: #334155;">Asset Register Records</h3>
         <div class="tool-btns">
             <button onclick="printRegister()" class="action-btn btn-print">
-                🖨️ Print Asset Register
+                🖨️ Print Register
             </button>
             <button onclick="exportToPDF()" class="action-btn btn-pdf">
                 📄 Export to PDF
@@ -339,7 +360,6 @@
     <!-- Main Printable Register Document -->
     <div class="doc-paper" id="register-document">
         
-        <!-- Header format matching PDF -->
         <div class="doc-header">
             <h1>REGISTER OF PROPERTY, PLANT AND EQUIPMENT</h1>
         </div>
@@ -361,7 +381,7 @@
                         <th rowspan="2">Location</th>
                         <th rowspan="2">Updated Date</th>
                         <th rowspan="2">Updated By</th>
-                        <th rowspan="2" class="btn-action-col">Action</th>
+                        <th rowspan="2" class="btn-action-col">Actions</th>
                     </tr>
                     <tr>
                         <th>Purchase</th>
@@ -448,50 +468,14 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // Sample Initial Data (If LocalStorage is empty)
-        const initialAssets = [
-            {
-                id: 1,
-                purchaseDate: "2026-01-15",
-                disposalDate: "-",
-                name: "Ergonomic Executive Office Chair",
-                category: "Furniture & Fittings",
-                refNo: "INV/2026/0101",
-                model: "ErgoPro-X9",
-                usefulLife: 5,
-                unit: 2,
-                unitPrice: 450.00,
-                total: 900.00,
-                location: "Administrative Office HQ",
-                updatedDate: "2026-01-15",
-                updatedBy: "Admin"
-            },
-            {
-                id: 2,
-                purchaseDate: "2026-02-10",
-                disposalDate: "-",
-                name: "Dell Latitude Laptop i7",
-                category: "Computer & Hardware",
-                refNo: "INV/2026/0204",
-                model: "Latitude 5440",
-                usefulLife: 3,
-                unit: 1,
-                unitPrice: 3850.00,
-                total: 3850.00,
-                location: "IT Department",
-                updatedDate: "2026-02-10",
-                updatedBy: "System Operator"
-            }
-        ];
-
-        // Load Assets from LocalStorage or Set Default
+        // Fetch real registered assets from LocalStorage (Strictly NO DEMO DATA)
         function getAssets() {
-            const stored = localStorage.getItem('susut_nilai_assets');
-            if (!stored) {
-                localStorage.setItem('susut_nilai_assets', JSON.stringify(initialAssets));
-                return initialAssets;
-            }
-            return JSON.parse(stored);
+            return JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+        }
+
+        // Save assets back to LocalStorage
+        function saveAssets(assets) {
+            localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
         }
 
         // Render Table Data
@@ -501,7 +485,14 @@
             tbody.innerHTML = "";
 
             if (assets.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="14" style="text-align:center; padding: 20px; color: #64748b;">No registered assets found.</td></tr>`;
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="14" class="empty-state">
+                            <p>No assets registered yet in the system.</p>
+                            <a href="registernew.html" class="btn-nav btn-primary" style="display: inline-block;">+ Register First Asset Now</a>
+                        </td>
+                    </tr>
+                `;
                 return;
             }
 
@@ -522,14 +513,27 @@
                     <td class="center">${item.updatedDate}</td>
                     <td class="center">${item.updatedBy}</td>
                     <td class="center btn-action-col">
-                        <button class="btn-edit" onclick="openEditModal(${item.id})">✏️ Edit</button>
+                        <div class="btn-group-actions">
+                            <button class="btn-action-sm btn-edit" onclick="openEditModal(${item.id})">✏️ Edit</button>
+                            <button class="btn-action-sm btn-delete" onclick="deleteAsset(${item.id})">🗑️ Delete</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Modal Functions for Editing Record
+        // DELETE FUNCTION
+        function deleteAsset(id) {
+            if (confirm("Are you sure you want to delete this asset record permanently?")) {
+                let assets = getAssets();
+                assets = assets.filter(item => item.id !== id);
+                saveAssets(assets);
+                renderTable();
+            }
+        }
+
+        // EDIT MODAL FUNCTIONS
         function openEditModal(id) {
             const assets = getAssets();
             const item = assets.find(a => a.id === id);
@@ -548,7 +552,7 @@
             document.getElementById('edit-total').value = parseFloat(item.total).toFixed(2);
             document.getElementById('edit-location').value = item.location;
             document.getElementById('edit-updated-date').value = new Date().toISOString().split('T')[0];
-            document.getElementById('edit-updated-by').value = item.updatedBy || 'Manager';
+            document.getElementById('edit-updated-by').value = item.updatedBy || 'User';
 
             document.getElementById('edit-modal').classList.add('active');
         }
@@ -590,19 +594,18 @@
                     updatedBy: document.getElementById('edit-updated-by').value
                 };
 
-                localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+                saveAssets(assets);
                 renderTable();
                 closeEditModal();
                 alert('Asset record updated successfully!');
             }
         }
 
-        // Print Function
+        // PRINT & PDF EXPORT
         function printRegister() {
             window.print();
         }
 
-        // PDF Export Function
         function exportToPDF() {
             const element = document.getElementById('register-document');
             const opt = {
@@ -613,7 +616,6 @@
                 jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
             };
 
-            // Temporarily hide action column for clean PDF
             const actionCols = document.querySelectorAll('.btn-action-col');
             actionCols.forEach(col => col.style.display = 'none');
 
@@ -622,7 +624,7 @@
             });
         }
 
-        // Initial Load
+        // Load Table on page open
         document.addEventListener('DOMContentLoaded', renderTable);
     </script>
 </body>
