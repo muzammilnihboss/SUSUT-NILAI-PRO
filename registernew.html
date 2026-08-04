@@ -409,11 +409,45 @@
 
         // Form Submission Handler
         function handleSaveAsset(event) {
-            event.preventDefault();
-            const assetName = document.getElementById('asset-name').value;
-            alert(`Asset "${assetName}" has been successfully saved to the ledger book!`);
-            window.location.href = "dashboard.html";
-        }
+    event.preventDefault();
+    
+    // Get existing assets from localStorage
+    let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+    
+    // Check asset category (support "Other Asset")
+    let category = document.getElementById('asset-category').value;
+    if (category === 'Other Asset') {
+        category = document.getElementById('other-category-input').value || 'Other Asset';
+    }
+
+    const unit = parseFloat(document.getElementById('unit').value) || 0;
+    const unitPrice = parseFloat(document.getElementById('unit-price').value) || 0;
+
+    // Create new asset object
+    const newAsset = {
+        id: Date.now(),
+        purchaseDate: document.getElementById('purchase-date').value,
+        disposalDate: '-',
+        name: document.getElementById('asset-name').value,
+        category: category,
+        refNo: document.getElementById('invoice-number').value,
+        model: 'Standard Model',
+        usefulLife: document.getElementById('useful-life').value,
+        unit: unit,
+        unitPrice: unitPrice,
+        total: unit * unitPrice,
+        location: document.getElementById('department').value,
+        updatedDate: new Date().toISOString().split('T')[0],
+        updatedBy: document.getElementById('supplier-name').value
+    };
+
+    // Save into array and update LocalStorage
+    assets.push(newAsset);
+    localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+
+    alert(`Asset "${newAsset.name}" successfully registered! Redirecting to Asset Register...`);
+    window.location.href = "assetregister.html";
+}
     </script>
 </body>
 </html>
