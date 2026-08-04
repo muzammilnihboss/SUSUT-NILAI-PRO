@@ -360,10 +360,35 @@
 
     // Simpan Borang & Kembali ke Dashboard
     function handleFormSubmit(event) {
-      event.preventDefault();
-      alert('Asset registered successfully!');
-      window.location.href = 'dashboard.html';
-    }
+  event.preventDefault();
+
+  const categorySelect = document.getElementById('assetCategory').value;
+  const customCategory = document.getElementById('otherCategoryInput').value;
+  const finalCategory = (categorySelect === 'Other Asset' && customCategory) ? customCategory : categorySelect;
+
+  const newAsset = {
+    id: Date.now().toString(),
+    item: event.target[0].value,
+    supplier: event.target[1].value,
+    refNo: event.target[2].value,
+    category: finalCategory,
+    purchaseDate: event.target[4].value,
+    location: event.target[6].value,
+    unit: parseInt(document.getElementById('unitInput').value) || 1,
+    unitPrice: parseFloat(document.getElementById('unitPriceInput').value) || 0,
+    total: parseFloat(document.getElementById('totalInput').value) || 0,
+    lifespan: event.target[10].value || 5,
+    updatedDate: new Date().toISOString().split('T')[0],
+    updatedBy: 'Admin'
+  };
+
+  let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+  assets.push(newAsset);
+  localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+
+  alert('Asset registered successfully!');
+  window.location.href = 'assetregister.html'; // Pindah ke Asset Register
+}
   </script>
 
 </body>
