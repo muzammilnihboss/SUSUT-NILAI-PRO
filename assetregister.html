@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asset Register - Susut Nilai Pro</title>
   
-  <!-- Pustaka html2pdf.js untuk eksport PDF -->
+  <!-- Pustaka html2pdf.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -28,7 +28,6 @@
       margin: 0 auto;
     }
 
-    /* Top Navigation (TIDAK DICETAK DALAM PDF) */
     .top-nav {
       display: flex;
       justify-content: space-between;
@@ -41,18 +40,14 @@
       color: #64748b;
       font-weight: 600;
       font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    .back-btn:hover {
-      color: #0f172a;
-    }
+    .back-btn:hover { color: #0f172a; }
 
     .action-toolbar {
       display: flex;
       gap: 12px;
+      align-items: center;
     }
 
     .btn {
@@ -78,7 +73,6 @@
     .btn-dark { background-color: #334155; color: #fff; }
     .btn-dark:hover { background-color: #1e293b; }
 
-    /* Documents & Table Wrapper */
     .register-paper {
       background: #ffffff;
       border-radius: 12px;
@@ -102,9 +96,7 @@
       text-transform: uppercase;
     }
 
-    .category-block {
-      margin-bottom: 35px;
-    }
+    .category-block { margin-bottom: 35px; }
 
     .category-title {
       font-size: 14px;
@@ -117,10 +109,7 @@
       text-transform: uppercase;
     }
 
-    /* Format Jadual Mengikut Dokumen PDF */
-    .table-responsive {
-      overflow-x: auto;
-    }
+    .table-responsive { overflow-x: auto; }
 
     table {
       width: 100%;
@@ -144,9 +133,7 @@
       white-space: nowrap;
     }
 
-    tr:nth-child(even) {
-      background-color: #fafafa;
-    }
+    tr:nth-child(even) { background-color: #fafafa; }
 
     .text-center { text-align: center; }
     .text-right { text-align: right; }
@@ -162,8 +149,6 @@
       font-weight: 600;
     }
 
-    .edit-btn:hover { background: #1d4ed8; }
-
     .delete-btn {
       background: #ef4444;
       color: white;
@@ -176,7 +161,19 @@
       margin-left: 4px;
     }
 
-    /* Modal untuk Edit Aset */
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+      color: #64748b;
+    }
+
+    .empty-state h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #334155;
+    }
+
+    /* Modal Edit */
     .modal {
       display: none;
       position: fixed;
@@ -237,7 +234,6 @@
       margin-top: 20px;
     }
 
-    /* CSS Khas Cetakan/PDF (Menyembunyikan butang navigasi semasa cetak) */
     @media print {
       body { background: white; padding: 0; }
       .top-nav, .action-col, .edit-btn, .delete-btn { display: none !important; }
@@ -249,11 +245,8 @@
 <body>
 
   <div class="container">
-    <!-- Navigation Toolbar -->
     <div class="top-nav">
-      <div>
-        <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
-      </div>
+      <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
       <div class="action-toolbar">
         <a href="registernew.html" class="btn btn-secondary">+ Register New Asset</a>
         <button onclick="printRegister()" class="btn btn-dark">🖨️ Print Register</button>
@@ -262,21 +255,19 @@
       </div>
     </div>
 
-    <!-- Paper Format -->
     <div class="register-paper" id="pdfContent">
       <div class="doc-header">
         <h2>Property, Plant and Equipment Register</h2>
       </div>
 
-      <!-- Container Dinamik Jadual mengikut Kategori -->
       <div id="registerTablesContainer"></div>
     </div>
   </div>
 
-  <!-- Modal Edit Asset -->
+  <!-- Modal Sunting Asset -->
   <div class="modal" id="editModal">
     <div class="modal-content">
-      <div class="modal-header">Edit Recorded Asset</div>
+      <div class="modal-header">Edit Recorded Asset Details</div>
       <form id="editForm" onsubmit="saveAssetEdit(event)">
         <input type="hidden" id="editAssetId">
         
@@ -291,8 +282,10 @@
               <option value="Office Equipment">Office Equipment</option>
               <option value="Computer & Hardware">Computer & Hardware</option>
               <option value="Furniture & Fittings">Furniture & Fittings</option>
-              <option value="Electrical Installation">Electrical Installation</option>
               <option value="Motor Vehicle">Motor Vehicle</option>
+              <option value="System & Development">System & Development</option>
+              <option value="Renovation">Renovation</option>
+              <option value="Shop Lot">Shop Lot</option>
               <option value="Other Asset">Other Asset</option>
             </select>
           </div>
@@ -347,80 +340,29 @@
   </div>
 
   <script>
-    // Contoh Data Awal Mengikut Format PDF
-    const initialAssets = [
-      {
-        id: "1",
-        category: "Furniture & Fittings",
-        purchaseDate: "2026-01-10",
-        disposalDate: "-",
-        item: "Ergonomic Office Chair",
-        refNo: "INV/2026/0101",
-        model: "ErgoPro-X",
-        lifespan: 5,
-        unit: 10,
-        unitPrice: 450.00,
-        total: 4500.00,
-        location: "Admin Office",
-        updatedDate: "2026-01-10",
-        updatedBy: "Admin"
-      },
-      {
-        id: "2",
-        category: "Office Equipment",
-        purchaseDate: "2026-01-15",
-        disposalDate: "-",
-        item: "Heavy Duty Shredder",
-        refNo: "INV/2026/0104",
-        model: "PaperSafe 3000",
-        lifespan: 3,
-        unit: 1,
-        unitPrice: 1200.00,
-        total: 1200.00,
-        location: "HQ Office",
-        updatedDate: "2026-01-15",
-        updatedBy: "Admin"
-      },
-      {
-        id: "3",
-        category: "Computer & Hardware",
-        purchaseDate: "2026-02-01",
-        disposalDate: "-",
-        item: "Workstation Laptop",
-        refNo: "INV/2026/0202",
-        model: "Dell XPS 15",
-        lifespan: 3,
-        unit: 2,
-        unitPrice: 6500.00,
-        total: 13000.00,
-        location: "IT Dept",
-        updatedDate: "2026-02-01",
-        updatedBy: "IT Staff"
-      }
-    ];
-
-    // Dapatkan data dari localStorage
+    // Ambil data sebenar dari Local Storage tanpa data acah
     function getAssets() {
-      const stored = localStorage.getItem('susut_nilai_assets');
-      if (!stored) {
-        localStorage.setItem('susut_nilai_assets', JSON.stringify(initialAssets));
-        return initialAssets;
-      }
-      return JSON.parse(stored);
+      return JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
     }
 
-    // Paparkan Jadual
     function renderAssets() {
       const assets = getAssets();
       const container = document.getElementById('registerTablesContainer');
       container.innerHTML = '';
 
       if (assets.length === 0) {
-        container.innerHTML = `<p style="text-align:center; padding: 20px; color: #64748b;">No registered assets found.</p>`;
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No Registered Assets Found</h3>
+            <p>You haven't registered any business assets yet.</p>
+            <br>
+            <a href="registernew.html" class="btn btn-secondary">+ Register Your First Asset</a>
+          </div>
+        `;
         return;
       }
 
-      // Kumpulkan data mengikut Kategori (Asset Type)
+      // Kumpulkan mengikut Kategori yang didaftarkan
       const categories = [...new Set(assets.map(a => a.category))];
 
       categories.forEach(cat => {
@@ -487,7 +429,6 @@
       });
     }
 
-    // Modal Edit Functionality
     function openEditModal(id) {
       const assets = getAssets();
       const asset = assets.find(a => a.id === id);
@@ -505,7 +446,7 @@
       document.getElementById('editUnitPrice').value = asset.unitPrice;
       document.getElementById('editTotal').value = parseFloat(asset.total).toFixed(2);
       document.getElementById('editLocation').value = asset.location;
-      document.getElementById('editUpdatedBy').value = asset.updatedBy;
+      document.getElementById('editUpdatedBy').value = asset.updatedBy || 'Admin';
 
       document.getElementById('editModal').style.display = 'flex';
     }
@@ -528,7 +469,7 @@
       const index = assets.findIndex(a => a.id === id);
       if (index !== -1) {
         assets[index] = {
-          id: id,
+          ...assets[index],
           item: document.getElementById('editItem').value,
           category: document.getElementById('editCategory').value,
           refNo: document.getElementById('editRefNo').value,
@@ -547,12 +488,12 @@
         localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
         renderAssets();
         closeEditModal();
-        alert('Asset details updated successfully!');
+        alert('Asset updated successfully!');
       }
     }
 
     function deleteAsset(id) {
-      if (confirm('Are you sure you want to delete this record?')) {
+      if (confirm('Are you sure you want to delete this asset record?')) {
         let assets = getAssets();
         assets = assets.filter(a => a.id !== id);
         localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
@@ -560,12 +501,10 @@
       }
     }
 
-    // Cetak Dokumen
     function printRegister() {
       window.print();
     }
 
-    // Eksport ke PDF
     function exportToPDF() {
       const element = document.getElementById('pdfContent');
       const opt = {
@@ -579,7 +518,6 @@
       html2pdf().set(opt).from(element).save();
     }
 
-    // Initial Load
     renderAssets();
   </script>
 </body>
