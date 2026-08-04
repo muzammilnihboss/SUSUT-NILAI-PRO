@@ -50,7 +50,6 @@
       color: #0f172a;
     }
 
-    /* Summary Metrics Bar */
     .metrics-grid {
       max-width: 1400px;
       margin: 0 auto 30px auto;
@@ -109,7 +108,6 @@
     .m-assets .metric-value { color: #0f172a; }
     .m-assets .metric-icon { background-color: #e0e7ff; color: #4f46e5; }
 
-    /* Control Panel Grid */
     .dashboard-grid {
       max-width: 1400px;
       margin: 0 auto;
@@ -203,7 +201,7 @@
     <a href="index.html" class="logout-btn">Log Out</a>
   </div>
 
-  <!-- Real Dynamic Metrics -->
+  <!-- Metric Bar -->
   <div class="metrics-grid">
     <div class="metric-card m-cost">
       <div>
@@ -246,7 +244,6 @@
     </div>
   </div>
 
-  <!-- 5 Control Panel Cards -->
   <div class="dashboard-grid">
     <!-- Invoice Manager -->
     <div class="card theme-green">
@@ -310,7 +307,6 @@
   </div>
 
   <script>
-    // Kira statistik sebenar dari Local Storage secara dinamik
     function loadDashboardMetrics() {
       const assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
       let totalCost = 0;
@@ -319,7 +315,6 @@
         totalCost += parseFloat(item.total) || 0;
       });
 
-      // Anggaran nilai berdasarkan susut nilai asas (contoh: 10% terlaras)
       let accDep = totalCost * 0.10; 
       let bookValue = totalCost - accDep;
 
