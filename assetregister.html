@@ -1,1 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Register - Susut Nilai Pro</title>
+    <!-- Include html2pdf library for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
 
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Top Navigation Bar */
+        header {
+            background-color: #ffffff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+
+        .header-brand h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Action Toolbar */
+        .toolbar-container {
+            max-width: 1300px;
+            margin: 0 auto 20px auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tool-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-print {
+            background-color: #0f172a;
+            color: #ffffff;
+        }
+
+        .btn-print:hover {
+            background-color: #1e293b;
+        }
+
+        .btn-pdf {
+            background-color: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-pdf:hover {
+            background-color: #b91c1c;
+        }
+
+        /* Document Container */
+        .doc-paper {
+            max-width: 1300px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .doc-header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 12px;
+        }
+
+        .doc-header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .category-badge-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        /* Table Styling matching Official Document */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table.asset-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        table.asset-table th, table.asset-table td {
+            border: 1px solid #cbd5e1;
+            padding: 10px 8px;
+            vertical-align: middle;
+        }
+
+        table.asset-table th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        table.asset-table td.center {
+            text-align: center;
+        }
+
+        table.asset-table td.right {
+            text-align: right;
+        }
+
+        .btn-edit {
+            background-color: #0284c7;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-edit:hover {
+            background-color: #0369a1;
+        }
+
+        /* Edit Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 700px;
+            border-radius: 12px;
+            padding: 28px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .close-modal {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .modal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .modal-grid .full {
+            grid-column: span 2;
+        }
+
+        .modal-grid label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .modal-grid input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .modal-footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* PRINT STYLES - Hides non-printable elements */
+        @media print {
+            header, .toolbar-container, .btn-action-col, .btn-edit {
+                display: none !important;
+            }
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+            .doc-paper {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                width: 100%;
+            }
+            table.asset-table th, table.asset-table td {
+                border: 1px solid #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="header-brand">
+            <h2>Susut Nilai Pro</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
+            <a href="registernew.html" class="btn-nav btn-primary">+ Register New Asset</a>
+            <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
+        </div>
+    </header>
+
+    <!-- Toolbar for Export & Print -->
+    <div class="toolbar-container">
+        <h3 style="color: #334155;">Asset Register Records</h3>
+        <div class="tool-btns">
+            <button onclick="printRegister()" class="action-btn btn-print">
+                🖨️ Print Asset Register
+            </button>
+            <button onclick="exportToPDF()" class="action-btn btn-pdf">
+                📄 Export to PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Printable Register Document -->
+    <div class="doc-paper" id="register-document">
+        
+        <!-- Header format matching PDF -->
+        <div class="doc-header">
+            <h1>REGISTER OF PROPERTY, PLANT AND EQUIPMENT</h1>
+        </div>
+
+        <!-- Table View -->
+        <div class="table-responsive">
+            <table class="asset-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 35px;">No.</th>
+                        <th colspan="2">Date</th>
+                        <th rowspan="2">Particulars / Description</th>
+                        <th rowspan="2">Ref. No.</th>
+                        <th rowspan="2">Model</th>
+                        <th rowspan="2">Useful Life (Yrs)</th>
+                        <th rowspan="2">Unit</th>
+                        <th rowspan="2">Unit Price (RM)</th>
+                        <th rowspan="2">Total (RM)</th>
+                        <th rowspan="2">Location</th>
+                        <th rowspan="2">Updated Date</th>
+                        <th rowspan="2">Updated By</th>
+                        <th rowspan="2" class="btn-action-col">Action</th>
+                    </tr>
+                    <tr>
+                        <th>Purchase</th>
+                        <th>Disposal</th>
+                    </tr>
+                </thead>
+                <tbody id="asset-table-body">
+                    <!-- Dynamic Rows Rendered via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- EDIT ASSET MODAL -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Edit Asset Record</h3>
+                <button class="close-modal" onclick="closeEditModal()">&times;</button>
+            </div>
+            <form onsubmit="saveEditedAsset(event)">
+                <input type="hidden" id="edit-id">
+                <div class="modal-grid">
+                    <div class="full">
+                        <label>Asset Name / Description</label>
+                        <input type="text" id="edit-name" required>
+                    </div>
+                    <div>
+                        <label>Category</label>
+                        <input type="text" id="edit-category" required>
+                    </div>
+                    <div>
+                        <label>Ref. No. / Invoice No.</label>
+                        <input type="text" id="edit-ref" required>
+                    </div>
+                    <div>
+                        <label>Purchase Date</label>
+                        <input type="date" id="edit-purchase-date" required>
+                    </div>
+                    <div>
+                        <label>Disposal Date</label>
+                        <input type="text" id="edit-disposal-date" placeholder="-">
+                    </div>
+                    <div>
+                        <label>Model</label>
+                        <input type="text" id="edit-model">
+                    </div>
+                    <div>
+                        <label>Useful Life (Yrs)</label>
+                        <input type="number" id="edit-life" required>
+                    </div>
+                    <div>
+                        <label>Unit</label>
+                        <input type="number" id="edit-unit" oninput="calculateModalTotal()" required>
+                    </div>
+                    <div>
+                        <label>Unit Price (RM)</label>
+                        <input type="number" step="0.01" id="edit-price" oninput="calculateModalTotal()" required>
+                    </div>
+                    <div>
+                        <label>Total Price (RM)</label>
+                        <input type="text" id="edit-total" readonly>
+                    </div>
+                    <div>
+                        <label>Location / Department</label>
+                        <input type="text" id="edit-location" required>
+                    </div>
+                    <div>
+                        <label>Updated Date</label>
+                        <input type="date" id="edit-updated-date" required>
+                    </div>
+                    <div>
+                        <label>Updated By</label>
+                        <input type="text" id="edit-updated-by" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="action-btn" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="action-btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Sample Initial Data (If LocalStorage is empty)
+        const initialAssets = [
+            {
+                id: 1,
+                purchaseDate: "2026-01-15",
+                disposalDate: "-",
+                name: "Ergonomic Executive Office Chair",
+                category: "Furniture & Fittings",
+                refNo: "INV/2026/0101",
+                model: "ErgoPro-X9",
+                usefulLife: 5,
+                unit: 2,
+                unitPrice: 450.00,
+                total: 900.00,
+                location: "Administrative Office HQ",
+                updatedDate: "2026-01-15",
+                updatedBy: "Admin"
+            },
+            {
+                id: 2,
+                purchaseDate: "2026-02-10",
+                disposalDate: "-",
+                name: "Dell Latitude Laptop i7",
+                category: "Computer & Hardware",
+                refNo: "INV/2026/0204",
+                model: "Latitude 5440",
+                usefulLife: 3,
+                unit: 1,
+                unitPrice: 3850.00,
+                total: 3850.00,
+                location: "IT Department",
+                updatedDate: "2026-02-10",
+                updatedBy: "System Operator"
+            }
+        ];
+
+        // Load Assets from LocalStorage or Set Default
+        function getAssets() {
+            const stored = localStorage.getItem('susut_nilai_assets');
+            if (!stored) {
+                localStorage.setItem('susut_nilai_assets', JSON.stringify(initialAssets));
+                return initialAssets;
+            }
+            return JSON.parse(stored);
+        }
+
+        // Render Table Data
+        function renderTable() {
+            const assets = getAssets();
+            const tbody = document.getElementById('asset-table-body');
+            tbody.innerHTML = "";
+
+            if (assets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="14" style="text-align:center; padding: 20px; color: #64748b;">No registered assets found.</td></tr>`;
+                return;
+            }
+
+            assets.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="center">${index + 1}</td>
+                    <td class="center">${item.purchaseDate}</td>
+                    <td class="center">${item.disposalDate || '-'}</td>
+                    <td><strong>${item.name}</strong><br><small style="color:#64748b;">${item.category}</small></td>
+                    <td class="center">${item.refNo}</td>
+                    <td class="center">${item.model || '-'}</td>
+                    <td class="center">${item.usefulLife}</td>
+                    <td class="center">${item.unit}</td>
+                    <td class="right">${parseFloat(item.unitPrice).toFixed(2)}</td>
+                    <td class="right"><strong>${parseFloat(item.total).toFixed(2)}</strong></td>
+                    <td>${item.location}</td>
+                    <td class="center">${item.updatedDate}</td>
+                    <td class="center">${item.updatedBy}</td>
+                    <td class="center btn-action-col">
+                        <button class="btn-edit" onclick="openEditModal(${item.id})">✏️ Edit</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Modal Functions for Editing Record
+        function openEditModal(id) {
+            const assets = getAssets();
+            const item = assets.find(a => a.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-id').value = item.id;
+            document.getElementById('edit-name').value = item.name;
+            document.getElementById('edit-category').value = item.category;
+            document.getElementById('edit-ref').value = item.refNo;
+            document.getElementById('edit-purchase-date').value = item.purchaseDate;
+            document.getElementById('edit-disposal-date').value = item.disposalDate || '';
+            document.getElementById('edit-model').value = item.model || '';
+            document.getElementById('edit-life').value = item.usefulLife;
+            document.getElementById('edit-unit').value = item.unit;
+            document.getElementById('edit-price').value = item.unitPrice;
+            document.getElementById('edit-total').value = parseFloat(item.total).toFixed(2);
+            document.getElementById('edit-location').value = item.location;
+            document.getElementById('edit-updated-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('edit-updated-by').value = item.updatedBy || 'Manager';
+
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        function calculateModalTotal() {
+            const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
+            const price = parseFloat(document.getElementById('edit-price').value) || 0;
+            document.getElementById('edit-total').value = (unit * price).toFixed(2);
+        }
+
+        function saveEditedAsset(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-id').value);
+            let assets = getAssets();
+
+            const index = assets.findIndex(a => a.id === id);
+            if (index !== -1) {
+                const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
+                const unitPrice = parseFloat(document.getElementById('edit-price').value) || 0;
+
+                assets[index] = {
+                    id: id,
+                    name: document.getElementById('edit-name').value,
+                    category: document.getElementById('edit-category').value,
+                    refNo: document.getElementById('edit-ref').value,
+                    purchaseDate: document.getElementById('edit-purchase-date').value,
+                    disposalDate: document.getElementById('edit-disposal-date').value || '-',
+                    model: document.getElementById('edit-model').value || '-',
+                    usefulLife: document.getElementById('edit-life').value,
+                    unit: unit,
+                    unitPrice: unitPrice,
+                    total: unit * unitPrice,
+                    location: document.getElementById('edit-location').value,
+                    updatedDate: document.getElementById('edit-updated-date').value,
+                    updatedBy: document.getElementById('edit-updated-by').value
+                };
+
+                localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+                renderTable();
+                closeEditModal();
+                alert('Asset record updated successfully!');
+            }
+        }
+
+        // Print Function
+        function printRegister() {
+            window.print();
+        }
+
+        // PDF Export Function
+        function exportToPDF() {
+            const element = document.getElementById('register-document');
+            const opt = {
+                margin:       [0.3, 0.3, 0.3, 0.3],
+                filename:     'Asset_Register_Report.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+
+            // Temporarily hide action column for clean PDF
+            const actionCols = document.querySelectorAll('.btn-action-col');
+            actionCols.forEach(col => col.style.display = 'none');
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                actionCols.forEach(col => col.style.display = '');
+            });
+        }
+
+        // Initial Load
+        document.addEventListener('DOMContentLoaded', renderTable);
+    </script>
+</body>
+</html>
