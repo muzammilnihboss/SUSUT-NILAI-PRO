@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register New Asset - Susut Nilai Pro</title>
+    <title>Manual Asset Registration Protocol - Susut Nilai Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -16,10 +16,10 @@
             background-color: #f8fafc;
             color: #1e293b;
             min-height: 100vh;
-            padding-bottom: 40px;
+            padding-bottom: 50px;
         }
 
-        /* Top Navigation Header */
+        /* Top Navigation Bar */
         header {
             background-color: #ffffff;
             padding: 16px 32px;
@@ -27,7 +27,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .header-brand h2 {
@@ -70,109 +70,167 @@
             background-color: #1d4ed8;
         }
 
-        /* Form Container Card */
-        .form-container {
-            max-width: 800px;
+        /* Main Form Container Card */
+        .form-card {
+            max-width: 900px;
             margin: 0 auto;
             background: #ffffff;
-            border-radius: 12px;
-            padding: 32px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            border-radius: 16px;
+            padding: 36px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             border: 1px solid #e2e8f0;
         }
 
-        .form-header {
-            margin-bottom: 24px;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 12px;
+        /* Form Title Section */
+        .protocol-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 28px;
         }
 
-        .form-header h1 {
+        .protocol-icon {
+            background-color: #dc2626; /* Match green/red protocol badge */
+            background: #ecfdf5;
+            color: #059669;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 22px;
-            color: #0f172a;
-            font-weight: 700;
+            flex-shrink: 0;
         }
 
-        .form-header p {
+        .protocol-titles h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .protocol-titles p {
             font-size: 13px;
             color: #64748b;
-            margin-top: 4px;
         }
 
-        /* Form Grid Layout */
+        /* Grid System */
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(12, 1fr);
             gap: 18px;
         }
 
-        .form-group.full-width {
-            grid-column: span 2;
+        .col-12 { grid-column: span 12; }
+        .col-6  { grid-column: span 6; }
+        .col-4  { grid-column: span 4; }
+        .col-3  { grid-column: span 3; }
+        .col-2  { grid-column: span 2; }
+
+        @media (max-width: 768px) {
+            .col-6, .col-4, .col-3, .col-2 {
+                grid-column: span 12;
+            }
         }
 
+        /* Labels & Input Controls */
         label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
-            color: #475569;
+            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
             margin-bottom: 6px;
         }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 14px;
-            color: #0f172a;
-            outline: none;
-            transition: border-color 0.2s ease;
+        label span.required {
+            color: #ef4444;
         }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        input, select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #0f172a;
+            background-color: #ffffff;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
         }
 
         input[readonly] {
             background-color: #f8fafc;
-            color: #64748b;
+            color: #475569;
+            font-weight: 600;
         }
 
-        /* Submit Section */
-        .form-actions {
-            margin-top: 28px;
+        /* Custom Category Field Hidden Container */
+        #custom-category-wrapper {
+            display: none;
+        }
+
+        /* Preventive Servicing Section Box */
+        .servicing-box {
+            background-color: #f8fafc;
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .servicing-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
             display: flex;
-            justify-content: flex-end;
-            gap: 12px;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
         }
 
-        .btn-submit {
+        /* Submit Button */
+        .btn-submit-container {
+            margin-top: 24px;
+        }
+
+        .btn-save-ledger {
+            width: 100%;
             background-color: #059669;
             color: #ffffff;
-            padding: 12px 24px;
+            padding: 14px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
         }
 
-        .btn-submit:hover {
+        .btn-save-ledger:hover {
             background-color: #047857;
         }
 
-        #other-category-group {
-            display: none;
+        .btn-save-ledger:active {
+            transform: scale(0.998);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Links -->
+    <!-- Header Navigation -->
     <header>
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
@@ -184,169 +242,218 @@
         </div>
     </header>
 
-    <!-- Main Registration Form -->
-    <div class="form-container">
-        <div class="form-header">
-            <h1>Register New Asset</h1>
-            <p>Fill in the asset details below to automatically record it into the Asset Register Ledger.</p>
+    <!-- Form Container Card -->
+    <div class="form-card">
+        
+        <!-- Title Banner -->
+        <div class="protocol-header">
+            <div class="protocol-icon">📝</div>
+            <div class="protocol-titles">
+                <h1>Manual Asset Registration Protocol</h1>
+                <p>Configure parameters accurately to execute general ledger amortization plans.</p>
+            </div>
         </div>
 
-        <form id="register-form" onsubmit="handleSaveAsset(event)">
+        <!-- Registration Form -->
+        <form id="asset-registration-form" onsubmit="handleSaveAsset(event)">
             <div class="form-grid">
-                
-                <!-- Asset Name -->
-                <div class="form-group full-width">
-                    <label for="asset-name">Asset Name / Description *</label>
-                    <input type="text" id="asset-name" placeholder="e.g. Ergonomic Executive Office Chair" required>
+
+                <!-- ASSET NAME / DESCRIPTION -->
+                <div class="col-12">
+                    <label for="asset-name">ASSET NAME / DESCRIPTION <span class="required">*</span></label>
+                    <input type="text" id="asset-name" placeholder="e.g. Ergonomic Office Chair" required>
                 </div>
 
-                <!-- Category -->
-                <div class="form-group">
-                    <label for="asset-category">Asset Category *</label>
-                    <select id="asset-category" onchange="toggleOtherCategory()" required>
-                        <option value="">-- Select Category --</option>
-                        <option value="Furniture & Fittings">Furniture & Fittings</option>
+                <!-- SUPPLIER NAME -->
+                <div class="col-6">
+                    <label for="supplier-name">SUPPLIER NAME <span class="required">*</span></label>
+                    <input type="text" id="supplier-name" placeholder="e.g. Apex Furniture Sdn Bhd" required>
+                </div>
+
+                <!-- INVOICE NUMBER -->
+                <div class="col-6">
+                    <label for="invoice-number">INVOICE NUMBER <span class="required">*</span></label>
+                    <input type="text" id="invoice-number" placeholder="e.g. INV/2026/0912" required>
+                </div>
+
+                <!-- ASSET CLASSIFICATION CATEGORY -->
+                <div class="col-6" id="category-dropdown-container">
+                    <label for="asset-category">ASSET CLASSIFICATION CATEGORY</label>
+                    <select id="asset-category" onchange="toggleCustomCategory()" required>
                         <option value="Office Equipment">Office Equipment</option>
-                        <option value="Electrical Installation">Electrical Installation</option>
                         <option value="Computer & Hardware">Computer & Hardware</option>
-                        <option value="Other Asset">Other Asset...</option>
+                        <option value="Furniture & Fittings">Furniture & Fittings</option>
+                        <option value="Motor Vehicle">Motor Vehicle</option>
+                        <option value="System & Development">System & Development</option>
+                        <option value="Renovation">Renovation</option>
+                        <option value="Shop Lot">Shop Lot</option>
+                        <option value="Other Asset">Other Asset</option>
                     </select>
                 </div>
 
-                <!-- Custom Category (Hidden by default) -->
-                <div class="form-group" id="other-category-group">
-                    <label for="other-category-input">Specify Category Name *</label>
-                    <input type="text" id="other-category-input" placeholder="e.g. Vehicles">
+                <!-- PURCHASE DATE -->
+                <div class="col-6">
+                    <label for="purchase-date">PURCHASE DATE</label>
+                    <input type="date" id="purchase-date" value="2026-08-01" required>
                 </div>
 
-                <!-- Purchase Date -->
-                <div class="form-group">
-                    <label for="purchase-date">Purchase Date *</label>
-                    <input type="date" id="purchase-date" required>
+                <!-- DYNAMIC CUSTOM CATEGORY (Appears only when "Other Asset" selected) -->
+                <div class="col-12" id="custom-category-wrapper">
+                    <label for="custom-category-input">SPECIFY CUSTOM CATEGORY <span class="required">*</span></label>
+                    <input type="text" id="custom-category-input" placeholder="e.g. Specialized Machinery">
                 </div>
 
-                <!-- Invoice / Ref No -->
-                <div class="form-group">
-                    <label for="invoice-number">Ref / Invoice No. *</label>
-                    <input type="text" id="invoice-number" placeholder="e.g. INV/2026/089" required>
+                <!-- DEPLOYMENT DEPARTMENT -->
+                <div class="col-6">
+                    <label for="department">DEPLOYMENT DEPARTMENT <span class="required">*</span></label>
+                    <input type="text" id="department" placeholder="e.g. Administrative Office HQ" required>
                 </div>
 
-                <!-- Model -->
-                <div class="form-group">
-                    <label for="asset-model">Model / Serial No.</label>
-                    <input type="text" id="asset-model" placeholder="e.g. ErgoPro-X9">
+                <!-- UNIT -->
+                <div class="col-2">
+                    <label for="unit">UNIT</label>
+                    <input type="number" id="unit" value="1" min="1" oninput="calculateTotal()" required>
                 </div>
 
-                <!-- Useful Life -->
-                <div class="form-group">
-                    <label for="useful-life">Useful Life (Years) *</label>
-                    <input type="number" id="useful-life" min="1" max="50" placeholder="e.g. 5" required>
-                </div>
-
-                <!-- Unit Quantity -->
-                <div class="form-group">
-                    <label for="unit">Quantity (Unit) *</label>
-                    <input type="number" id="unit" min="1" value="1" oninput="calculateTotal()" required>
-                </div>
-
-                <!-- Unit Price -->
-                <div class="form-group">
-                    <label for="unit-price">Unit Price (RM) *</label>
+                <!-- UNIT PRICE -->
+                <div class="col-2">
+                    <label for="unit-price">UNIT PRICE</label>
                     <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()" required>
                 </div>
 
-                <!-- Total Cost -->
-                <div class="form-group">
-                    <label for="total-cost">Total Price (RM)</label>
-                    <input type="text" id="total-cost" placeholder="0.00" readonly>
+                <!-- TOTAL (Calculated automatically) -->
+                <div class="col-2">
+                    <label for="total-cost">TOTAL</label>
+                    <input type="text" id="total-cost" value="0.00" readonly>
                 </div>
 
-                <!-- Location / Department -->
-                <div class="form-group">
-                    <label for="department">Location / Department *</label>
-                    <input type="text" id="department" placeholder="e.g. HQ Admin Office" required>
+                <!-- ESTIMATED SALVAGE (RM) -->
+                <div class="col-4">
+                    <label for="estimated-salvage">ESTIMATED SALVAGE (RM)</label>
+                    <input type="number" step="0.01" id="estimated-salvage" placeholder="0.00" value="0.00">
                 </div>
 
-                <!-- Registered By -->
-                <div class="form-group">
-                    <label for="supplier-name">Registered / Updated By *</label>
-                    <input type="text" id="supplier-name" placeholder="e.g. Admin Manager" required>
+                <!-- ESTIMATED USEFUL LIFE (YRS) -->
+                <div class="col-4">
+                    <label for="useful-life">ESTIMATED USEFUL LIFE (YRS)</label>
+                    <input type="number" id="useful-life" value="5" min="1" required>
+                </div>
+
+                <!-- AMORTIZATION METHOD -->
+                <div class="col-4">
+                    <label for="amortization-method">AMORTIZATION METHOD</label>
+                    <select id="amortization-method">
+                        <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
+                        <option value="Reducing Balance Method">Reducing Balance Method</option>
+                    </select>
+                </div>
+
+                <!-- PREVENTIVE SERVICING INTERVALS -->
+                <div class="col-12">
+                    <div class="servicing-box">
+                        <div class="servicing-title">
+                            <span>🔧</span> Preventive Servicing Intervals
+                        </div>
+                        <div class="form-grid">
+                            <div class="col-6">
+                                <label for="last-service-date">LAST SERVICE DATE</label>
+                                <input type="date" id="last-service-date" value="2026-08-01">
+                            </div>
+                            <div class="col-6">
+                                <label for="service-interval">SERVICE INTERVAL (MONTHS)</label>
+                                <input type="number" id="service-interval" value="6" min="1">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
 
-            <div class="form-actions">
-                <a href="dashboard.html" class="btn-nav btn-secondary" style="padding: 12px 20px;">Cancel</a>
-                <button type="submit" class="btn-submit">💾 Save Asset to Register</button>
+            <!-- Submit Button -->
+            <div class="btn-submit-container">
+                <button type="submit" class="btn-save-ledger">
+                    💾 Save Asset to Ledger Book
+                </button>
             </div>
         </form>
+
     </div>
 
-    <!-- PROPERLY WRAPPED JAVASCRIPT CODE -->
+    <!-- JavaScript Scripting -->
     <script>
-        // Toggle Custom Category Field
-        function toggleOtherCategory() {
-            const select = document.getElementById('asset-category');
-            const otherGroup = document.getElementById('other-category-group');
-            if (select.value === 'Other Asset') {
-                otherGroup.style.display = 'block';
-                document.getElementById('other-category-input').required = true;
+        // Toggle Custom Category Input Box when "Other Asset" is picked
+        function toggleCustomCategory() {
+            const categorySelect = document.getElementById('asset-category');
+            const customWrapper = document.getElementById('custom-category-wrapper');
+            const customInput = document.getElementById('custom-category-input');
+
+            if (categorySelect.value === 'Other Asset') {
+                customWrapper.style.display = 'block';
+                customInput.required = true;
             } else {
-                otherGroup.style.display = 'none';
-                document.getElementById('other-category-input').required = false;
+                customWrapper.style.display = 'none';
+                customInput.required = false;
+                customInput.value = '';
             }
         }
 
-        // Auto Calculate Total Cost
+        // Calculate Total Cost automatically (Unit * Unit Price)
         function calculateTotal() {
-            const unit = parseFloat(document.getElementById('unit').value) || 0;
-            const price = parseFloat(document.getElementById('unit-price').value) || 0;
-            const total = unit * price;
+            const unitVal = parseFloat(document.getElementById('unit').value) || 0;
+            const priceVal = parseFloat(document.getElementById('unit-price').value) || 0;
+            const total = unitVal * priceVal;
             document.getElementById('total-cost').value = total.toFixed(2);
         }
 
-        // Save Asset to LocalStorage Function
+        // Save Asset Record into LocalStorage and Redirect
         function handleSaveAsset(event) {
             event.preventDefault();
+
+            // Fetch existing stored assets
+            let storedAssets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+
+            // Determine final category name
+            const categoryDropdown = document.getElementById('asset-category').value;
+            let finalCategory = categoryDropdown;
             
-            // Get existing assets from LocalStorage
-            let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
-            
-            // Determine Category Name
-            let category = document.getElementById('asset-category').value;
-            if (category === 'Other Asset') {
-                category = document.getElementById('other-category-input').value || 'Other Asset';
+            if (categoryDropdown === 'Other Asset') {
+                const customCategoryVal = document.getElementById('custom-category-input').value.trim();
+                finalCategory = customCategoryVal ? customCategoryVal : 'Other Asset';
             }
 
-            const unit = parseFloat(document.getElementById('unit').value) || 0;
-            const unitPrice = parseFloat(document.getElementById('unit-price').value) || 0;
+            const unitNum = parseFloat(document.getElementById('unit').value) || 0;
+            const unitPriceNum = parseFloat(document.getElementById('unit-price').value) || 0;
+            const totalNum = unitNum * unitPriceNum;
 
-            // Construct new asset object
-            const newAsset = {
+            // Create new asset data object
+            const newAssetObject = {
                 id: Date.now(),
-                purchaseDate: document.getElementById('purchase-date').value,
-                disposalDate: '-',
                 name: document.getElementById('asset-name').value,
-                category: category,
+                supplier: document.getElementById('supplier-name').value,
                 refNo: document.getElementById('invoice-number').value,
-                model: document.getElementById('asset-model').value || '-',
-                usefulLife: document.getElementById('useful-life').value,
-                unit: unit,
-                unitPrice: unitPrice,
-                total: unit * unitPrice,
+                category: finalCategory,
+                purchaseDate: document.getElementById('purchase-date').value,
                 location: document.getElementById('department').value,
+                unit: unitNum,
+                unitPrice: unitPriceNum,
+                total: totalNum,
+                salvage: parseFloat(document.getElementById('estimated-salvage').value) || 0,
+                usefulLife: document.getElementById('useful-life').value,
+                amortizationMethod: document.getElementById('amortization-method').value,
+                lastServiceDate: document.getElementById('last-service-date').value,
+                serviceInterval: document.getElementById('service-interval').value,
+                model: '-',
                 updatedDate: new Date().toISOString().split('T')[0],
-                updatedBy: document.getElementById('supplier-name').value
+                updatedBy: document.getElementById('supplier-name').value || 'Admin'
             };
 
-            // Save to LocalStorage array
-            assets.push(newAsset);
-            localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+            // Save to LocalStorage
+            storedAssets.push(newAssetObject);
+            localStorage.setItem('susut_nilai_assets', JSON.stringify(storedAssets));
 
-            alert(`Asset "${newAsset.name}" has been successfully registered! Directing to Asset Register...`);
-            
-            // Redirect to assetregister.html
-            window.location.href = "assetregister.html";
+            // Notify user and navigate to assetregister.html
+            alert(`Asset "${newAssetObject.name}" has been successfully saved to the Ledger Book!`);
+            window.location.href = 'assetregister.html';
         }
     </script>
 </body>
