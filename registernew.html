@@ -1,40 +1,353 @@
-function handleSaveAsset(event) {
-    event.preventDefault();
-    
-    // Ambil senarai aset sedia ada dari LocalStorage
-    let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
-    
-    // Semak kategori jika pengguna pilih "Other Asset"
-    let category = document.getElementById('asset-category').value;
-    if (category === 'Other Asset') {
-        category = document.getElementById('other-category-input').value || 'Other Asset';
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register New Asset - Susut Nilai Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
 
-    const unit = parseFloat(document.getElementById('unit').value) || 0;
-    const unitPrice = parseFloat(document.getElementById('unit-price').value) || 0;
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
 
-    // Bina objek aset baharu
-    const newAsset = {
-        id: Date.now(),
-        purchaseDate: document.getElementById('purchase-date').value,
-        disposalDate: '-',
-        name: document.getElementById('asset-name').value,
-        category: category,
-        refNo: document.getElementById('invoice-number').value,
-        model: 'Standard',
-        usefulLife: document.getElementById('useful-life').value,
-        unit: unit,
-        unitPrice: unitPrice,
-        total: unit * unitPrice,
-        location: document.getElementById('department').value,
-        updatedDate: new Date().toISOString().split('T')[0],
-        updatedBy: document.getElementById('supplier-name').value
-    };
+        /* Top Navigation Header */
+        header {
+            background-color: #ffffff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
 
-    // Tambah aset dan simpan semula
-    assets.push(newAsset);
-    localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+        .header-brand h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
 
-    alert(`Asset "${newAsset.name}" successfully registered! Redirecting to Asset Register...`);
-    window.location.href = "assetregister.html";
-}
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .btn-view-register {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .btn-view-register:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Form Container Card */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-header {
+            margin-bottom: 24px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .form-header h1 {
+            font-size: 22px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .form-header p {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* Form Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #0f172a;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        input[readonly] {
+            background-color: #f8fafc;
+            color: #64748b;
+        }
+
+        /* Submit Section */
+        .form-actions {
+            margin-top: 28px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-submit {
+            background-color: #059669;
+            color: #ffffff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #047857;
+        }
+
+        #other-category-group {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Links -->
+    <header>
+        <div class="header-brand">
+            <h2>Susut Nilai Pro</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
+            <a href="assetregister.html" class="btn-nav btn-view-register">📋 View Asset Register</a>
+            <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
+        </div>
+    </header>
+
+    <!-- Main Registration Form -->
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Register New Asset</h1>
+            <p>Fill in the asset details below to automatically record it into the Asset Register Ledger.</p>
+        </div>
+
+        <form id="register-form" onsubmit="handleSaveAsset(event)">
+            <div class="form-grid">
+                
+                <!-- Asset Name -->
+                <div class="form-group full-width">
+                    <label for="asset-name">Asset Name / Description *</label>
+                    <input type="text" id="asset-name" placeholder="e.g. Ergonomic Executive Office Chair" required>
+                </div>
+
+                <!-- Category -->
+                <div class="form-group">
+                    <label for="asset-category">Asset Category *</label>
+                    <select id="asset-category" onchange="toggleOtherCategory()" required>
+                        <option value="">-- Select Category --</option>
+                        <option value="Furniture & Fittings">Furniture & Fittings</option>
+                        <option value="Office Equipment">Office Equipment</option>
+                        <option value="Electrical Installation">Electrical Installation</option>
+                        <option value="Computer & Hardware">Computer & Hardware</option>
+                        <option value="Other Asset">Other Asset...</option>
+                    </select>
+                </div>
+
+                <!-- Custom Category (Hidden by default) -->
+                <div class="form-group" id="other-category-group">
+                    <label for="other-category-input">Specify Category Name *</label>
+                    <input type="text" id="other-category-input" placeholder="e.g. Vehicles">
+                </div>
+
+                <!-- Purchase Date -->
+                <div class="form-group">
+                    <label for="purchase-date">Purchase Date *</label>
+                    <input type="date" id="purchase-date" required>
+                </div>
+
+                <!-- Invoice / Ref No -->
+                <div class="form-group">
+                    <label for="invoice-number">Ref / Invoice No. *</label>
+                    <input type="text" id="invoice-number" placeholder="e.g. INV/2026/089" required>
+                </div>
+
+                <!-- Model -->
+                <div class="form-group">
+                    <label for="asset-model">Model / Serial No.</label>
+                    <input type="text" id="asset-model" placeholder="e.g. ErgoPro-X9">
+                </div>
+
+                <!-- Useful Life -->
+                <div class="form-group">
+                    <label for="useful-life">Useful Life (Years) *</label>
+                    <input type="number" id="useful-life" min="1" max="50" placeholder="e.g. 5" required>
+                </div>
+
+                <!-- Unit Quantity -->
+                <div class="form-group">
+                    <label for="unit">Quantity (Unit) *</label>
+                    <input type="number" id="unit" min="1" value="1" oninput="calculateTotal()" required>
+                </div>
+
+                <!-- Unit Price -->
+                <div class="form-group">
+                    <label for="unit-price">Unit Price (RM) *</label>
+                    <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()" required>
+                </div>
+
+                <!-- Total Cost -->
+                <div class="form-group">
+                    <label for="total-cost">Total Price (RM)</label>
+                    <input type="text" id="total-cost" placeholder="0.00" readonly>
+                </div>
+
+                <!-- Location / Department -->
+                <div class="form-group">
+                    <label for="department">Location / Department *</label>
+                    <input type="text" id="department" placeholder="e.g. HQ Admin Office" required>
+                </div>
+
+                <!-- Registered By -->
+                <div class="form-group">
+                    <label for="supplier-name">Registered / Updated By *</label>
+                    <input type="text" id="supplier-name" placeholder="e.g. Admin Manager" required>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <a href="dashboard.html" class="btn-nav btn-secondary" style="padding: 12px 20px;">Cancel</a>
+                <button type="submit" class="btn-submit">💾 Save Asset to Register</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- PROPERLY WRAPPED JAVASCRIPT CODE -->
+    <script>
+        // Toggle Custom Category Field
+        function toggleOtherCategory() {
+            const select = document.getElementById('asset-category');
+            const otherGroup = document.getElementById('other-category-group');
+            if (select.value === 'Other Asset') {
+                otherGroup.style.display = 'block';
+                document.getElementById('other-category-input').required = true;
+            } else {
+                otherGroup.style.display = 'none';
+                document.getElementById('other-category-input').required = false;
+            }
+        }
+
+        // Auto Calculate Total Cost
+        function calculateTotal() {
+            const unit = parseFloat(document.getElementById('unit').value) || 0;
+            const price = parseFloat(document.getElementById('unit-price').value) || 0;
+            const total = unit * price;
+            document.getElementById('total-cost').value = total.toFixed(2);
+        }
+
+        // Save Asset to LocalStorage Function
+        function handleSaveAsset(event) {
+            event.preventDefault();
+            
+            // Get existing assets from LocalStorage
+            let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+            
+            // Determine Category Name
+            let category = document.getElementById('asset-category').value;
+            if (category === 'Other Asset') {
+                category = document.getElementById('other-category-input').value || 'Other Asset';
+            }
+
+            const unit = parseFloat(document.getElementById('unit').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('unit-price').value) || 0;
+
+            // Construct new asset object
+            const newAsset = {
+                id: Date.now(),
+                purchaseDate: document.getElementById('purchase-date').value,
+                disposalDate: '-',
+                name: document.getElementById('asset-name').value,
+                category: category,
+                refNo: document.getElementById('invoice-number').value,
+                model: document.getElementById('asset-model').value || '-',
+                usefulLife: document.getElementById('useful-life').value,
+                unit: unit,
+                unitPrice: unitPrice,
+                total: unit * unitPrice,
+                location: document.getElementById('department').value,
+                updatedDate: new Date().toISOString().split('T')[0],
+                updatedBy: document.getElementById('supplier-name').value
+            };
+
+            // Save to LocalStorage array
+            assets.push(newAsset);
+            localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+
+            alert(`Asset "${newAsset.name}" has been successfully registered! Directing to Asset Register...`);
+            
+            // Redirect to assetregister.html
+            window.location.href = "assetregister.html";
+        }
+    </script>
+</body>
+</html>
