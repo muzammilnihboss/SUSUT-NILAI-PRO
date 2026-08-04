@@ -31,19 +31,20 @@
       margin-bottom: 20px;
     }
 
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
     .back-btn {
       text-decoration: none;
       color: #64748b;
       font-weight: 600;
       font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    .back-btn:hover {
-      color: #0f172a;
-    }
+    .back-btn:hover { color: #0f172a; }
 
     .form-card {
       background: #ffffff;
@@ -53,7 +54,6 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     }
 
-    /* Header Form */
     .form-header {
       display: flex;
       align-items: flex-start;
@@ -73,19 +73,9 @@
       flex-shrink: 0;
     }
 
-    .form-header h2 {
-      font-size: 20px;
-      color: #0f172a;
-      font-weight: 700;
-    }
+    .form-header h2 { font-size: 20px; color: #0f172a; font-weight: 700; }
+    .form-header p { font-size: 13px; color: #64748b; margin-top: 4px; }
 
-    .form-header p {
-      font-size: 13px;
-      color: #64748b;
-      margin-top: 4px;
-    }
-
-    /* Layout Grid */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(12, 1fr);
@@ -100,15 +90,10 @@
     .col-2  { grid-column: span 2; }
 
     @media (max-width: 768px) {
-      .col-6, .col-5, .col-4, .col-3, .col-2 {
-        grid-column: span 12;
-      }
+      .col-6, .col-5, .col-4, .col-3, .col-2 { grid-column: span 12; }
     }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
+    .form-group { display: flex; flex-direction: column; }
 
     .form-group label {
       font-size: 11px;
@@ -119,9 +104,7 @@
       margin-bottom: 8px;
     }
 
-    .form-group label span {
-      color: #ef4444;
-    }
+    .form-group label span { color: #ef4444; }
 
     .form-control {
       width: 100%;
@@ -131,7 +114,6 @@
       font-size: 14px;
       color: #1e293b;
       background-color: #fff;
-      transition: all 0.2s;
     }
 
     .form-control:focus {
@@ -140,13 +122,8 @@
       box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
     }
 
-    .form-control[readonly] {
-      background-color: #f8fafc;
-      color: #64748b;
-      font-weight: 700;
-    }
+    .form-control[readonly] { background-color: #f8fafc; color: #64748b; font-weight: 700; }
 
-    /* Section Sub Box (Preventive Servicing) */
     .sub-section {
       background-color: #f8fafc;
       border: 1px solid #f1f5f9;
@@ -165,10 +142,6 @@
       margin-bottom: 16px;
     }
 
-    .sub-title span {
-      color: #ef4444;
-    }
-
     .submit-btn {
       width: 100%;
       background-color: #059669;
@@ -179,21 +152,11 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
       margin-top: 25px;
-      transition: background-color 0.2s;
     }
 
-    .submit-btn:hover {
-      background-color: #047857;
-    }
-
-    .hidden {
-      display: none !important;
-    }
+    .submit-btn:hover { background-color: #047857; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -201,7 +164,10 @@
   <div class="container">
     <div class="top-nav">
       <a href="dashboard.html" class="back-btn">&larr; Back to Dashboard</a>
-      <a href="index.html" class="back-btn">Log Out</a>
+      <div class="nav-links">
+        <a href="assetregister.html" class="back-btn">View Asset Register</a>
+        <a href="index.html" class="back-btn">Log Out</a>
+      </div>
     </div>
 
     <div class="form-card">
@@ -215,28 +181,24 @@
         </div>
       </div>
 
-      <form onsubmit="handleFormSubmit(event)">
+      <form onsubmit="saveNewAsset(event)">
         <div class="form-grid">
           
-          <!-- Asset Name -->
           <div class="form-group col-12">
             <label>Asset Name / Description <span>*</span></label>
-            <input type="text" class="form-control" placeholder="e.g. Ergonomic Office Chair" required>
+            <input type="text" id="inpItem" class="form-control" placeholder="e.g. Ergonomic Office Chair" required>
           </div>
 
-          <!-- Supplier Name -->
           <div class="form-group col-6">
             <label>Supplier Name <span>*</span></label>
-            <input type="text" class="form-control" placeholder="e.g. Apex Furniture Sdn Bhd" required>
+            <input type="text" id="inpSupplier" class="form-control" placeholder="e.g. Apex Furniture Sdn Bhd" required>
           </div>
 
-          <!-- Invoice Number -->
           <div class="form-group col-6">
             <label>Invoice Number <span>*</span></label>
-            <input type="text" class="form-control" placeholder="e.g. INV/2026/0912" required>
+            <input type="text" id="inpRefNo" class="form-control" placeholder="e.g. INV/2026/0912" required>
           </div>
 
-          <!-- Asset Classification Category -->
           <div class="form-group col-6">
             <label>Asset Classification Category</label>
             <select id="assetCategory" class="form-control" onchange="toggleOtherCategory()">
@@ -251,55 +213,47 @@
             </select>
           </div>
 
-          <!-- Purchase Date -->
           <div class="form-group col-6">
             <label>Purchase Date</label>
-            <input type="date" class="form-control" value="2026-01-08">
+            <input type="date" id="inpPurchaseDate" class="form-control" required>
           </div>
 
-          <!-- Custom Category Input (Hanya terpapar jika "Other Asset" dipilih) -->
+          <!-- Other Category dynamic input -->
           <div id="otherCategoryGroup" class="form-group col-12 hidden">
             <label>Specify Other Asset Category <span>*</span></label>
-            <input type="text" id="otherCategoryInput" class="form-control" placeholder="Enter custom asset category name">
+            <input type="text" id="otherCategoryInput" class="form-control" placeholder="Enter custom category name">
           </div>
 
-          <!-- Deployment Department -->
           <div class="form-group col-5">
-            <label>Deployment Department <span>*</span></label>
-            <input type="text" class="form-control" placeholder="e.g. Administrative Office HQ" required>
+            <label>Deployment Department / Location <span>*</span></label>
+            <input type="text" id="inpLocation" class="form-control" placeholder="e.g. Administrative Office HQ" required>
           </div>
 
-          <!-- Unit -->
           <div class="form-group col-2">
             <label>Unit</label>
-            <input type="number" id="unitInput" class="form-control" value="1" min="1" oninput="calculateTotal()">
+            <input type="number" id="unitInput" class="form-control" value="1" min="1" oninput="calculateTotal()" required>
           </div>
 
-          <!-- Unit Price -->
           <div class="form-group col-2">
-            <label>Unit Price</label>
-            <input type="number" id="unitPriceInput" class="form-control" placeholder="0.00" step="0.01" oninput="calculateTotal()">
+            <label>Unit Price (RM)</label>
+            <input type="number" id="unitPriceInput" class="form-control" placeholder="0.00" step="0.01" oninput="calculateTotal()" required>
           </div>
 
-          <!-- Total (Auto-calculated) -->
           <div class="form-group col-3">
-            <label>Total</label>
+            <label>Total (RM)</label>
             <input type="text" id="totalInput" class="form-control" value="0.00" readonly>
           </div>
 
-          <!-- Estimated Salvage -->
           <div class="form-group col-4">
             <label>Estimated Salvage (RM)</label>
             <input type="number" class="form-control" placeholder="0.00" step="0.01">
           </div>
 
-          <!-- Estimated Useful Life -->
           <div class="form-group col-4">
             <label>Estimated Useful Life (Yrs)</label>
-            <input type="number" class="form-control" value="5">
+            <input type="number" id="inpLifespan" class="form-control" value="5" required>
           </div>
 
-          <!-- Amortization Method -->
           <div class="form-group col-4">
             <label>Amortization Method</label>
             <select class="form-control">
@@ -307,15 +261,12 @@
             </select>
           </div>
 
-          <!-- Preventive Servicing Intervals Box -->
           <div class="col-12 sub-section">
-            <div class="sub-title">
-              <span>🔧</span> Preventive Servicing Intervals
-            </div>
+            <div class="sub-title">🔧 Preventive Servicing Intervals</div>
             <div class="form-grid">
               <div class="form-group col-6">
                 <label>Last Service Date</label>
-                <input type="date" class="form-control" value="2026-01-08">
+                <input type="date" class="form-control">
               </div>
               <div class="form-group col-6">
                 <label>Service Interval (Months)</label>
@@ -326,15 +277,15 @@
 
         </div>
 
-        <button type="submit" class="submit-btn">
-          💾 Save Asset to Ledger Book
-        </button>
+        <button type="submit" class="submit-btn">💾 Save Asset to Ledger Book</button>
       </form>
     </div>
   </div>
 
   <script>
-    // Fungsi Pengiraan Automatik Total (Unit * Unit Price)
+    // Set default purchase date to current date
+    document.getElementById('inpPurchaseDate').valueAsDate = new Date();
+
     function calculateTotal() {
       const unit = parseFloat(document.getElementById('unitInput').value) || 0;
       const price = parseFloat(document.getElementById('unitPriceInput').value) || 0;
@@ -342,7 +293,6 @@
       document.getElementById('totalInput').value = total.toFixed(2);
     }
 
-    // Fungsi Papar/Sembunyi Medan 'Other Asset'
     function toggleOtherCategory() {
       const categorySelect = document.getElementById('assetCategory');
       const otherGroup = document.getElementById('otherCategoryGroup');
@@ -358,37 +308,39 @@
       }
     }
 
-    // Simpan Borang & Kembali ke Dashboard
-    function handleFormSubmit(event) {
-  event.preventDefault();
+    // Simpan ke LocalStorage tanpa sebarang data acah/demo
+    function saveNewAsset(event) {
+      event.preventDefault();
 
-  const categorySelect = document.getElementById('assetCategory').value;
-  const customCategory = document.getElementById('otherCategoryInput').value;
-  const finalCategory = (categorySelect === 'Other Asset' && customCategory) ? customCategory : categorySelect;
+      const catSelect = document.getElementById('assetCategory').value;
+      const customCat = document.getElementById('otherCategoryInput').value;
+      const finalCat = (catSelect === 'Other Asset' && customCat) ? customCat : catSelect;
 
-  const newAsset = {
-    id: Date.now().toString(),
-    item: event.target[0].value,
-    supplier: event.target[1].value,
-    refNo: event.target[2].value,
-    category: finalCategory,
-    purchaseDate: event.target[4].value,
-    location: event.target[6].value,
-    unit: parseInt(document.getElementById('unitInput').value) || 1,
-    unitPrice: parseFloat(document.getElementById('unitPriceInput').value) || 0,
-    total: parseFloat(document.getElementById('totalInput').value) || 0,
-    lifespan: event.target[10].value || 5,
-    updatedDate: new Date().toISOString().split('T')[0],
-    updatedBy: 'Admin'
-  };
+      const newAsset = {
+        id: Date.now().toString(),
+        item: document.getElementById('inpItem').value,
+        supplier: document.getElementById('inpSupplier').value,
+        refNo: document.getElementById('inpRefNo').value,
+        category: finalCat,
+        purchaseDate: document.getElementById('inpPurchaseDate').value,
+        location: document.getElementById('inpLocation').value,
+        unit: parseInt(document.getElementById('unitInput').value) || 1,
+        unitPrice: parseFloat(document.getElementById('unitPriceInput').value) || 0,
+        total: parseFloat(document.getElementById('totalInput').value) || 0,
+        lifespan: parseInt(document.getElementById('inpLifespan').value) || 5,
+        disposalDate: '-',
+        model: '-',
+        updatedDate: new Date().toISOString().split('T')[0],
+        updatedBy: 'Admin'
+      };
 
-  let assets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
-  assets.push(newAsset);
-  localStorage.setItem('susut_nilai_assets', JSON.stringify(assets));
+      const existingAssets = JSON.parse(localStorage.getItem('susut_nilai_assets')) || [];
+      existingAssets.push(newAsset);
+      localStorage.setItem('susut_nilai_assets', JSON.stringify(existingAssets));
 
-  alert('Asset registered successfully!');
-  window.location.href = 'assetregister.html'; // Pindah ke Asset Register
-}
+      alert('Asset successfully registered!');
+      window.location.href = 'assetregister.html';
+    }
   </script>
 
 </body>
