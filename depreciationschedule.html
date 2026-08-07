@@ -1,1 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depreciation Schedule - Susut Nilai Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        }
 
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 28px;
+        }
+
+        .header-brand h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-nav {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 22px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .selector-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .asset-summary {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            font-size: 13px;
+        }
+
+        .asset-summary div strong {
+            display: block;
+            color: #0f172a;
+        }
+
+        .table-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-brand">
+            <h2>Susut Nilai Pro</h2>
+        </div>
+        <div class="nav-links">
+            <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
+            <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
+            <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
+            <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Straight-Line Depreciation Schedule</h1>
+        </div>
+
+        <div class="selector-card">
+            <label for="asset-selector">Select Registered Asset</label>
+            <select id="asset-selector" onchange="generateSchedule()">
+                <option value="">-- Select an Asset --</option>
+            </select>
+
+            <div class="asset-summary" id="summary-box" style="display: none;">
+                <div><span>Initial Cost:</span> <strong id="sum-cost">RM 0.00</strong></div>
+                <div><span>Salvage Value:</span> <strong id="sum-salvage">RM 0.00</strong></div>
+                <div><span>Useful Life:</span> <strong id="sum-life">0 Years</strong></div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Opening Book Value (RM)</th>
+                        <th>Depreciation Expense (RM)</th>
+                        <th>Accumulated Depreciation (RM)</th>
+                        <th>Ending Book Value (RM)</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-table-body">
+                    <tr>
+                        <td colspan="5" style="padding: 30px; color: #64748b;">
+                            Please select a registered asset above to view its amortization schedule.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'susut_nilai_assets';
+
+        function populateAssetDropdown() {
+            const selector = document.getElementById('asset-selector');
+            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+            selector.innerHTML = '<option value="">-- Select an Asset --</option>';
+
+            if (assets.length === 0) {
+                selector.innerHTML = '<option value="">No assets registered yet</option>';
+                return;
+            }
+
+            assets.forEach(asset => {
+                const opt = document.createElement('option');
+                opt.value = asset.id;
+                opt.textContent = `${asset.name} (${asset.refNo})`;
+                selector.appendChild(opt);
+            });
+        }
+
+        function generateSchedule() {
+            const selector = document.getElementById('asset-selector');
+            const selectedId = parseInt(selector.value);
+            const tbody = document.getElementById('schedule-table-body');
+            const summaryBox = document.getElementById('summary-box');
+
+            if (!selectedId) {
+                summaryBox.style.display = 'none';
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="padding: 30px; color: #64748b;">
+                            Please select a registered asset above to view its amortization schedule.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            const asset = assets.find(item => item.id === selectedId);
+
+            if (!asset) return;
+
+            const cost = parseFloat(asset.total) || 0;
+            const salvage = parseFloat(asset.salvage) || 0;
+            const usefulLife = parseInt(asset.usefulLife) || 1;
+            const purchaseYear = new Date(asset.purchaseDate).getFullYear() || new Date().getFullYear();
+
+            document.getElementById('sum-cost').textContent = `RM ${cost.toFixed(2)}`;
+            document.getElementById('sum-salvage').textContent = `RM ${salvage.toFixed(2)}`;
+            document.getElementById('sum-life').textContent = `${usefulLife} Years`;
+            summaryBox.style.display = 'grid';
+
+            const depreciableAmount = cost - salvage;
+            const annualDepreciation = depreciableAmount / usefulLife;
+
+            let currentBookValue = cost;
+            let accumulatedDepreciation = 0;
+            let rowsHtml = '';
+
+            for (let year = 1; year <= usefulLife; year++) {
+                const openingValue = currentBookValue;
+                const depExpense = annualDepreciation;
+                accumulatedDepreciation += depExpense;
+                currentBookValue = openingValue - depExpense;
+
+                rowsHtml += `
+                    <tr>
+                        <td><strong>Year ${year}</strong> (${purchaseYear + year - 1})</td>
+                        <td>${openingValue.toFixed(2)}</td>
+                        <td>${depExpense.toFixed(2)}</td>
+                        <td>${accumulatedDepreciation.toFixed(2)}</td>
+                        <td><strong>${Math.max(currentBookValue, salvage).toFixed(2)}</strong></td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = rowsHtml;
+        }
+
+        document.addEventListener('DOMContentLoaded', populateAssetDropdown);
+    </script>
+</body>
+</html>
