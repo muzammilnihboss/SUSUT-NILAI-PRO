@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Register Ledger - Susut Nilai Pro</title>
+    <title>Asset Register - Susut Nilai Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -238,7 +238,7 @@
 
     <div class="container">
         <div class="page-header">
-            <h1>Asset Register Ledger</h1>
+            <h1>Asset Register</h1>
         </div>
 
         <div class="table-card">
@@ -334,7 +334,11 @@
 
         function renderTable() {
             const tbody = document.getElementById('asset-table-body');
-            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+            // Automatically clean legacy entries containing 'Unnamed Asset' or invalid names
+            assets = assets.filter(item => item.name && item.name.trim() !== '' && item.name !== 'Unnamed Asset');
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
 
             if (assets.length === 0) {
                 tbody.innerHTML = `
@@ -350,7 +354,7 @@
 
             tbody.innerHTML = assets.map((item, index) => {
                 const id = item.id;
-                const name = item.name || 'Unnamed Asset';
+                const name = item.name;
                 const category = item.category || '-';
                 const purchaseDate = item.purchaseDate || '-';
                 const disposalDate = item.disposalDate || '-';
