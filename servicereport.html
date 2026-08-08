@@ -195,7 +195,7 @@
 </head>
 <body>
 
-    <!-- Header Navigation Bar linked across all files -->
+    <!-- Header Navigation Bar linked across all project files -->
     <header>
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
@@ -218,7 +218,7 @@
                 <h3 class="card-title">🛠️ Log Maintenance & Service</h3>
                 <form id="service-form" onsubmit="saveServiceLog(event)">
                     
-                    <!-- Asset Selector -->
+                    <!-- Asset Selector from Asset Register -->
                     <div class="form-group">
                         <label for="select-asset">Select Asset</label>
                         <select id="select-asset" class="form-control" onchange="autoFillAssetData()" required>
@@ -226,7 +226,7 @@
                         </select>
                     </div>
 
-                    <!-- Auto-filled Fields (Readonly) -->
+                    <!-- Auto-filled Fields from Asset Register (Readonly) -->
                     <div class="form-group">
                         <label>Category</label>
                         <input type="text" id="asset-category" class="form-control" readonly placeholder="Auto-filled">
@@ -253,7 +253,7 @@
                         <input type="text" id="service-desc" class="form-control" placeholder="e.g. Engine Overhaul & Oil Filter" required>
                     </div>
 
-                    <!-- Service Cost Manual Input -->
+                    <!-- Manual Service Cost Input -->
                     <div class="form-group">
                         <label for="service-cost" style="color: #e11d48;">Service Cost (RM)</label>
                         <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold;" placeholder="0.00" required>
@@ -268,7 +268,7 @@
                 </form>
             </div>
 
-            <!-- SERVICE HISTORY TABLE -->
+            <!-- MAINTENANCE HISTORY LOG TABLE -->
             <div class="card">
                 <h3 class="card-title">📋 Maintenance History Log</h3>
                 <div style="overflow-x: auto;">
@@ -287,7 +287,7 @@
                             </tr>
                         </thead>
                         <tbody id="service-history-body">
-                            <!-- Populated dynamically -->
+                            <!-- Populated dynamically via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -302,7 +302,7 @@
 
         let registeredAssets = [];
 
-        // Load Asset Dropdown Options
+        // Load Asset Dropdown Options from Asset Register
         function loadAssetOptions() {
             registeredAssets = JSON.parse(localStorage.getItem(ASSETS_STORAGE_KEY)) || [];
             const select = document.getElementById('select-asset');
@@ -316,7 +316,7 @@
             });
         }
 
-        // Auto-fill Asset Information on selection
+        // Auto-fill Asset Category & Ref No. on Selection
         function autoFillAssetData() {
             const selectedId = parseInt(document.getElementById('select-asset').value);
             const foundAsset = registeredAssets.find(item => item.id === selectedId);
@@ -330,7 +330,7 @@
             }
         }
 
-        // Save Service Log to LocalStorage
+        // Save Service Record to LocalStorage
         function saveServiceLog(event) {
             event.preventDefault();
             const assetId = parseInt(document.getElementById('select-asset').value);
@@ -358,10 +358,11 @@
             localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
 
             document.getElementById('service-form').reset();
+            autoFillAssetData();
             renderServiceHistory();
         }
 
-        // Render Service Records Table
+        // Render Service History Table
         function renderServiceHistory() {
             const tbody = document.getElementById('service-history-body');
             const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
@@ -379,7 +380,7 @@
                     <td>${item.category}</td>
                     <td>${item.vendor}</td>
                     <td>${item.description}</td>
-                    <td><strong style="color: #e11d48;">RM ${item.cost.toFixed(2)}</strong></td>
+                    <td><strong style="color: #e11d48;">RM ${item.cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
                     <td>${item.nextServiceDate}</td>
                     <td>
                         <button class="btn-delete" onclick="deleteServiceLog(${item.id})">Delete</button>
