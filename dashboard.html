@@ -65,6 +65,55 @@
             padding: 0 10px;
         }
 
+        /* ---------------- WARNING BANNER ---------------- */
+        .dashboard-alert-banner {
+            background-color: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-radius: 14px;
+            padding: 16px 22px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-banner-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .alert-banner-icon {
+            font-size: 24px;
+        }
+
+        .alert-banner-text h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #be123c;
+        }
+
+        .alert-banner-text p {
+            font-size: 13px;
+            color: #9f1239;
+            margin-top: 2px;
+        }
+
+        .btn-banner-action {
+            background-color: #e11d48;
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: background 0.2s;
+        }
+
+        .btn-banner-action:hover {
+            background-color: #be123c;
+        }
+
         /* ---------------- TOP KPI SUMMARY STATS GRID ---------------- */
         .stats-grid {
             display: grid;
@@ -261,6 +310,18 @@
 
     <div class="container">
 
+        <!-- DASHBOARD MAINTENANCE WARNING BANNER -->
+        <div id="maintenance-warning-banner" class="dashboard-alert-banner" style="display: none;">
+            <div class="alert-banner-info">
+                <span class="alert-banner-icon">🚨</span>
+                <div class="alert-banner-text">
+                    <h4 id="banner-title">Maintenance Alert Required!</h4>
+                    <p id="banner-desc">You have assets that are overdue or approaching their service due date.</p>
+                </div>
+            </div>
+            <a href="servicereport.html" class="btn-banner-action">View Service Desk &rarr;</a>
+        </div>
+
         <!-- 4 SUMMARY KPI CARDS -->
         <div class="stats-grid">
             <div class="stat-card">
@@ -315,7 +376,6 @@
         <!-- 5 CONTROL PANELS -->
         <div class="dashboard-grid">
 
-            <!-- Card 1: Invoice Manager -->
             <div class="card c1">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -331,7 +391,6 @@
                 </div>
             </div>
 
-            <!-- Card 2: Register New Asset -->
             <div class="card c2 active-card">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -347,7 +406,6 @@
                 </div>
             </div>
 
-            <!-- Card 3: Asset Register -->
             <div class="card c3">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -363,7 +421,6 @@
                 </div>
             </div>
 
-            <!-- Card 4: Service Report (ACTIVE LINKED TO servicereport.html) -->
             <div class="card c4">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -379,7 +436,6 @@
                 </div>
             </div>
 
-            <!-- Card 5: Depreciation Schedule -->
             <div class="card c5">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -399,6 +455,55 @@
     </div>
 
     <script>
+        function checkMaintenanceAlerts() {
+            const SERVICES_STORAGE_KEY = 'susut_nilai_services';
+            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
+            
+            if (services.length === 0) return;
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            let overdueCount = 0;
+            let dueSoonCount = 0;
+
+            const latestRecordsMap = {};
+            services.forEach(rec => {
+                if (!latestRecordsMap[rec.assetName] || new Date(rec.serviceDate) > new Date(latestRecordsMap[rec.assetName].serviceDate)) {
+                    latestRecordsMap[rec.assetName] = rec;
+                }
+            });
+
+            Object.values(latestRecordsMap).forEach(item => {
+                const dueDate = new Date(item.nextServiceDate || item.serviceDate);
+                dueDate.setHours(0,0,0,0);
+
+                const diffTime = dueDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays <= 0) {
+                    overdueCount++;
+                } else if (diffDays <= 30) {
+                    dueSoonCount++;
+                }
+            });
+
+            const banner = document.getElementById('maintenance-warning-banner');
+            const title = document.getElementById('banner-title');
+            const desc = document.getElementById('banner-desc');
+
+            if (overdueCount > 0 || dueSoonCount > 0) {
+                banner.style.display = 'flex';
+                if (overdueCount > 0) {
+                    title.textContent = `🚨 Attention Required: ${overdueCount} Asset(s) Overdue for Service!`;
+                    desc.textContent = `You have ${overdueCount} asset(s) past their service due date and ${dueSoonCount} approaching soon. Click to resolve.`;
+                } else {
+                    title.textContent = `⚡ Upcoming Maintenance: ${dueSoonCount} Asset(s) Due Soon!`;
+                    desc.textContent = `You have ${dueSoonCount} asset(s) scheduled for service within the next 30 days.`;
+                }
+            }
+        }
+
         function calculateDashboardKPIs() {
             const STORAGE_KEY = 'susut_nilai_assets';
             const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -431,7 +536,10 @@
             document.getElementById('kpi-total-count').textContent = assets.length;
         }
 
-        document.addEventListener('DOMContentLoaded', calculateDashboardKPIs);
+        document.addEventListener('DOMContentLoaded', () => {
+            calculateDashboardKPIs();
+            checkMaintenanceAlerts();
+        });
     </script>
 </body>
 </html>
