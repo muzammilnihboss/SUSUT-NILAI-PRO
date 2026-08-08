@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #f8fafc;
+            background-color: #f4f6f9;
             color: #1e293b;
             min-height: 100vh;
             padding-bottom: 50px;
@@ -37,12 +37,12 @@
 
         .nav-links {
             display: flex;
+            gap: 10px;
             align-items: center;
-            gap: 12px;
         }
 
         .btn-nav {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             text-decoration: none;
             font-size: 13px;
@@ -61,50 +61,60 @@
         }
 
         .btn-primary {
-            background-color: #059669;
+            background-color: #2563eb;
             color: #ffffff;
         }
 
-        .btn-primary:hover {
-            background-color: #047857;
-        }
-
         .container {
-            max-width: 96%;
+            max-width: 98%;
             margin: 0 auto;
+            padding: 0 10px;
         }
 
-        .page-header {
+        .card {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
 
-        .page-header h1 {
+        .card-title {
             font-size: 22px;
+            font-weight: 800;
             color: #0f172a;
-            font-weight: 700;
         }
 
-        .table-card {
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        .search-input {
+            padding: 8px 14px;
             border: 1px solid #cbd5e1;
-            overflow-x: auto;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 280px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #2563eb;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
-            text-align: center;
+            font-size: 12.5px;
+            text-align: left;
         }
 
         th, td {
-            padding: 10px 8px;
-            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
             vertical-align: middle;
         }
 
@@ -112,113 +122,173 @@
             background-color: #f1f5f9;
             color: #0f172a;
             font-weight: 700;
+            white-space: nowrap;
         }
 
-        td.text-left {
-            text-align: left;
+        .sub-text {
+            font-size: 11px;
+            color: #64748b;
+            display: block;
         }
 
-        .action-group {
+        .action-btns {
             display: flex;
             gap: 6px;
-            justify-content: center;
-            align-items: center;
         }
 
-        .btn-action {
+        .btn-action-edit {
             padding: 6px 12px;
+            background-color: #0284c7;
+            color: white;
             border: none;
             border-radius: 6px;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            color: #ffffff;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             gap: 4px;
-            transition: opacity 0.2s ease;
         }
 
-        .btn-action:hover {
-            opacity: 0.88;
-        }
+        .btn-action-edit:hover { background-color: #0369a1; }
 
-        .btn-edit {
-            background-color: #0284c7;
-        }
-
-        .btn-delete {
+        .btn-action-delete {
+            padding: 6px 12px;
             background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .modal-backdrop {
-            display: none;
+        .btn-action-delete:hover { background-color: #dc2626; }
+
+        /* ---------------- EDIT MODAL STYLES ---------------- */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(15, 23, 42, 0.5);
-            z-index: 1000;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
 
         .modal-box {
-            background-color: #ffffff;
-            width: 90%;
-            max-width: 650px;
+            background: #ffffff;
             border-radius: 12px;
+            width: 650px;
+            max-width: 95%;
             padding: 24px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        .modal-header h2 {
+        .modal-title {
             font-size: 18px;
-            color: #0f172a;
-        }
-
-        .modal-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .modal-grid .full-span {
-            grid-column: span 2;
-        }
-
-        .modal-grid label {
-            display: block;
-            font-size: 11px;
             font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-modal-btn {
+            background: transparent;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
             color: #64748b;
+        }
+
+        .close-modal-btn:hover { color: #0f172a; }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #475569;
             margin-bottom: 4px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .modal-grid input {
+        .form-control {
             width: 100%;
             padding: 8px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
             font-size: 13px;
+            outline: none;
         }
 
-        .modal-actions {
-            margin-top: 20px;
+        .form-control:focus {
+            border-color: #059669;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .modal-footer {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel-modal {
+            padding: 9px 18px;
+            background-color: #e2e8f0;
+            color: #475569;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-cancel-modal:hover { background-color: #cbd5e1; }
+
+        .btn-save-modal {
+            padding: 9px 20px;
+            background-color: #059669;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-save-modal:hover { background-color: #047857; }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
         }
     </style>
 </head>
@@ -229,101 +299,124 @@
             <h2>Susut Nilai Pro</h2>
         </div>
         <div class="nav-links">
-            <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
-            <a href="registernew.html" class="btn-nav btn-primary">+ Register New Asset</a>
+            <a href="dashboard.html" class="btn-nav btn-secondary">🏠 Dashboard</a>
+            <a href="assetregister.html" class="btn-nav btn-primary">📋 Asset Register</a>
+            <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
             <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
+            <a href="servicereport.html" class="btn-nav btn-secondary">🛠️ Service Report</a>
             <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
         </div>
     </header>
 
     <div class="container">
-        <div class="page-header">
-            <h1>Asset Register</h1>
-        </div>
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Asset Register</h2>
+                <input type="text" id="search-input" class="search-input" placeholder="Search asset name or invoice..." onkeyup="renderTable()">
+            </div>
 
-        <div class="table-card">
-            <table>
-                <thead>
-                    <tr>
-                        <th rowspan="2" style="width: 40px;">No.</th>
-                        <th colspan="2">Date</th>
-                        <th rowspan="2" style="min-width: 220px;">Particulars / Description</th>
-                        <th rowspan="2">Ref. No.</th>
-                        <th rowspan="2">Model</th>
-                        <th rowspan="2">Useful Life (Yrs)</th>
-                        <th rowspan="2">Unit</th>
-                        <th rowspan="2">Unit Price (RM)</th>
-                        <th rowspan="2">Total (RM)</th>
-                        <th rowspan="2">Location</th>
-                        <th rowspan="2">Updated Date</th>
-                        <th rowspan="2">Updated By</th>
-                        <th rowspan="2" style="width: 150px;">Actions</th>
-                    </tr>
-                    <tr>
-                        <th>Purchase</th>
-                        <th>Disposal</th>
-                    </tr>
-                </thead>
-                <tbody id="asset-table-body">
-                </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">No.</th>
+                            <th colspan="2" style="text-align: center;">Date</th>
+                            <th rowspan="2">Particulars / Description</th>
+                            <th rowspan="2">Ref. No. / Invoice</th>
+                            <th rowspan="2">Location / Dept</th>
+                            <th rowspan="2">Useful Life</th>
+                            <th rowspan="2">Unit</th>
+                            <th rowspan="2">Unit Price (RM)</th>
+                            <th rowspan="2">Total Price (RM)</th>
+                            <th rowspan="2">Updated Date</th>
+                            <th rowspan="2">Updated By</th>
+                            <th rowspan="2">Actions</th>
+                        </tr>
+                        <tr>
+                            <th>Purchase</th>
+                            <th>Disposal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="asset-table-body">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Modal for Edit Functionality -->
-    <div class="modal-backdrop" id="edit-modal">
+    <!-- EDIT ASSET RECORD MODAL -->
+    <div id="edit-modal" class="modal-overlay">
         <div class="modal-box">
             <div class="modal-header">
-                <h2>✏️ Edit Asset Record</h2>
-                <button onclick="closeModal()" style="background:none; border:none; font-size: 20px; cursor:pointer;">&times;</button>
+                <div class="modal-title">
+                    <span>✏️</span>
+                    <span>Edit Asset Record</span>
+                </div>
+                <button class="close-modal-btn" onclick="closeEditModal()">&times;</button>
             </div>
-            <form id="edit-form" onsubmit="saveAssetEdit(event)">
-                <input type="hidden" id="edit-id">
-                <div class="modal-grid">
-                    <div class="full-span">
-                        <label>Asset Name / Description</label>
-                        <input type="text" id="edit-name" required>
+
+            <form id="edit-asset-form" onsubmit="saveAssetChanges(event)">
+                <input type="hidden" id="edit-asset-id">
+
+                <div class="form-group">
+                    <label for="edit-name">Asset Name / Description</label>
+                    <input type="text" id="edit-name" class="form-control" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-category">Category</label>
+                        <input type="text" id="edit-category" class="form-control" required>
                     </div>
-                    <div>
-                        <label>Category</label>
-                        <input type="text" id="edit-category" required>
-                    </div>
-                    <div>
-                        <label>Ref. No. / Invoice</label>
-                        <input type="text" id="edit-refNo" required>
-                    </div>
-                    <div>
-                        <label>Model</label>
-                        <input type="text" id="edit-model">
-                    </div>
-                    <div>
-                        <label>Useful Life (Yrs)</label>
-                        <input type="number" id="edit-usefulLife" required>
-                    </div>
-                    <div>
-                        <label>Unit</label>
-                        <input type="number" id="edit-unit" min="1" oninput="calculateModalTotal()" required>
-                    </div>
-                    <div>
-                        <label>Unit Price (RM)</label>
-                        <input type="number" step="0.01" id="edit-unitPrice" oninput="calculateModalTotal()" required>
-                    </div>
-                    <div>
-                        <label>Total Price (RM)</label>
-                        <input type="text" id="edit-total" readonly style="background-color: #f8fafc; font-weight: bold;">
-                    </div>
-                    <div>
-                        <label>Location / Department</label>
-                        <input type="text" id="edit-location" required>
-                    </div>
-                    <div class="full-span">
-                        <label>Updated By</label>
-                        <input type="text" id="edit-updatedBy" required>
+                    <div class="form-group">
+                        <label for="edit-invoice">Ref. No. / Invoice</label>
+                        <input type="text" id="edit-invoice" class="form-control">
                     </div>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" class="btn-nav btn-secondary" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn-nav btn-primary">Save Changes</button>
+
+                <div class="form-row">
+                    <!-- REPLACED MODEL WITH PURCHASE DATE -->
+                    <div class="form-group">
+                        <label for="edit-purchase-date">Purchase Date</label>
+                        <input type="date" id="edit-purchase-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-useful-life">Useful Life (Yrs)</label>
+                        <input type="number" id="edit-useful-life" class="form-control" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-unit">Unit</label>
+                        <input type="number" id="edit-unit" class="form-control" min="1" oninput="calculateModalTotal()" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-unit-price">Unit Price (RM)</label>
+                        <input type="number" step="0.01" id="edit-unit-price" class="form-control" oninput="calculateModalTotal()" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-total-price">Total Price (RM)</label>
+                        <input type="number" step="0.01" id="edit-total-price" class="form-control" style="font-weight: bold; background-color: #f8fafc;" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-location">Location / Department</label>
+                        <input type="text" id="edit-location" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-updated-by">Updated By / Supplier</label>
+                    <input type="text" id="edit-updated-by" class="form-control">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel-modal" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn-save-modal">Save Changes</button>
                 </div>
             </form>
         </div>
@@ -332,68 +425,52 @@
     <script>
         const STORAGE_KEY = 'susut_nilai_assets';
 
+        function getAssets() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        }
+
         function renderTable() {
+            const assets = getAssets();
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
             const tbody = document.getElementById('asset-table-body');
-            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-            // Automatically clean legacy entries containing 'Unnamed Asset' or invalid names
-            assets = assets.filter(item => item.name && item.name.trim() !== '' && item.name !== 'Unnamed Asset');
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
+            const filtered = assets.filter(item => 
+                (item.name || '').toLowerCase().includes(searchVal) || 
+                (item.invoiceNo || item.refNo || '').toLowerCase().includes(searchVal) ||
+                (item.category || '').toLowerCase().includes(searchVal)
+            );
 
-            if (assets.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="14" style="padding: 40px; color: #64748b; font-size: 14px;">
-                            No registered assets found in memory.<br>
-                            Click <a href="registernew.html" style="color: #059669; font-weight: 700; text-decoration: underline;">+ Register New Asset</a> to register an asset.
-                        </td>
-                    </tr>
-                `;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="13" class="empty-msg">No assets registered yet.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = assets.map((item, index) => {
-                const id = item.id;
-                const name = item.name;
-                const category = item.category || '-';
-                const purchaseDate = item.purchaseDate || '-';
-                const disposalDate = item.disposalDate || '-';
-                const refNo = item.refNo || '-';
-                const model = item.model || '-';
-                const usefulLife = item.usefulLife || '-';
-                const unit = item.unit || 1;
-                const unitPrice = parseFloat(item.unitPrice || 0).toFixed(2);
-                const total = parseFloat(item.total || (unit * unitPrice)).toFixed(2);
-                const location = item.location || '-';
-                const updatedDate = item.updatedDate || new Date().toISOString().split('T')[0];
-                const updatedBy = item.updatedBy || 'Admin';
+            tbody.innerHTML = filtered.map((item, index) => {
+                const total = item.total || (item.unit * item.price) || 0;
+                const updatedDate = item.updatedDate || item.purchaseDate || '-';
+                const supplierOrUser = item.supplier || item.vendor || item.updatedBy || '-';
 
                 return `
                     <tr>
                         <td>${index + 1}</td>
-                        <td>${purchaseDate}</td>
-                        <td>${disposalDate}</td>
-                        <td class="text-left">
-                            <strong style="color: #0f172a; display: block;">${name}</strong>
-                            <span style="color: #64748b; font-size: 11px;">${category}</span>
-                        </td>
-                        <td>${refNo}</td>
-                        <td>${model}</td>
-                        <td>${usefulLife}</td>
-                        <td>${unit}</td>
-                        <td>${unitPrice}</td>
-                        <td><strong>${total}</strong></td>
-                        <td>${location}</td>
-                        <td>${updatedDate}</td>
-                        <td>${updatedBy}</td>
+                        <td>${item.purchaseDate || '-'}</td>
+                        <td>${item.disposalDate || '-'}</td>
                         <td>
-                            <div class="action-group">
-                                <button class="btn-action btn-edit" onclick="openEditModal(${id})">
-                                    ✏️ Edit
-                                </button>
-                                <button class="btn-action btn-delete" onclick="deleteAsset(${id})">
-                                    🗑️ Delete
-                                </button>
+                            <strong>${item.name}</strong>
+                            <span class="sub-text">${item.category || '-'}</span>
+                        </td>
+                        <td>${item.invoiceNo || item.refNo || '-'}</td>
+                        <td>${item.location || item.department || '-'}</td>
+                        <td>${item.usefulLife || 1}</td>
+                        <td>${item.unit || 1}</td>
+                        <td>RM ${parseFloat(item.price || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td><strong>RM ${parseFloat(total).toLocaleString('en-US', {minimumFractionDigits: 2})}</strong></td>
+                        <td>${updatedDate}</td>
+                        <td>${supplierOrUser}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-action-edit" onclick="openEditModal(${item.id})">✏️ Edit</button>
+                                <button class="btn-action-delete" onclick="deleteAsset(${item.id})">🗑️ Delete</button>
                             </div>
                         </td>
                     </tr>
@@ -401,76 +478,82 @@
             }).join('');
         }
 
-        function deleteAsset(id) {
-            if (!confirm("Are you sure you want to delete this asset record from the register?")) {
-                return;
-            }
-
-            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            assets = assets.filter(item => item.id !== id);
-
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
-            renderTable();
-        }
-
         function openEditModal(id) {
-            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            const asset = assets.find(item => item.id === id);
+            const assets = getAssets();
+            const asset = assets.find(a => a.id === id);
 
             if (!asset) return;
 
-            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-asset-id').value = asset.id;
             document.getElementById('edit-name').value = asset.name || '';
             document.getElementById('edit-category').value = asset.category || '';
-            document.getElementById('edit-refNo').value = asset.refNo || '';
-            document.getElementById('edit-model').value = asset.model || '-';
-            document.getElementById('edit-usefulLife').value = asset.usefulLife || '';
+            document.getElementById('edit-invoice').value = asset.invoiceNo || asset.refNo || '';
+            
+            // Populate Purchase Date into the date field
+            document.getElementById('edit-purchase-date').value = asset.purchaseDate || '';
+            
+            document.getElementById('edit-useful-life').value = asset.usefulLife || 1;
             document.getElementById('edit-unit').value = asset.unit || 1;
-            document.getElementById('edit-unitPrice').value = asset.unitPrice || 0;
-            document.getElementById('edit-total').value = parseFloat(asset.total || 0).toFixed(2);
-            document.getElementById('edit-location').value = asset.location || '';
-            document.getElementById('edit-updatedBy').value = asset.updatedBy || '';
+            document.getElementById('edit-unit-price').value = asset.price || 0;
+            document.getElementById('edit-total-price').value = (asset.total || (asset.unit * asset.price) || 0).toFixed(2);
+            document.getElementById('edit-location').value = asset.location || asset.department || '';
+            document.getElementById('edit-updated-by').value = asset.supplier || asset.vendor || asset.updatedBy || '';
 
             document.getElementById('edit-modal').style.display = 'flex';
         }
 
-        function calculateModalTotal() {
-            const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
-            const price = parseFloat(document.getElementById('edit-unitPrice').value) || 0;
-            document.getElementById('edit-total').value = (unit * price).toFixed(2);
-        }
-
-        function closeModal() {
+        function closeEditModal() {
             document.getElementById('edit-modal').style.display = 'none';
         }
 
-        function saveAssetEdit(event) {
-            event.preventDefault();
-            const id = parseInt(document.getElementById('edit-id').value);
-            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        function calculateModalTotal() {
+            const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
+            const price = parseFloat(document.getElementById('edit-unit-price').value) || 0;
+            document.getElementById('edit-total-price').value = (unit * price).toFixed(2);
+        }
 
-            const index = assets.findIndex(item => item.id === id);
+        function saveAssetChanges(event) {
+            event.preventDefault();
+
+            const id = parseInt(document.getElementById('edit-asset-id').value);
+            const assets = getAssets();
+            const index = assets.findIndex(a => a.id === id);
 
             if (index !== -1) {
-                const unit = parseFloat(document.getElementById('edit-unit').value) || 0;
-                const unitPrice = parseFloat(document.getElementById('edit-unitPrice').value) || 0;
+                const todayStr = new Date().toISOString().split('T')[0];
+                const unit = parseInt(document.getElementById('edit-unit').value) || 1;
+                const price = parseFloat(document.getElementById('edit-unit-price').value) || 0;
 
-                assets[index].name = document.getElementById('edit-name').value;
-                assets[index].category = document.getElementById('edit-category').value;
-                assets[index].refNo = document.getElementById('edit-refNo').value;
-                assets[index].model = document.getElementById('edit-model').value || '-';
-                assets[index].usefulLife = parseInt(document.getElementById('edit-usefulLife').value);
-                assets[index].unit = unit;
-                assets[index].unitPrice = unitPrice;
-                assets[index].total = unit * unitPrice;
-                assets[index].location = document.getElementById('edit-location').value;
-                assets[index].updatedBy = document.getElementById('edit-updatedBy').value;
-                assets[index].updatedDate = new Date().toISOString().split('T')[0];
+                assets[index] = {
+                    ...assets[index],
+                    name: document.getElementById('edit-name').value,
+                    category: document.getElementById('edit-category').value,
+                    invoiceNo: document.getElementById('edit-invoice').value,
+                    purchaseDate: document.getElementById('edit-purchase-date').value, // Saved updated Purchase Date
+                    usefulLife: parseInt(document.getElementById('edit-useful-life').value) || 1,
+                    unit: unit,
+                    price: price,
+                    total: unit * price,
+                    location: document.getElementById('edit-location').value,
+                    department: document.getElementById('edit-location').value,
+                    supplier: document.getElementById('edit-updated-by').value,
+                    updatedBy: document.getElementById('edit-updated-by').value,
+                    updatedDate: todayStr
+                };
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
-                closeModal();
+                closeEditModal();
                 renderTable();
             }
+        }
+
+        function deleteAsset(id) {
+            if (!confirm("Are you sure you want to delete this asset record?")) return;
+
+            let assets = getAssets();
+            assets = assets.filter(a => a.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
+            renderTable();
         }
 
         document.addEventListener('DOMContentLoaded', renderTable);
