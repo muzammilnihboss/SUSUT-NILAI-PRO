@@ -19,6 +19,7 @@
             padding-bottom: 50px;
         }
 
+        /* Header Navigation with Full Hyperlinks */
         header {
             background-color: #ffffff;
             padding: 16px 32px;
@@ -38,11 +39,11 @@
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .btn-nav {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             text-decoration: none;
             font-size: 13px;
@@ -87,31 +88,26 @@
             font-weight: 700;
         }
 
-        .category-section {
-            margin-bottom: 32px;
-        }
-
-        .category-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #0f172a;
-            background-color: #e2e8f0;
-            padding: 10px 16px;
-            border-radius: 6px 6px 0 0;
-            border: 1px solid #cbd5e1;
-            border-bottom: none;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .table-card {
+        /* Schedule Category Card */
+        .category-card {
             background: #ffffff;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 8px;
             border: 1px solid #cbd5e1;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 28px;
             overflow-x: auto;
         }
 
+        .category-header {
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Table Format Matching Uploaded PDF */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -135,16 +131,17 @@
             text-align: left;
         }
 
-        .total-row {
+        tr.total-row {
             background-color: #f8fafc;
             font-weight: 700;
+            color: #0f172a;
         }
 
+        /* Action Buttons */
         .action-group {
             display: flex;
             gap: 4px;
             justify-content: center;
-            align-items: center;
         }
 
         .btn-action {
@@ -170,16 +167,7 @@
             background-color: #ef4444;
         }
 
-        .empty-state {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            color: #64748b;
-            border: 1px solid #cbd5e1;
-        }
-
-        /* Modal for Edit */
+        /* Edit Modal Backdrop */
         .modal-backdrop {
             display: none;
             position: fixed;
@@ -209,11 +197,6 @@
             margin-bottom: 18px;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 10px;
-        }
-
-        .modal-header h2 {
-            font-size: 18px;
-            color: #0f172a;
         }
 
         .modal-grid {
@@ -249,10 +232,20 @@
             justify-content: flex-end;
             gap: 10px;
         }
+
+        .empty-placeholder {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 50px;
+            text-align: center;
+            color: #64748b;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Header Navigation with All Hyperlinks -->
     <header>
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
@@ -261,32 +254,34 @@
             <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
             <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
             <a href="registernew.html" class="btn-nav btn-primary">+ Register New Asset</a>
+            <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
             <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
         </div>
     </header>
 
     <div class="container">
         <div class="page-header">
-            <h1>Depreciation Schedule</h1>
+            <h1>Depreciation Schedule Report</h1>
         </div>
 
+        <!-- Dynamic Container for Category Tables -->
         <div id="schedule-container">
-            <!-- Dynamic Content Generated via JS -->
+            <!-- Dynamic Category Tables Rendered Here -->
         </div>
     </div>
 
-    <!-- Edit Asset Modal -->
+    <!-- Modal for Edit Record -->
     <div class="modal-backdrop" id="edit-modal">
         <div class="modal-box">
             <div class="modal-header">
-                <h2>✏️ Edit Asset Record</h2>
+                <h2>✏️ Edit Record Parameters</h2>
                 <button onclick="closeModal()" style="background:none; border:none; font-size: 20px; cursor:pointer;">&times;</button>
             </div>
             <form id="edit-form" onsubmit="saveAssetEdit(event)">
                 <input type="hidden" id="edit-id">
                 <div class="modal-grid">
                     <div class="full-span">
-                        <label>Asset Description</label>
+                        <label>Asset Name / Description</label>
                         <input type="text" id="edit-name" required>
                     </div>
                     <div>
@@ -294,15 +289,15 @@
                         <input type="text" id="edit-category" required>
                     </div>
                     <div>
-                        <label>Purchase Date</label>
-                        <input type="date" id="edit-purchaseDate" required>
+                        <label>Invoice / Ref No.</label>
+                        <input type="text" id="edit-refNo" required>
                     </div>
                     <div>
-                        <label>Useful Life (Yrs)</label>
-                        <input type="number" id="edit-usefulLife" min="1" required>
+                        <label>Useful Life (Years)</label>
+                        <input type="number" id="edit-usefulLife" required min="1">
                     </div>
                     <div>
-                        <label>Unit</label>
+                        <label>Unit Quantity</label>
                         <input type="number" id="edit-unit" min="1" oninput="calculateModalTotal()" required>
                     </div>
                     <div>
@@ -310,8 +305,12 @@
                         <input type="number" step="0.01" id="edit-unitPrice" oninput="calculateModalTotal()" required>
                     </div>
                     <div>
-                        <label>Total Cost (RM)</label>
+                        <label>Total Price (RM)</label>
                         <input type="text" id="edit-total" readonly style="background-color: #f8fafc; font-weight: bold;">
+                    </div>
+                    <div>
+                        <label>Estimated Salvage (RM)</label>
+                        <input type="number" step="0.01" id="edit-salvage" required>
                     </div>
                 </div>
                 <div class="modal-actions">
@@ -325,118 +324,97 @@
     <script>
         const STORAGE_KEY = 'susut_nilai_assets';
 
-        function renderDepreciationSchedules() {
+        // Render Depreciation Schedule Categorized like the PDF Format
+        function renderDepreciationSchedule() {
             const container = document.getElementById('schedule-container');
             let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-            // Clean invalid legacy items
+            // Filter out invalid/empty assets
             assets = assets.filter(item => item.name && item.name.trim() !== '' && item.name !== 'Unnamed Asset');
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
 
             if (assets.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-state">
-                        <p style="font-size: 15px; font-weight: 600;">No registered assets found.</p>
-                        <p style="margin-top: 8px;">Please click <a href="registernew.html" style="color: #059669; font-weight: 700;">+ Register New Asset</a> to create a new asset record.</p>
+                    <div class="empty-placeholder">
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No Depreciation Schedule Available</p>
+                        <p style="font-size: 13px;">Please register an asset first via <a href="registernew.html" style="color: #059669; font-weight: 700;">+ Register New Asset</a> to generate the schedule automatically.</p>
                     </div>
                 `;
                 return;
             }
 
-            // Group assets by Category
-            const categoriesMap = {};
+            // Group assets by category
+            const groupedAssets = {};
             assets.forEach(asset => {
-                const category = asset.category || 'Other Asset';
-                if (!categoriesMap[category]) {
-                    categoriesMap[category] = [];
+                const categoryName = asset.category || 'Other Assets';
+                if (!groupedAssets[categoryName]) {
+                    groupedAssets[categoryName] = [];
                 }
-                categoriesMap[category].push(asset);
+                groupedAssets[categoryName].push(asset);
             });
 
-            const currentYear = new Date().getFullYear();
             let htmlContent = '';
 
-            // Generate table for each category
-            Object.keys(categoriesMap).forEach(category => {
-                const categoryAssets = categoriesMap[category];
+            // Generate a category block for each category (matching PDF structure)
+            Object.keys(groupedAssets).forEach(category => {
+                const categoryList = groupedAssets[category];
 
-                let sumCostOpening = 0;
-                let sumCostAdditions = 0;
-                let sumCostDisposals = 0;
-                let sumCostEnding = 0;
+                let totOpeningCost = 0, totAdditions = 0, totDisposalCost = 0, totClosingCost = 0;
+                let totOpeningAcc = 0, totAddAcc = 0, totDisposalAcc = 0, totClosingAcc = 0;
+                let totNetBookValue = 0;
 
-                let sumAccOpening = 0;
-                let sumAccCharge = 0;
-                let sumAccDisposals = 0;
-                let sumAccEnding = 0;
+                const tableRows = categoryList.map((item, index) => {
+                    const totalCost = parseFloat(item.total || 0);
+                    const salvage = parseFloat(item.salvage || 0);
+                    const usefulLife = parseInt(item.usefulLife || 1);
 
-                let sumNetBookValue = 0;
-
-                const rowsHtml = categoryAssets.map((asset, index) => {
-                    const cost = parseFloat(asset.total) || 0;
-                    const usefulLife = parseInt(asset.usefulLife) || 1;
+                    // Depreciation Rate (%)
                     const depRate = (100 / usefulLife).toFixed(2);
-                    const purchaseYear = new Date(asset.purchaseDate).getFullYear() || currentYear;
-                    const annualDep = cost / usefulLife;
 
-                    let costOpening = 0;
-                    let costAdditions = 0;
-                    let costDisposals = 0;
-                    let costEnding = cost;
+                    // Amortization Calculations (Current Year Addition)
+                    const costOpening = 0.00;
+                    const costAddition = totalCost;
+                    const costDisposal = 0.00;
+                    const costClosing = costOpening + costAddition - costDisposal;
 
-                    let accOpening = 0;
-                    let accCharge = 0;
-                    let accDisposals = 0;
-                    let accEnding = 0;
+                    const currentDepreciation = (totalCost - salvage) / usefulLife;
+                    const accOpening = 0.00;
+                    const accAddition = currentDepreciation;
+                    const accDisposal = 0.00;
+                    const accClosing = accOpening + accAddition - accDisposal;
 
-                    if (purchaseYear === currentYear) {
-                        costOpening = 0;
-                        costAdditions = cost;
-                        accOpening = 0;
-                        accCharge = annualDep;
-                    } else if (purchaseYear < currentYear) {
-                        costOpening = cost;
-                        costAdditions = 0;
-                        const elapsedYears = currentYear - purchaseYear;
-                        accOpening = Math.min(cost, annualDep * (elapsedYears - 1));
-                        accCharge = (accOpening < cost) ? Math.min(annualDep, cost - accOpening) : 0;
-                    }
-
-                    accEnding = accOpening + accCharge;
-                    const netBookValue = Math.max(0, costEnding - accEnding);
+                    const netBookValue = costClosing - accClosing;
 
                     // Accumulate Category Totals
-                    sumCostOpening += costOpening;
-                    sumCostAdditions += costAdditions;
-                    sumCostDisposals += costDisposals;
-                    sumCostEnding += costEnding;
+                    totOpeningCost += costOpening;
+                    totAdditions += costAddition;
+                    totDisposalCost += costDisposal;
+                    totClosingCost += costClosing;
 
-                    sumAccOpening += accOpening;
-                    sumAccCharge += accCharge;
-                    sumAccDisposals += accDisposals;
-                    sumAccEnding += accEnding;
-
-                    sumNetBookValue += netBookValue;
+                    totOpeningAcc += accOpening;
+                    totAddAcc += accAddition;
+                    totDisposalAcc += accDisposal;
+                    totClosingAcc += accClosing;
+                    totNetBookValue += netBookValue;
 
                     return `
                         <tr>
                             <td>${index + 1}</td>
-                            <td>${asset.purchaseDate || '-'}</td>
-                            <td class="text-left"><strong>${asset.name}</strong></td>
+                            <td>${item.purchaseDate || '-'}</td>
+                            <td class="text-left"><strong>${item.name}</strong></td>
                             <td>${costOpening.toFixed(2)}</td>
-                            <td>${costAdditions.toFixed(2)}</td>
-                            <td>${costDisposals.toFixed(2)}</td>
-                            <td><strong>${costEnding.toFixed(2)}</strong></td>
+                            <td>${costAddition.toFixed(2)}</td>
+                            <td>${costDisposal.toFixed(2)}</td>
+                            <td><strong>${costClosing.toFixed(2)}</strong></td>
                             <td>${depRate}%</td>
                             <td>${accOpening.toFixed(2)}</td>
-                            <td>${accCharge.toFixed(2)}</td>
-                            <td>${accDisposals.toFixed(2)}</td>
-                            <td><strong>${accEnding.toFixed(2)}</strong></td>
+                            <td>${accAddition.toFixed(2)}</td>
+                            <td>${accDisposal.toFixed(2)}</td>
+                            <td><strong>${accClosing.toFixed(2)}</strong></td>
                             <td><strong style="color: #059669;">${netBookValue.toFixed(2)}</strong></td>
                             <td>
                                 <div class="action-group">
-                                    <button class="btn-action btn-edit" onclick="openEditModal(${asset.id})">✏️ Edit</button>
-                                    <button class="btn-action btn-delete" onclick="deleteAsset(${asset.id})">🗑️ Delete</button>
+                                    <button class="btn-action btn-edit" onclick="openEditModal(${item.id})">✏️ Edit</button>
+                                    <button class="btn-action btn-delete" onclick="deleteAsset(${item.id})">🗑️ Delete</button>
                                 </div>
                             </td>
                         </tr>
@@ -444,51 +422,49 @@
                 }).join('');
 
                 htmlContent += `
-                    <div class="category-section">
-                        <div class="category-title">ASSET TYPE: ${category}</div>
-                        <div class="table-card">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th rowspan="2" style="width: 35px;">No.</th>
-                                        <th rowspan="2" style="width: 85px;">Date</th>
-                                        <th rowspan="2" style="min-width: 180px;">Asset Description</th>
-                                        <th colspan="4">Cost (RM)</th>
-                                        <th rowspan="2">Dep. Rate (%)</th>
-                                        <th colspan="4">Accumulated Depreciation (RM)</th>
-                                        <th rowspan="2">Net Book Value (RM)</th>
-                                        <th rowspan="2" style="width: 110px;">Actions</th>
-                                    </tr>
-                                    <tr>
-                                        <th>Opening</th>
-                                        <th>Additions</th>
-                                        <th>Disposals</th>
-                                        <th>Ending</th>
-                                        <th>Opening</th>
-                                        <th>Charge</th>
-                                        <th>Disposals</th>
-                                        <th>Ending</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${rowsHtml}
-                                    <tr class="total-row">
-                                        <td colspan="3" class="text-left">TOTAL</td>
-                                        <td>${sumCostOpening.toFixed(2)}</td>
-                                        <td>${sumCostAdditions.toFixed(2)}</td>
-                                        <td>${sumCostDisposals.toFixed(2)}</td>
-                                        <td>${sumCostEnding.toFixed(2)}</td>
-                                        <td>-</td>
-                                        <td>${sumAccOpening.toFixed(2)}</td>
-                                        <td>${sumAccCharge.toFixed(2)}</td>
-                                        <td>${sumAccDisposals.toFixed(2)}</td>
-                                        <td>${sumAccEnding.toFixed(2)}</td>
-                                        <td style="color: #059669;">${sumNetBookValue.toFixed(2)}</td>
-                                        <td>-</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="category-card">
+                        <div class="category-header">ASSET TYPE: ${category.toUpperCase()}</div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 35px;">No.</th>
+                                    <th rowspan="2" style="width: 85px;">Date</th>
+                                    <th rowspan="2" style="min-width: 150px;">Asset Description</th>
+                                    <th colspan="4">Cost (RM)</th>
+                                    <th rowspan="2" style="width: 60px;">Dep. Rate (%)</th>
+                                    <th colspan="4">Accumulated Depreciation (RM)</th>
+                                    <th rowspan="2" style="width: 100px;">Net Book Value (RM)</th>
+                                    <th rowspan="2" style="width: 110px;">Actions</th>
+                                </tr>
+                                <tr>
+                                    <th>Opening Bal.</th>
+                                    <th>Additions</th>
+                                    <th>Disposals</th>
+                                    <th>Closing Bal.</th>
+                                    <th>Opening Bal.</th>
+                                    <th>Current Dep.</th>
+                                    <th>Disposals</th>
+                                    <th>Closing Bal.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRows}
+                                <tr class="total-row">
+                                    <td colspan="3" style="text-align: right; padding-right: 12px;">Total (${category}):</td>
+                                    <td>${totOpeningCost.toFixed(2)}</td>
+                                    <td>${totAdditions.toFixed(2)}</td>
+                                    <td>${totDisposalCost.toFixed(2)}</td>
+                                    <td>${totClosingCost.toFixed(2)}</td>
+                                    <td>-</td>
+                                    <td>${totOpeningAcc.toFixed(2)}</td>
+                                    <td>${totAddAcc.toFixed(2)}</td>
+                                    <td>${totDisposalAcc.toFixed(2)}</td>
+                                    <td>${totClosingAcc.toFixed(2)}</td>
+                                    <td style="color: #059669;">${totNetBookValue.toFixed(2)}</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 `;
             });
@@ -496,18 +472,18 @@
             container.innerHTML = htmlContent;
         }
 
+        // Delete Asset Function
         function deleteAsset(id) {
-            if (!confirm("Are you sure you want to delete this asset record from the schedule?")) {
-                return;
-            }
+            if (!confirm("Are you sure you want to delete this record?")) return;
 
             let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             assets = assets.filter(item => item.id !== id);
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
-            renderDepreciationSchedules();
+            renderDepreciationSchedule();
         }
 
+        // Open Edit Modal Function
         function openEditModal(id) {
             const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             const asset = assets.find(item => item.id === id);
@@ -517,11 +493,12 @@
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-name').value = asset.name || '';
             document.getElementById('edit-category').value = asset.category || '';
-            document.getElementById('edit-purchaseDate').value = asset.purchaseDate || '';
+            document.getElementById('edit-refNo').value = asset.refNo || '';
             document.getElementById('edit-usefulLife').value = asset.usefulLife || 1;
             document.getElementById('edit-unit').value = asset.unit || 1;
             document.getElementById('edit-unitPrice').value = asset.unitPrice || 0;
             document.getElementById('edit-total').value = parseFloat(asset.total || 0).toFixed(2);
+            document.getElementById('edit-salvage').value = asset.salvage || 0;
 
             document.getElementById('edit-modal').style.display = 'flex';
         }
@@ -536,6 +513,7 @@
             document.getElementById('edit-modal').style.display = 'none';
         }
 
+        // Save Edit Changes
         function saveAssetEdit(event) {
             event.preventDefault();
             const id = parseInt(document.getElementById('edit-id').value);
@@ -549,20 +527,21 @@
 
                 assets[index].name = document.getElementById('edit-name').value;
                 assets[index].category = document.getElementById('edit-category').value;
-                assets[index].purchaseDate = document.getElementById('edit-purchaseDate').value;
+                assets[index].refNo = document.getElementById('edit-refNo').value;
                 assets[index].usefulLife = parseInt(document.getElementById('edit-usefulLife').value);
                 assets[index].unit = unit;
                 assets[index].unitPrice = unitPrice;
                 assets[index].total = unit * unitPrice;
+                assets[index].salvage = parseFloat(document.getElementById('edit-salvage').value) || 0;
                 assets[index].updatedDate = new Date().toISOString().split('T')[0];
 
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
                 closeModal();
-                renderDepreciationSchedules();
+                renderDepreciationSchedule();
             }
         }
 
-        document.addEventListener('DOMContentLoaded', renderDepreciationSchedules);
+        document.addEventListener('DOMContentLoaded', renderDepreciationSchedule);
     </script>
 </body>
 </html>
