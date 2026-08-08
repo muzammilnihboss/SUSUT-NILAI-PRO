@@ -61,176 +61,127 @@
         }
 
         .btn-primary {
-            background-color: #e11d48;
+            background-color: #2563eb;
             color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background-color: #be123c;
         }
 
         .container {
             max-width: 98%;
             margin: 0 auto;
             padding: 0 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        /* ---------------- ACTIVE ALERTS SECTION ---------------- */
-        .alerts-container {
+        /* ---------------- ACTIVE ALERTS CARD STYLES ---------------- */
+        .alert-card {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
             padding: 24px;
-            margin-bottom: 28px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
-        .alerts-header {
+        .alert-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 20px;
         }
 
-        .alerts-title-box {
+        .alert-title-group {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
-        .alerts-icon {
+        .alert-icon-box {
             width: 44px;
             height: 44px;
             background-color: #ffe4e6;
-            color: #e11d48;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
         }
 
-        .alerts-header h3 {
-            font-size: 18px;
+        .alert-title-text h3 {
+            font-size: 16px;
             font-weight: 700;
             color: #0f172a;
+            margin-bottom: 2px;
         }
 
-        .alerts-header p {
+        .alert-title-text p {
             font-size: 12.5px;
             color: #64748b;
-            margin-top: 2px;
         }
 
-        .alerts-badge {
+        .alert-badge-count {
             background-color: #ffe4e6;
             color: #e11d48;
+            font-size: 12px;
+            font-weight: 700;
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
         }
 
-        .alerts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 16px;
-        }
-
-        .alert-card {
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 18px;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .alert-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .alert-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .alert-category {
-            font-size: 11px;
-            font-weight: 700;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .badge-red { background: #ffe4e6; color: #e11d48; }
-        .badge-yellow { background: #fef3c7; color: #d97706; }
-        .badge-green { background: #dcfce7; color: #16a34a; }
-
-        .alert-asset-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .alert-dates {
-            font-size: 12px;
+        .alert-body-empty {
+            text-align: center;
             color: #64748b;
-            margin-bottom: 16px;
-            line-height: 1.6;
+            font-size: 13.5px;
+            padding: 20px 0;
         }
 
-        .btn-mark-serviced {
-            width: 100%;
-            padding: 9px;
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            color: #e11d48;
-            font-size: 12.5px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-mark-serviced:hover {
-            background: #ffe4e6;
-            border-color: #fda4af;
-        }
-
-        /* ---------------- FORM & TABLE LAYOUT ---------------- */
-        .grid-layout {
+        /* GRID FOR OVERDUE / DUE ASSETS */
+        .alert-items-grid {
             display: grid;
-            grid-template-columns: 400px 1fr;
-            gap: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
         }
 
-        @media (max-width: 1100px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
+        .alert-item-box {
+            background-color: #fff1f2;
+            border: 1px solid #fecdd3;
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
+        .alert-item-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #9f1239;
+            margin-bottom: 4px;
+        }
+
+        .alert-item-info p {
+            font-size: 12px;
+            color: #be123c;
+        }
+
+        .btn-quick-service {
+            background-color: #e11d48;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-quick-service:hover {
+            background-color: #be123c;
+        }
+
+        /* ---------------- SERVICE HISTORY TABLE ---------------- */
         .card {
             background: #ffffff;
             border: 1px solid #cbd5e1;
@@ -239,84 +190,17 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
 
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .card-title {
             font-size: 18px;
             font-weight: 700;
             color: #0f172a;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #475569;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 13px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #e11d48;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 11px;
-            background-color: #e11d48;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.2s;
-        }
-
-        .btn-submit:hover {
-            background-color: #be123c;
-        }
-
-        .btn-cancel {
-            width: 100%;
-            padding: 9px;
-            background-color: #94a3b8;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 6px;
-            display: none;
-        }
-
-        .btn-cancel:hover {
-            background-color: #64748b;
         }
 
         table {
@@ -336,55 +220,56 @@
             background-color: #f1f5f9;
             color: #0f172a;
             font-weight: 700;
-            white-space: nowrap;
         }
 
-        .action-btns {
-            display: flex;
-            gap: 6px;
-        }
-
-        .btn-action-edit {
-            padding: 5px 10px;
-            background-color: #0284c7;
-            color: white;
-            border: none;
+        .status-badge {
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-overdue { background-color: #ffe4e6; color: #e11d48; }
+        .status-ok { background-color: #dcfce7; color: #15803d; }
+
+        .btn-add-service {
+            padding: 8px 16px;
+            background-color: #059669;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
         }
 
-        .btn-action-edit:hover { background-color: #0369a1; }
+        .btn-add-service:hover { background-color: #047857; }
 
-        .btn-action-delete {
-            padding: 5px 10px;
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
+        /* ---------------- MODAL STYLES ---------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
 
-        .btn-action-delete:hover { background-color: #dc2626; }
-
-        .empty-msg {
-            text-align: center;
-            padding: 30px;
-            color: #64748b;
-            font-size: 14px;
-        }
-
-        .badge-edit {
-            font-size: 11px;
-            background-color: #fef3c7;
-            color: #d97706;
-            padding: 2px 8px;
+        .modal-box {
+            background: #ffffff;
             border-radius: 12px;
-            font-weight: 600;
+            width: 500px;
+            max-width: 95%;
+            padding: 24px;
         }
+
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 4px; text-transform: uppercase; }
+        .form-control { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -404,389 +289,241 @@
     </header>
 
     <div class="container">
-
         <!-- ACTIVE MAINTENANCE & SERVICING ALERTS -->
-        <div class="alerts-container">
-            <div class="alerts-header">
-                <div class="alerts-title-box">
-                    <div class="alerts-icon">🧰</div>
-                    <div>
+        <div class="alert-card">
+            <div class="alert-header">
+                <div class="alert-title-group">
+                    <div class="alert-icon-box">🧰</div>
+                    <div class="alert-title-text">
                         <h3>Active Maintenance & Servicing Alerts</h3>
                         <p>Real-time schedule monitoring projected from customized maintenance intervals.</p>
                     </div>
                 </div>
-                <div id="overdue-badge-count" class="alerts-badge">0 Overdue Services</div>
+                <div class="alert-badge-count" id="overdue-count-badge">0 Overdue Services</div>
             </div>
 
-            <div id="alerts-grid-container" class="alerts-grid">
-                <!-- Dynamic Alert Cards rendered via JavaScript -->
+            <!-- Dynamic content area -->
+            <div id="alerts-container">
+                <div class="alert-body-empty">
+                    No maintenance schedules found. Log a service record to generate alerts.
+                </div>
             </div>
         </div>
 
-        <div class="grid-layout">
-
-            <!-- LOG MAINTENANCE FORM -->
-            <div class="card">
-                <div class="card-title">
-                    <span>🛠️ Log Maintenance & Service</span>
-                    <span id="edit-indicator" class="badge-edit" style="display: none;">Editing Record</span>
-                </div>
-                
-                <form id="service-form" onsubmit="saveServiceLog(event)">
-                    <input type="hidden" id="editing-id" value="">
-
-                    <!-- Asset Selector -->
-                    <div class="form-group">
-                        <label for="select-asset">Select Asset from Register</label>
-                        <select id="select-asset" class="form-control" onchange="autoFillAssetData()">
-                            <option value="">-- Choose Asset --</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="asset-name">Asset Name</label>
-                        <input type="text" id="asset-name" class="form-control" placeholder="Asset name" required>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="supplier-name">Supplier Name</label>
-                            <input type="text" id="supplier-name" class="form-control" placeholder="Supplier name">
-                        </div>
-                        <div class="form-group">
-                            <label for="invoice-number">Invoice Number</label>
-                            <input type="text" id="invoice-number" class="form-control" placeholder="Invoice / Ref No.">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="asset-category">Classification Category</label>
-                            <input type="text" id="asset-category" class="form-control" placeholder="Category">
-                        </div>
-                        <div class="form-group">
-                            <label for="deployment-location">Deployment Location / Dept</label>
-                            <input type="text" id="deployment-location" class="form-control" placeholder="Department / Room">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="asset-unit">Unit / Qty</label>
-                            <input type="number" id="asset-unit" class="form-control" min="1" value="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="service-date">Last Service Date</label>
-                            <input type="date" id="service-date" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="next-service-date" style="color: #0284c7;">Next Service Due Date</label>
-                        <input type="date" id="next-service-date" class="form-control" style="border-color: #0284c7; font-weight: 600;" required>
-                    </div>
-
-                    <!-- Manual Service Cost Input -->
-                    <div class="form-group">
-                        <label for="service-cost" style="color: #e11d48;">Service Cost (RM)</label>
-                        <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold;" placeholder="0.00" required>
-                    </div>
-
-                    <button type="submit" id="btn-submit" class="btn-submit">Save Service Record</button>
-                    <button type="button" id="btn-cancel" class="btn-cancel" onclick="resetForm()">Cancel Edit</button>
-                </form>
+        <!-- SERVICE RECORDS TABLE CARD -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Maintenance & Service Logs</h3>
+                <button class="btn-add-service" onclick="openAddModal()">+ Log New Service</button>
             </div>
 
-            <!-- MAINTENANCE LOG HISTORY TABLE -->
-            <div class="card">
-                <h3 class="card-title">📋 Maintenance & Service History Log</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th>Service Date</th>
-                                <th>Asset Name</th>
-                                <th>Category</th>
-                                <th>Department / Location</th>
-                                <th>Next Due Date</th>
-                                <th>Unit</th>
-                                <th>Cost (RM)</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="service-history-body">
-                            <!-- Populated dynamically via JS -->
-                        </tbody>
-                    </table>
-                </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Asset Name</th>
+                            <th>Last Service Date</th>
+                            <th>Next Service Date</th>
+                            <th>Service Provider / Technician</th>
+                            <th>Cost (RM)</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="service-table-body">
+                        <!-- Populated dynamically via JS -->
+                    </tbody>
+                </table>
             </div>
+        </div>
+    </div>
 
+    <!-- LOG SERVICE MODAL -->
+    <div id="service-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 style="margin-bottom: 16px;" id="modal-title">Log Asset Service</h3>
+            <form id="service-form" onsubmit="saveServiceRecord(event)">
+                <input type="hidden" id="service-id">
+
+                <div class="form-group">
+                    <label>Select Asset</label>
+                    <select id="service-asset-name" class="form-control" required>
+                        <!-- Populated from Asset Register -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Last Service Date</label>
+                    <input type="date" id="service-last-date" class="form-control" required onchange="autoCalculateNextDate()">
+                </div>
+
+                <div class="form-group">
+                    <label>Next Scheduled Service Date</label>
+                    <input type="date" id="service-next-date" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Service Provider / Vendor</label>
+                    <input type="text" id="service-provider" class="form-control" placeholder="e.g. Dell Support / Contractor" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Cost (RM)</label>
+                    <input type="number" step="0.01" id="service-cost" class="form-control" placeholder="0.00" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary btn-nav" onclick="closeServiceModal()">Cancel</button>
+                    <button type="submit" class="btn-add-service">Save Record</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
-        const ASSETS_STORAGE_KEY = 'susut_nilai_assets';
-        const SERVICES_STORAGE_KEY = 'susut_nilai_services';
+        const SERVICE_KEY = 'susut_nilai_services';
+        const ASSET_KEY = 'susut_nilai_assets';
 
-        let registeredAssets = [];
-
-        function loadAssetOptions() {
-            registeredAssets = JSON.parse(localStorage.getItem(ASSETS_STORAGE_KEY)) || [];
-            const select = document.getElementById('select-asset');
-            select.innerHTML = '<option value="">-- Choose Asset --</option>';
-
-            registeredAssets.forEach(asset => {
-                const option = document.createElement('option');
-                option.value = asset.id;
-                option.textContent = `${asset.name} (${asset.refNo || asset.invoiceNo || 'No Ref'})`;
-                select.appendChild(option);
-            });
+        function getServices() {
+            return JSON.parse(localStorage.getItem(SERVICE_KEY)) || [];
         }
 
-        function autoFillAssetData() {
-            const selectedId = parseInt(document.getElementById('select-asset').value);
-            const foundAsset = registeredAssets.find(item => item.id === selectedId);
-
-            if (foundAsset) {
-                document.getElementById('asset-name').value = foundAsset.name || '';
-                document.getElementById('supplier-name').value = foundAsset.supplier || foundAsset.vendor || '';
-                document.getElementById('invoice-number').value = foundAsset.invoiceNo || foundAsset.refNo || '';
-                document.getElementById('asset-category').value = foundAsset.category || '';
-                document.getElementById('deployment-location').value = foundAsset.department || foundAsset.location || '';
-                document.getElementById('asset-unit').value = foundAsset.unit || foundAsset.qty || 1;
-
-                // Auto set next due date to +6 months by default
-                const nextDate = new Date();
-                nextDate.setMonth(nextDate.getMonth() + 6);
-                document.getElementById('next-service-date').value = nextDate.toISOString().split('T')[0];
-            }
+        function getAssets() {
+            return JSON.parse(localStorage.getItem(ASSET_KEY)) || [];
         }
 
-        // Render Active Maintenance Alert Cards with Status Indicators
-        function renderAlertCards() {
-            const container = document.getElementById('alerts-grid-container');
-            const overdueBadge = document.getElementById('overdue-badge-count');
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-
-            if (services.length === 0) {
-                container.innerHTML = `<p class="empty-msg" style="grid-column: 1/-1;">No maintenance schedules found. Log a service record to generate alerts.</p>`;
-                overdueBadge.textContent = '0 Overdue Services';
+        function populateAssetDropdown() {
+            const assets = getAssets();
+            const select = document.getElementById('service-asset-name');
+            if (assets.length === 0) {
+                select.innerHTML = '<option value="">-- No Assets Available --</option>';
                 return;
             }
+            select.innerHTML = assets.map(a => `<option value="${a.name}">${a.name} (${a.category || 'Asset'})</option>`).join('');
+        }
 
-            const today = new Date();
-            today.setHours(0,0,0,0);
+        function renderServicesAndAlerts() {
+            const services = getServices();
+            const todayStr = new Date().toISOString().split('T')[0];
+            const alertsContainer = document.getElementById('alerts-container');
+            const badgeCount = document.getElementById('overdue-count-badge');
+            const tableBody = document.getElementById('service-table-body');
 
-            let overdueCount = 0;
+            // Find all records that are overdue or due today
+            const overdueItems = services.filter(s => s.nextServiceDate && s.nextServiceDate <= todayStr);
 
-            // Map & filter unique assets by their latest service record
-            const latestRecordsMap = {};
-            services.forEach(rec => {
-                if (!latestRecordsMap[rec.assetName] || new Date(rec.serviceDate) > new Date(latestRecordsMap[rec.assetName].serviceDate)) {
-                    latestRecordsMap[rec.assetName] = rec;
-                }
-            });
+            // 1. UPDATE ALERTS SECTION
+            badgeCount.innerText = `${overdueItems.length} Overdue Services`;
 
-            const cardsHtml = Object.values(latestRecordsMap).map(item => {
-                const dueDate = new Date(item.nextServiceDate || item.serviceDate);
-                dueDate.setHours(0,0,0,0);
-
-                const diffTime = dueDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                let badgeClass = '';
-                let statusText = '';
-                let icon = '';
-
-                // RED: Overdue or due today
-                if (diffDays <= 0) {
-                    overdueCount++;
-                    badgeClass = 'badge-red';
-                    statusText = diffDays === 0 ? 'Due Today' : `Overdue by ${Math.abs(diffDays)} Days`;
-                    icon = '🚨';
-                } 
-                // YELLOW: Approaching due date (within 30 days)
-                else if (diffDays <= 30) {
-                    badgeClass = 'badge-yellow';
-                    statusText = `Due in ${diffDays} Days`;
-                    icon = '⚡';
-                } 
-                // GREEN: Healthy & far from service date (>30 days)
-                else {
-                    badgeClass = 'badge-green';
-                    statusText = `Healthy (${diffDays} Days Left)`;
-                    icon = '✅';
-                }
-
-                return `
-                    <div class="alert-card">
-                        <div>
-                            <div class="alert-card-header">
-                                <span class="alert-category">${item.category || 'GENERAL'}</span>
-                                <span class="status-badge ${badgeClass}">${statusText}</span>
-                            </div>
-                            <div class="alert-asset-name">
-                                <span>${icon}</span>
-                                <span>${item.assetName}</span>
-                            </div>
-                            <div class="alert-dates">
-                                <div><strong>Last Service:</strong> ${item.serviceDate || '-'}</div>
-                                <div><strong>Next Due:</strong> ${item.nextServiceDate || '-'}</div>
-                            </div>
-                        </div>
-                        <button class="btn-mark-serviced" onclick="markAsServicedToday(${item.id})">
-                            🔧 Mark as Serviced Today
-                        </button>
+            if (overdueItems.length === 0) {
+                alertsContainer.innerHTML = `
+                    <div class="alert-body-empty">
+                        No maintenance schedules found. Log a service record to generate alerts.
                     </div>
                 `;
-            }).join('');
-
-            container.innerHTML = cardsHtml;
-            overdueBadge.textContent = `${overdueCount} Overdue Services`;
-        }
-
-        // Action: Quick Mark Asset as Serviced Today
-        function markAsServicedToday(id) {
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            const record = services.find(item => item.id === id);
-
-            if (!record) return;
-
-            const todayStr = new Date().toISOString().split('T')[0];
-            const nextDate = new Date();
-            nextDate.setMonth(nextDate.getMonth() + 6); // Default +6 Months next interval
-            const nextDateStr = nextDate.toISOString().split('T')[0];
-
-            const updatedRecord = {
-                ...record,
-                id: Date.now(),
-                serviceDate: todayStr,
-                nextServiceDate: nextDateStr
-            };
-
-            services.push(updatedRecord);
-            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
-
-            renderAlertCards();
-            renderServiceHistory();
-        }
-
-        function saveServiceLog(event) {
-            event.preventDefault();
-
-            const editingId = document.getElementById('editing-id').value;
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-
-            const serviceRecord = {
-                id: editingId ? parseInt(editingId) : Date.now(),
-                assetName: document.getElementById('asset-name').value,
-                supplierName: document.getElementById('supplier-name').value || '-',
-                invoiceNumber: document.getElementById('invoice-number').value || '-',
-                category: document.getElementById('asset-category').value || '-',
-                departmentLocation: document.getElementById('deployment-location').value || '-',
-                unit: document.getElementById('asset-unit').value || 1,
-                serviceDate: document.getElementById('service-date').value,
-                nextServiceDate: document.getElementById('next-service-date').value,
-                serviceCost: parseFloat(document.getElementById('service-cost').value) || 0
-            };
-
-            if (editingId) {
-                const index = services.findIndex(item => item.id === parseInt(editingId));
-                if (index !== -1) services[index] = serviceRecord;
             } else {
-                services.push(serviceRecord);
+                alertsContainer.innerHTML = `
+                    <div class="alert-items-grid">
+                        ${overdueItems.map(item => `
+                            <div class="alert-item-box">
+                                <div class="alert-item-info">
+                                    <h4>${item.assetName}</h4>
+                                    <p>⚠️ Due Date: <strong>${item.nextServiceDate}</strong></p>
+                                </div>
+                                <button class="btn-quick-service" onclick="openAddModal('${item.assetName}')">Renew Service</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
             }
 
-            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
-            resetForm();
-            renderAlertCards();
-            renderServiceHistory();
-        }
-
-        function editServiceLog(id) {
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            const record = services.find(item => item.id === id);
-
-            if (!record) return;
-
-            document.getElementById('editing-id').value = record.id;
-            document.getElementById('select-asset').value = '';
-            document.getElementById('asset-name').value = record.assetName || '';
-            document.getElementById('supplier-name').value = record.supplierName || '';
-            document.getElementById('invoice-number').value = record.invoiceNumber || '';
-            document.getElementById('asset-category').value = record.category || '';
-            document.getElementById('deployment-location').value = record.departmentLocation || '';
-            document.getElementById('asset-unit').value = record.unit || 1;
-            document.getElementById('service-date').value = record.serviceDate || '';
-            document.getElementById('next-service-date').value = record.nextServiceDate || '';
-            document.getElementById('service-cost').value = record.serviceCost || '';
-
-            document.getElementById('btn-submit').textContent = 'Update Service Record';
-            document.getElementById('btn-cancel').style.display = 'block';
-            document.getElementById('edit-indicator').style.display = 'inline-block';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function deleteServiceLog(id) {
-            if (!confirm("Are you sure you want to delete this maintenance record?")) return;
-
-            let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            services = services.filter(item => item.id !== id);
-            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
-
-            renderAlertCards();
-            renderServiceHistory();
-        }
-
-        function resetForm() {
-            document.getElementById('service-form').reset();
-            document.getElementById('editing-id').value = '';
-            document.getElementById('btn-submit').textContent = 'Save Service Record';
-            document.getElementById('btn-cancel').style.display = 'none';
-            document.getElementById('edit-indicator').style.display = 'none';
-            document.getElementById('service-date').valueAsDate = new Date();
-
-            const defaultNext = new Date();
-            defaultNext.setMonth(defaultNext.getMonth() + 6);
-            document.getElementById('next-service-date').value = defaultNext.toISOString().split('T')[0];
-        }
-
-        function renderServiceHistory() {
-            const tbody = document.getElementById('service-history-body');
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-
+            // 2. UPDATE TABLE
             if (services.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">No maintenance records logged yet.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#64748b; padding:20px;">No service records found.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = services.map((item, index) => `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${item.serviceDate}</td>
-                    <td><strong>${item.assetName}</strong></td>
-                    <td>${item.category}</td>
-                    <td>${item.departmentLocation}</td>
-                    <td><strong style="color: #0284c7;">${item.nextServiceDate || '-'}</strong></td>
-                    <td>${item.unit}</td>
-                    <td><strong style="color: #e11d48;">RM ${item.serviceCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
-                    <td>
-                        <div class="action-btns">
-                            <button class="btn-action-edit" onclick="editServiceLog(${item.id})">Edit</button>
-                            <button class="btn-action-delete" onclick="deleteServiceLog(${item.id})">Delete</button>
-                        </div>
-                    </td>
-                </tr>
-            `).join('');
+            tableBody.innerHTML = services.map((item, index) => {
+                const isOverdue = item.nextServiceDate && item.nextServiceDate <= todayStr;
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${item.assetName}</strong></td>
+                        <td>${item.lastServiceDate || '-'}</td>
+                        <td>${item.nextServiceDate || '-'}</td>
+                        <td>${item.provider || '-'}</td>
+                        <td>RM ${parseFloat(item.cost || 0).toFixed(2)}</td>
+                        <td>
+                            <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-ok'}">
+                                ${isOverdue ? 'OVERDUE / DUE' : 'UP TO DATE'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-quick-service" style="background-color:#0284c7;" onclick="deleteService(${item.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function autoCalculateNextDate() {
+            const lastDateVal = document.getElementById('service-last-date').value;
+            if (lastDateVal) {
+                const lastDate = new Date(lastDateVal);
+                // Default next service date: 6 months after last service
+                lastDate.setMonth(lastDate.getMonth() + 6);
+                document.getElementById('service-next-date').value = lastDate.toISOString().split('T')[0];
+            }
+        }
+
+        function openAddModal(assetName = '') {
+            populateAssetDropdown();
+            document.getElementById('service-id').value = '';
+            document.getElementById('service-last-date').value = new Date().toISOString().split('T')[0];
+            autoCalculateNextDate();
+            document.getElementById('service-provider').value = '';
+            document.getElementById('service-cost').value = '';
+
+            if (assetName) {
+                document.getElementById('service-asset-name').value = assetName;
+            }
+
+            document.getElementById('service-modal').style.display = 'flex';
+        }
+
+        function closeServiceModal() {
+            document.getElementById('service-modal').style.display = 'none';
+        }
+
+        function saveServiceRecord(e) {
+            e.preventDefault();
+            const services = getServices();
+
+            const newRecord = {
+                id: Date.now(),
+                assetName: document.getElementById('service-asset-name').value,
+                lastServiceDate: document.getElementById('service-last-date').value,
+                nextServiceDate: document.getElementById('service-next-date').value,
+                provider: document.getElementById('service-provider').value,
+                cost: parseFloat(document.getElementById('service-cost').value) || 0
+            };
+
+            services.push(newRecord);
+            localStorage.setItem(SERVICE_KEY, JSON.stringify(services));
+            closeServiceModal();
+            renderServicesAndAlerts();
+        }
+
+        function deleteService(id) {
+            if (!confirm("Are you sure you want to delete this record?")) return;
+            let services = getServices().filter(s => s.id !== id);
+            localStorage.setItem(SERVICE_KEY, JSON.stringify(services));
+            renderServicesAndAlerts();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            loadAssetOptions();
-            renderAlertCards();
-            renderServiceHistory();
-            resetForm();
+            renderServicesAndAlerts();
         });
     </script>
 </body>
