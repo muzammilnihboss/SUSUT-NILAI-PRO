@@ -16,6 +16,7 @@
             background-color: #f4f6f9;
             color: #1e293b;
             min-height: 100vh;
+            padding-bottom: 40px;
         }
 
         header {
@@ -25,7 +26,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 32px;
+            margin-bottom: 24px;
         }
 
         .header-brand h2 {
@@ -64,7 +65,82 @@
             padding: 0 10px;
         }
 
-        /* 5-Card Horizontal Grid */
+        /* ---------------- TOP KPI SUMMARY STATS GRID ---------------- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .stat-value.green-text { color: #059669; }
+        .stat-value.red-text { color: #e11d48; }
+
+        .stat-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon-box svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Stat Icon Backgrounds & Colors */
+        .kpi-1 { background-color: #e6f7ed; color: #10b981; }
+        .kpi-2 { background-color: #e6f7ed; color: #059669; }
+        .kpi-3 { background-color: #ffe4e6; color: #e11d48; }
+        .kpi-4 { background-color: #e0e7ff; color: #6366f1; }
+
+        /* ---------------- 5-CARD CONTROL PANEL GRID ---------------- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -97,25 +173,9 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
 
-        /* Highlighted Card 2 */
         .card.active-card {
             border: 1.5px solid #6366f1;
             box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12);
-        }
-
-        /* Background Pattern Overlay */
-        .card::after {
-            content: "";
-            position: absolute;
-            right: -10px;
-            bottom: -10px;
-            width: 120px;
-            height: 120px;
-            opacity: 0.04;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-            pointer-events: none;
         }
 
         .icon-box {
@@ -133,27 +193,23 @@
             height: 22px;
         }
 
-        /* Colors for Card 1 - Invoice Manager */
+        /* Card Themes */
         .c1 .icon-box { background-color: #dcfce7; color: #16a34a; }
         .c1 .card-title { color: #0f172a; }
         .c1 .card-link { color: #16a34a; }
 
-        /* Colors for Card 2 - Register New Asset */
         .c2 .icon-box { background-color: #e0e7ff; color: #4f46e5; }
         .c2 .card-title { color: #4f46e5; }
         .c2 .card-link { color: #4f46e5; }
 
-        /* Colors for Card 3 - Asset Register */
         .c3 .icon-box { background-color: #dbeafe; color: #2563eb; }
         .c3 .card-title { color: #0f172a; }
         .c3 .card-link { color: #2563eb; }
 
-        /* Colors for Card 4 - Service Report */
         .c4 .icon-box { background-color: #ffe4e6; color: #e11d48; }
         .c4 .card-title { color: #0f172a; }
         .c4 .card-link { color: #e11d48; }
 
-        /* Colors for Card 5 - Depreciation Schedule */
         .c5 .icon-box { background-color: #fef3c7; color: #d97706; }
         .c5 .card-title { color: #0f172a; }
         .c5 .card-link { color: #d97706; }
@@ -205,6 +261,63 @@
     </header>
 
     <div class="container">
+
+        <!-- 4 SUMMARY KPI CARDS (TOP SECTION) -->
+        <div class="stats-grid">
+            <!-- 1. Total Asset Cost -->
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Total Asset Cost</span>
+                    <span class="stat-value" id="kpi-total-cost">RM 0.00</span>
+                </div>
+                <div class="stat-icon-box kpi-1">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 4.02 2 6.5s4.48 4.5 10 4.5 10-2.02 10-4.5S17.52 2 12 2zm0 3c-4.42 0-8-.9-8-1.5S7.58 2 12 2s8 .9 8 1.5S16.42 5 12 5zm0 4c-4.42 0-8-.9-8-1.5V11c0 1.66 3.58 3 8 3s8-1.34 8-3V7.5c0 .6-3.58 1.5-8 1.5zm0 5c-4.42 0-8-.9-8-1.5V16c0 1.66 3.58 3 8 3s8-1.34 8-3v-3.5c0 .6-3.58 1.5-8 1.5z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 2. Current Book Value -->
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Current Book Value</span>
+                    <span class="stat-value green-text" id="kpi-book-value">RM 0.00</span>
+                </div>
+                <div class="stat-icon-box kpi-2">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 3. Accumulated Dep. -->
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Accumulated Dep.</span>
+                    <span class="stat-value red-text" id="kpi-accum-dep">RM 0.00</span>
+                </div>
+                <div class="stat-icon-box kpi-3">
+                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 4. Registered Assets -->
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Registered Assets</span>
+                    <span class="stat-value" id="kpi-total-count">0</span>
+                </div>
+                <div class="stat-icon-box kpi-4">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5 CONTROL PANELS (BOTTOM SECTION) -->
         <div class="dashboard-grid">
 
             <!-- Card 1: Invoice Manager -->
@@ -290,5 +403,41 @@
         </div>
     </div>
 
+    <script>
+        // Dynamically calculate metrics from LocalStorage
+        function calculateDashboardKPIs() {
+            const STORAGE_KEY = 'susut_nilai_assets';
+            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+            let totalCost = 0;
+            let totalAccumDep = 0;
+            let currentYear = new Date().getFullYear();
+
+            assets.forEach(asset => {
+                const cost = parseFloat(asset.total || 0);
+                const salvage = parseFloat(asset.salvage || 0);
+                const usefulLife = parseInt(asset.usefulLife || 1);
+                const purchaseYear = asset.purchaseDate ? new Date(asset.purchaseDate).getFullYear() : currentYear;
+
+                totalCost += cost;
+
+                if (currentYear >= purchaseYear) {
+                    const annualDep = (cost - salvage) / usefulLife;
+                    const yearsElapsed = currentYear - purchaseYear + 1;
+                    const accumulated = Math.min(yearsElapsed * annualDep, cost - salvage);
+                    totalAccumDep += Math.max(0, accumulated);
+                }
+            });
+
+            const currentBookValue = totalCost - totalAccumDep;
+
+            document.getElementById('kpi-total-cost').textContent = `RM ${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('kpi-book-value').textContent = `RM ${Math.max(0, currentBookValue).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('kpi-accum-dep').textContent = `RM ${totalAccumDep.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            document.getElementById('kpi-total-count').textContent = assets.length;
+        }
+
+        document.addEventListener('DOMContentLoaded', calculateDashboardKPIs);
+    </script>
 </body>
 </html>
