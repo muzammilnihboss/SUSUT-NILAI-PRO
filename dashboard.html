@@ -134,7 +134,6 @@
             height: 24px;
         }
 
-        /* Stat Icon Backgrounds & Colors */
         .kpi-1 { background-color: #e6f7ed; color: #10b981; }
         .kpi-2 { background-color: #e6f7ed; color: #059669; }
         .kpi-3 { background-color: #ffe4e6; color: #e11d48; }
@@ -193,7 +192,6 @@
             height: 22px;
         }
 
-        /* Card Themes */
         .c1 .icon-box { background-color: #dcfce7; color: #16a34a; }
         .c1 .card-title { color: #0f172a; }
         .c1 .card-link { color: #16a34a; }
@@ -256,15 +254,15 @@
             <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
             <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
             <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
+            <a href="servicereport.html" class="btn-nav btn-secondary">🛠️ Service Report</a>
             <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
         </div>
     </header>
 
     <div class="container">
 
-        <!-- 4 SUMMARY KPI CARDS (TOP SECTION) -->
+        <!-- 4 SUMMARY KPI CARDS -->
         <div class="stats-grid">
-            <!-- 1. Total Asset Cost -->
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Total Asset Cost</span>
@@ -277,7 +275,6 @@
                 </div>
             </div>
 
-            <!-- 2. Current Book Value -->
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Current Book Value</span>
@@ -290,7 +287,6 @@
                 </div>
             </div>
 
-            <!-- 3. Accumulated Dep. -->
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Accumulated Dep.</span>
@@ -303,7 +299,6 @@
                 </div>
             </div>
 
-            <!-- 4. Registered Assets -->
             <div class="stat-card">
                 <div class="stat-info">
                     <span class="stat-label">Registered Assets</span>
@@ -317,7 +312,7 @@
             </div>
         </div>
 
-        <!-- 5 CONTROL PANELS (BOTTOM SECTION) -->
+        <!-- 5 CONTROL PANELS -->
         <div class="dashboard-grid">
 
             <!-- Card 1: Invoice Manager -->
@@ -336,7 +331,7 @@
                 </div>
             </div>
 
-            <!-- Card 2: Register New Asset (Highlighted) -->
+            <!-- Card 2: Register New Asset -->
             <div class="card c2 active-card">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -368,7 +363,7 @@
                 </div>
             </div>
 
-            <!-- Card 4: Service Report -->
+            <!-- Card 4: Service Report (ACTIVE LINKED TO servicereport.html) -->
             <div class="card c4">
                 <div class="icon-box">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -380,7 +375,7 @@
                     <p class="card-desc">Keep your assets in top shape! Monitor maintenance schedules, track equipment health status, and get alerts for overdue servicing.</p>
                 </div>
                 <div>
-                    <a href="#" class="card-link">View Service Desk &rarr;</a>
+                    <a href="servicereport.html" class="card-link">View Service Desk &rarr;</a>
                 </div>
             </div>
 
@@ -404,7 +399,6 @@
     </div>
 
     <script>
-        // Dynamically calculate metrics from LocalStorage
         function calculateDashboardKPIs() {
             const STORAGE_KEY = 'susut_nilai_assets';
             const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
