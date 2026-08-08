@@ -16,7 +16,6 @@
             background-color: #f8fafc;
             color: #1e293b;
             min-height: 100vh;
-            padding-bottom: 50px;
         }
 
         header {
@@ -29,17 +28,9 @@
             margin-bottom: 28px;
         }
 
-        .header-brand h2 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0f172a;
-        }
+        .header-brand h2 { font-size: 20px; font-weight: 700; color: #0f172a; }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .nav-links { display: flex; gap: 10px; }
 
         .btn-nav {
             padding: 8px 14px;
@@ -47,114 +38,57 @@
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
-            transition: all 0.2s ease;
         }
 
-        .btn-secondary {
-            background-color: #f1f5f9;
-            color: #475569;
-        }
+        .btn-secondary { background-color: #f1f5f9; color: #475569; }
+        .btn-primary { background-color: #059669; color: #ffffff; }
 
-        .btn-secondary:hover {
-            background-color: #e2e8f0;
-            color: #0f172a;
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        .btn-primary {
-            background-color: #059669;
-            color: #ffffff;
-        }
-
-        .btn-primary:hover {
-            background-color: #047857;
-        }
-
-        .container {
-            max-width: 96%;
-            margin: 0 auto;
-        }
-
-        .stats-grid {
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 18px;
-            margin-bottom: 28px;
-        }
-
-        .stat-card {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 20px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .stat-card h3 {
-            font-size: 12px;
-            color: #64748b;
-            text-transform: uppercase;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .stat-card .value {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
 
         .card {
             background: #ffffff;
-            border-radius: 8px;
             border: 1px solid #cbd5e1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
-            overflow: hidden;
+            border-radius: 10px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
 
-        .card-header {
-            padding: 16px 20px;
-            border-bottom: 1px solid #e2e8f0;
+        .card h3 { font-size: 18px; color: #0f172a; margin-bottom: 10px; }
+        .card p { font-size: 13px; color: #64748b; margin-bottom: 18px; }
+
+        .dash-control-group {
             display: flex;
-            justify-content: space-between;
+            gap: 10px;
             align-items: center;
-            background-color: #f8fafc;
         }
 
-        .card-header h2 {
-            font-size: 16px;
-            color: #0f172a;
-            font-weight: 700;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            text-align: center;
-        }
-
-        th, td {
-            padding: 12px 10px;
+        .dash-select {
+            padding: 8px 12px;
             border: 1px solid #cbd5e1;
-            vertical-align: middle;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        th {
-            background-color: #f1f5f9;
-            color: #0f172a;
-            font-weight: 700;
+        .btn-open {
+            display: inline-block;
+            background-color: #0f172a;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
         }
 
-        td.text-left {
-            text-align: left;
-        }
-
-        .empty-text {
-            text-align: center;
-            padding: 40px;
-            color: #64748b;
-        }
+        .btn-open:hover { background-color: #1e293b; }
     </style>
 </head>
 <body>
@@ -164,7 +98,6 @@
             <h2>Susut Nilai Pro</h2>
         </div>
         <div class="nav-links">
-            <a href="dashboard.html" class="btn-nav btn-secondary">Dashboard</a>
             <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
             <a href="registernew.html" class="btn-nav btn-primary">+ Register New Asset</a>
             <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
@@ -173,111 +106,60 @@
     </header>
 
     <div class="container">
-        <!-- KPI Cards -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <h3>Total Registered Assets</h3>
-                <div class="value" id="stat-total-count">0</div>
-            </div>
-            <div class="stat-card">
-                <h3>Total Asset Cost (RM)</h3>
-                <div class="value" id="stat-total-cost">RM 0.00</div>
-            </div>
-            <div class="stat-card">
-                <h3>Annual Depreciation (RM)</h3>
-                <div class="value" id="stat-total-dep">RM 0.00</div>
-            </div>
-            <div class="stat-card">
-                <h3>Current Net Book Value (RM)</h3>
-                <div class="value" style="color: #059669;" id="stat-total-nbv">RM 0.00</div>
-            </div>
-        </div>
+        <h1 style="font-size: 24px; margin-bottom: 10px;">Control Panel Dashboard</h1>
 
-        <!-- Depreciation Schedule Summary Widget -->
-        <div class="card">
-            <div class="card-header">
-                <h2>📊 Depreciation Schedule Summary</h2>
-                <a href="depreciationschedule.html" class="btn-nav btn-primary">Open Full Depreciation Schedule &rarr;</a>
+        <div class="dashboard-grid">
+            <!-- Asset Register Control Card -->
+            <div class="card">
+                <h3>📋 Asset Register</h3>
+                <p>View and manage registered assets, update details, or remove legacy records.</p>
+                <a href="assetregister.html" class="btn-open">Open Register &rarr;</a>
             </div>
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>Category</th>
-                            <th>Asset Description</th>
-                            <th>Purchase Date</th>
-                            <th>Total Cost (RM)</th>
-                            <th>Dep. Rate (%)</th>
-                            <th>Current Dep. (RM)</th>
-                            <th>Net Book Value (RM)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dashboard-schedule-body">
-                    </tbody>
-                </table>
+
+            <!-- Depreciation Schedule Control Panel Card -->
+            <div class="card" style="border-left: 4px solid #059669;">
+                <h3>📊 Depreciation Schedule Panel</h3>
+                <p>Generate financial depreciation reports according to selected financial years (2000 - 2050).</p>
+                
+                <div class="dash-control-group">
+                    <select id="dash-year-select" class="dash-select">
+                        <!-- Populated dynamically via JS -->
+                    </select>
+                    <button onclick="openDepreciationSchedule()" class="btn-open">Open Schedule &rarr;</button>
+                </div>
+            </div>
+
+            <!-- Register New Asset Card -->
+            <div class="card">
+                <h3>➕ Register New Asset</h3>
+                <p>Add new machinery, office equipment, computers, or furniture to system memory.</p>
+                <a href="registernew.html" class="btn-open" style="background-color: #059669;">+ Add New Asset</a>
             </div>
         </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'susut_nilai_assets';
+        // Populate Dashboard Year Options (2000 to 2050)
+        function initDashYears() {
+            const select = document.getElementById('dash-year-select');
+            const currentYear = new Date().getFullYear();
 
-        function loadDashboardData() {
-            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            assets = assets.filter(item => item.name && item.name.trim() !== '' && item.name !== 'Unnamed Asset');
-
-            const tbody = document.getElementById('dashboard-schedule-body');
-
-            let totalCost = 0;
-            let totalAnnualDep = 0;
-            let totalNBV = 0;
-
-            if (assets.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="empty-text">
-                            No assets registered yet.<br>
-                            Click <a href="registernew.html" style="color: #059669; font-weight: bold;">+ Register New Asset</a> to begin.
-                        </td>
-                    </tr>
-                `;
-            } else {
-                tbody.innerHTML = assets.map((item, index) => {
-                    const cost = parseFloat(item.total || 0);
-                    const salvage = parseFloat(item.salvage || 0);
-                    const usefulLife = parseInt(item.usefulLife || 1);
-                    const depRate = (100 / usefulLife).toFixed(2);
-                    const annualDep = (cost - salvage) / usefulLife;
-                    const nbv = cost - annualDep;
-
-                    totalCost += cost;
-                    totalAnnualDep += annualDep;
-                    totalNBV += nbv;
-
-                    return `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td><strong>${item.category || '-'}</strong></td>
-                            <td class="text-left">${item.name}</td>
-                            <td>${item.purchaseDate || '-'}</td>
-                            <td>${cost.toFixed(2)}</td>
-                            <td>${depRate}%</td>
-                            <td>${annualDep.toFixed(2)}</td>
-                            <td><strong style="color: #059669;">${nbv.toFixed(2)}</strong></td>
-                        </tr>
-                    `;
-                }).join('');
+            for (let year = 2000; year <= 2050; year++) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                if (year === currentYear) option.selected = true;
+                select.appendChild(option);
             }
-
-            // Update KPI cards
-            document.getElementById('stat-total-count').textContent = assets.length;
-            document.getElementById('stat-total-cost').textContent = 'RM ' + totalCost.toFixed(2);
-            document.getElementById('stat-total-dep').textContent = 'RM ' + totalAnnualDep.toFixed(2);
-            document.getElementById('stat-total-nbv').textContent = 'RM ' + totalNBV.toFixed(2);
         }
 
-        document.addEventListener('DOMContentLoaded', loadDashboardData);
+        // Redirect to Depreciation Schedule with selected Year
+        function openDepreciationSchedule() {
+            const selectedYear = document.getElementById('dash-year-select').value;
+            window.location.href = `depreciationschedule.html?year=${selectedYear}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashYears);
     </script>
 </body>
 </html>
