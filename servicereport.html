@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,7 +77,7 @@
 
         .grid-layout {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 24px;
         }
 
@@ -109,9 +109,15 @@
             margin-bottom: 14px;
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
         .form-group label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: #475569;
             margin-bottom: 6px;
@@ -134,13 +140,14 @@
 
         .form-control[readonly] {
             background-color: #f8fafc;
-            color: #64748b;
+            color: #475569;
             cursor: not-allowed;
+            border-color: #e2e8f0;
         }
 
         .btn-submit {
             width: 100%;
-            padding: 10px;
+            padding: 11px;
             background-color: #e11d48;
             color: white;
             border: none;
@@ -159,12 +166,12 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12.5px;
             text-align: left;
         }
 
         th, td {
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid #cbd5e1;
             vertical-align: middle;
         }
@@ -173,6 +180,7 @@
             background-color: #f1f5f9;
             color: #0f172a;
             font-weight: 700;
+            white-space: nowrap;
         }
 
         .btn-delete {
@@ -195,7 +203,6 @@
 </head>
 <body>
 
-    <!-- Header Navigation Bar linked across all project files -->
     <header>
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
@@ -218,76 +225,83 @@
                 <h3 class="card-title">🛠️ Log Maintenance & Service</h3>
                 <form id="service-form" onsubmit="saveServiceLog(event)">
                     
-                    <!-- Asset Selector from Asset Register -->
+                    <!-- Pilih Aset -->
                     <div class="form-group">
-                        <label for="select-asset">Select Asset</label>
+                        <label for="select-asset">Pilih Aset (Asset Register)</label>
                         <select id="select-asset" class="form-control" onchange="autoFillAssetData()" required>
-                            <option value="">-- Choose Asset from Register --</option>
+                            <option value="">-- Pilih Aset Terdaftar --</option>
                         </select>
                     </div>
 
-                    <!-- Auto-filled Fields from Asset Register (Readonly) -->
+                    <!-- Maklumat Automatik Dari Asset Register -->
                     <div class="form-group">
-                        <label>Category</label>
+                        <label>Asset Name</label>
+                        <input type="text" id="asset-name" class="form-control" readonly placeholder="Auto-filled">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Supplier Name</label>
+                            <input type="text" id="supplier-name" class="form-control" readonly placeholder="Auto-filled">
+                        </div>
+                        <div class="form-group">
+                            <label>Invoice Number</label>
+                            <input type="text" id="invoice-number" class="form-control" readonly placeholder="Auto-filled">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Asset Classification Category</label>
                         <input type="text" id="asset-category" class="form-control" readonly placeholder="Auto-filled">
                     </div>
 
-                    <div class="form-group">
-                        <label>Ref / Serial No.</label>
-                        <input type="text" id="asset-ref" class="form-control" readonly placeholder="Auto-filled">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Deployment Dept.</label>
+                            <input type="text" id="deployment-department" class="form-control" readonly placeholder="Auto-filled">
+                        </div>
+                        <div class="form-group">
+                            <label>Unit</label>
+                            <input type="text" id="asset-unit" class="form-control" readonly placeholder="Auto-filled">
+                        </div>
                     </div>
 
-                    <!-- Manual Input Fields -->
+                    <!-- Input Manual -->
                     <div class="form-group">
                         <label for="service-date">Service Date</label>
                         <input type="date" id="service-date" class="form-control" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="service-vendor">Vendor / Contractor</label>
-                        <input type="text" id="service-vendor" class="form-control" placeholder="e.g. ABC Engineering" required>
+                        <label for="service-cost" style="color: #e11d48;">Service Cost (RM) *[Manual]</label>
+                        <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold; background-color: #fff1f2;" placeholder="0.00" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="service-desc">Service / Repair Description</label>
-                        <input type="text" id="service-desc" class="form-control" placeholder="e.g. Engine Overhaul & Oil Filter" required>
-                    </div>
-
-                    <!-- Manual Service Cost Input -->
-                    <div class="form-group">
-                        <label for="service-cost" style="color: #e11d48;">Service Cost (RM)</label>
-                        <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold;" placeholder="0.00" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="next-service">Next Due Date</label>
-                        <input type="date" id="next-service" class="form-control">
-                    </div>
-
-                    <button type="submit" class="btn-submit">Save Service Record</button>
+                    <button type="submit" class="btn-submit">Simpan Log Penyelenggaraan</button>
                 </form>
             </div>
 
-            <!-- MAINTENANCE HISTORY LOG TABLE -->
+            <!-- TABLE REKOD PENYELENGGARAAN -->
             <div class="card">
-                <h3 class="card-title">📋 Maintenance History Log</h3>
+                <h3 class="card-title">📋 Maintenance & Service History Log</h3>
                 <div style="overflow-x: auto;">
                     <table>
                         <thead>
                             <tr>
                                 <th>No.</th>
-                                <th>Date</th>
+                                <th>Service Date</th>
                                 <th>Asset Name</th>
+                                <th>Supplier</th>
+                                <th>Invoice No.</th>
                                 <th>Category</th>
-                                <th>Vendor</th>
-                                <th>Work Description</th>
-                                <th>Cost (RM)</th>
-                                <th>Next Service</th>
-                                <th>Action</th>
+                                <th>Department</th>
+                                <th>Unit</th>
+                                <th>Service Cost (RM)</th>
+                                <th>Tindakan</th>
                             </tr>
                         </thead>
                         <tbody id="service-history-body">
-                            <!-- Populated dynamically via JS -->
+                            <!-- Dijana secara dinamik -->
                         </tbody>
                     </table>
                 </div>
@@ -302,73 +316,84 @@
 
         let registeredAssets = [];
 
-        // Load Asset Dropdown Options from Asset Register
+        // Isikan Pilihan Aset daripada LocalStorage Asset Register
         function loadAssetOptions() {
             registeredAssets = JSON.parse(localStorage.getItem(ASSETS_STORAGE_KEY)) || [];
             const select = document.getElementById('select-asset');
-            select.innerHTML = '<option value="">-- Choose Asset from Register --</option>';
+            select.innerHTML = '<option value="">-- Pilih Aset Terdaftar --</option>';
 
             registeredAssets.forEach(asset => {
                 const option = document.createElement('option');
                 option.value = asset.id;
-                option.textContent = `${asset.name} (${asset.refNo || 'No Ref'})`;
+                option.textContent = `${asset.name || asset.assetName} (${asset.invoiceNo || asset.refNo || 'Tiada Inv'})`;
                 select.appendChild(option);
             });
         }
 
-        // Auto-fill Asset Category & Ref No. on Selection
+        // Isi Maklumat Aset Secara Automatik Apabila Aset Dipilih
         function autoFillAssetData() {
             const selectedId = parseInt(document.getElementById('select-asset').value);
-            const foundAsset = registeredAssets.find(item => item.id === selectedId);
+            const asset = registeredAssets.find(item => item.id === selectedId);
 
-            if (foundAsset) {
-                document.getElementById('asset-category').value = foundAsset.category || 'N/A';
-                document.getElementById('asset-ref').value = foundAsset.refNo || 'N/A';
+            if (asset) {
+                document.getElementById('asset-name').value = asset.name || asset.assetName || '-';
+                document.getElementById('supplier-name').value = asset.supplier || asset.supplierName || asset.vendor || '-';
+                document.getElementById('invoice-number').value = asset.invoiceNo || asset.invoiceNumber || asset.refNo || '-';
+                document.getElementById('asset-category').value = asset.category || asset.assetCategory || '-';
+                document.getElementById('deployment-department').value = asset.department || asset.location || asset.deploymentDepartment || '-';
+                document.getElementById('asset-unit').value = asset.unit || asset.quantity || '1';
             } else {
+                document.getElementById('asset-name').value = '';
+                document.getElementById('supplier-name').value = '';
+                document.getElementById('invoice-number').value = '';
                 document.getElementById('asset-category').value = '';
-                document.getElementById('asset-ref').value = '';
+                document.getElementById('deployment-department').value = '';
+                document.getElementById('asset-unit').value = '';
             }
         }
 
-        // Save Service Record to LocalStorage
+        // Simpan Rekod Penyelenggaraan
         function saveServiceLog(event) {
             event.preventDefault();
-            const assetId = parseInt(document.getElementById('select-asset').value);
-            const foundAsset = registeredAssets.find(item => item.id === assetId);
+            const selectedId = parseInt(document.getElementById('select-asset').value);
+            const asset = registeredAssets.find(item => item.id === selectedId);
 
-            if (!foundAsset) {
-                alert("Please select a valid asset.");
+            if (!asset) {
+                alert("Sila pilih aset terlebih dahulu.");
                 return;
             }
 
-            const newService = {
+            const newServiceRecord = {
                 id: Date.now(),
-                assetId: foundAsset.id,
-                assetName: foundAsset.name,
-                category: foundAsset.category || 'N/A',
+                assetId: asset.id,
+                assetName: document.getElementById('asset-name').value,
+                supplierName: document.getElementById('supplier-name').value,
+                invoiceNumber: document.getElementById('invoice-number').value,
+                category: document.getElementById('asset-category').value,
+                department: document.getElementById('deployment-department').value,
+                unit: document.getElementById('asset-unit').value,
                 serviceDate: document.getElementById('service-date').value,
-                vendor: document.getElementById('service-vendor').value,
-                description: document.getElementById('service-desc').value,
-                cost: parseFloat(document.getElementById('service-cost').value) || 0,
-                nextServiceDate: document.getElementById('next-service').value || '-'
+                serviceCost: parseFloat(document.getElementById('service-cost').value) || 0
             };
 
             const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            services.push(newService);
+            services.push(newServiceRecord);
             localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
 
+            // Reset Form & Input
             document.getElementById('service-form').reset();
             autoFillAssetData();
+            document.getElementById('service-date').valueAsDate = new Date();
             renderServiceHistory();
         }
 
-        // Render Service History Table
+        // Paparkan Rekod Penyelenggaraan pada Jadual
         function renderServiceHistory() {
             const tbody = document.getElementById('service-history-body');
             const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
 
             if (services.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">No maintenance records logged yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-msg">Tiada rekod penyelenggaraan disimpan.</td></tr>`;
                 return;
             }
 
@@ -377,21 +402,22 @@
                     <td>${index + 1}</td>
                     <td>${item.serviceDate}</td>
                     <td><strong>${item.assetName}</strong></td>
+                    <td>${item.supplierName}</td>
+                    <td>${item.invoiceNumber}</td>
                     <td>${item.category}</td>
-                    <td>${item.vendor}</td>
-                    <td>${item.description}</td>
-                    <td><strong style="color: #e11d48;">RM ${item.cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
-                    <td>${item.nextServiceDate}</td>
+                    <td>${item.department}</td>
+                    <td>${item.unit}</td>
+                    <td><strong style="color: #e11d48;">RM ${item.serviceCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
                     <td>
-                        <button class="btn-delete" onclick="deleteServiceLog(${item.id})">Delete</button>
+                        <button class="btn-delete" onclick="deleteServiceLog(${item.id})">Padam</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // Delete Service Record
+        // Padam Rekod Penyelenggaraan
         function deleteServiceLog(id) {
-            if (!confirm("Are you sure you want to delete this maintenance record?")) return;
+            if (!confirm("Adakah anda pasti untuk memadam rekod ini?")) return;
             let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
             services = services.filter(item => item.id !== id);
             localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
