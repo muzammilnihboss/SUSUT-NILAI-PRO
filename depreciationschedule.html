@@ -26,7 +26,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .header-brand h2 {
@@ -74,44 +74,49 @@
             margin: 0 auto;
         }
 
-        .page-header {
+        /* Control Panel Header */
+        .control-panel {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            background-color: #ffffff;
-            padding: 16px 20px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        .page-header h1 {
+        .control-panel h1 {
             font-size: 20px;
             color: #0f172a;
             font-weight: 700;
         }
 
-        .year-selector-box {
+        .year-selector-group {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .year-selector-box label {
+        .year-selector-group label {
             font-size: 13px;
             font-weight: 700;
             color: #475569;
         }
 
         .year-select {
-            padding: 8px 16px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
+            padding: 8px 14px;
             font-size: 14px;
             font-weight: 700;
             color: #0f172a;
-            background-color: #f8fafc;
+            border: 1px solid #059669;
+            border-radius: 6px;
+            background-color: #f0fdf4;
             cursor: pointer;
+            outline: none;
         }
 
         .category-card {
@@ -182,13 +187,8 @@
             opacity: 0.85;
         }
 
-        .btn-edit {
-            background-color: #0284c7;
-        }
-
-        .btn-delete {
-            background-color: #ef4444;
-        }
+        .btn-edit { background-color: #0284c7; }
+        .btn-delete { background-color: #ef4444; }
 
         .modal-backdrop {
             display: none;
@@ -227,9 +227,7 @@
             gap: 12px;
         }
 
-        .modal-grid .full-span {
-            grid-column: span 2;
-        }
+        .modal-grid .full-span { grid-column: span 2; }
 
         .modal-grid label {
             display: block;
@@ -281,26 +279,27 @@
     </header>
 
     <div class="container">
-        <div class="page-header">
+        <!-- Control Panel with Year Selector (2000 - 2050) -->
+        <div class="control-panel">
             <h1>Depreciation Schedule Report</h1>
-            <div class="year-selector-box">
-                <label for="year-select">Select Financial Year:</label>
-                <select id="year-select" class="year-select" onchange="renderDepreciationSchedule()">
-                    <!-- Years 2000 to 2050 auto populated via JS -->
+            <div class="year-selector-group">
+                <label for="select-year">Financial Year:</label>
+                <select id="select-year" class="year-select" onchange="renderDepreciationSchedule()">
+                    <!-- Populated dynamically via JS -->
                 </select>
             </div>
         </div>
 
         <div id="schedule-container">
-            <!-- Dynamic Category Tables -->
+            <!-- Dynamic Tables Rendered Here -->
         </div>
     </div>
 
-    <!-- Modal for Edit Record -->
+    <!-- Edit Modal -->
     <div class="modal-backdrop" id="edit-modal">
         <div class="modal-box">
             <div class="modal-header">
-                <h2>✏️ Edit Asset Parameters</h2>
+                <h2>✏️ Edit Record Parameters</h2>
                 <button onclick="closeModal()" style="background:none; border:none; font-size: 20px; cursor:pointer;">&times;</button>
             </div>
             <form id="edit-form" onsubmit="saveAssetEdit(event)">
@@ -315,8 +314,8 @@
                         <input type="text" id="edit-category" required>
                     </div>
                     <div>
-                        <label>Purchase Date</label>
-                        <input type="date" id="edit-purchaseDate" required>
+                        <label>Invoice / Ref No.</label>
+                        <input type="text" id="edit-refNo" required>
                     </div>
                     <div>
                         <label>Useful Life (Years)</label>
@@ -335,7 +334,7 @@
                         <input type="text" id="edit-total" readonly style="background-color: #f8fafc; font-weight: bold;">
                     </div>
                     <div>
-                        <label>Estimated Salvage Value (RM)</label>
+                        <label>Estimated Salvage (RM)</label>
                         <input type="number" step="0.01" id="edit-salvage" required>
                     </div>
                 </div>
@@ -350,43 +349,42 @@
     <script>
         const STORAGE_KEY = 'susut_nilai_assets';
 
-        // Populate Years 2000 to 2050 into Dropdown
-        function initYearDropdown() {
-            const select = document.getElementById('year-select');
-            const currentYear = new Date().getFullYear();
-            select.innerHTML = '';
+        // Populate Years 2000 to 2050
+        function initYearOptions() {
+            const select = document.getElementById('select-year');
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryYear = urlParams.get('year');
+            const currentYear = queryYear ? parseInt(queryYear) : new Date().getFullYear();
 
-            for (let y = 2000; y <= 2050; y++) {
+            for (let year = 2000; year <= 2050; year++) {
                 const option = document.createElement('option');
-                option.value = y;
-                option.textContent = y;
-                if (y === currentYear) {
+                option.value = year;
+                option.textContent = `Year ${year}`;
+                if (year === currentYear) {
                     option.selected = true;
                 }
                 select.appendChild(option);
             }
         }
 
-        // Calculate and Render Depreciation Schedule by Selected Year
+        // Render Depreciation Schedule based on selected financial year
         function renderDepreciationSchedule() {
             const container = document.getElementById('schedule-container');
-            const selectedYear = parseInt(document.getElementById('year-select').value) || new Date().getFullYear();
+            const selectedYear = parseInt(document.getElementById('select-year').value);
             let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-            // Filter out invalid records
             assets = assets.filter(item => item.name && item.name.trim() !== '' && item.name !== 'Unnamed Asset');
 
             if (assets.length === 0) {
                 container.innerHTML = `
                     <div class="empty-placeholder">
-                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No Assets Found</p>
-                        <p style="font-size: 13px;">Please register an asset first via <a href="registernew.html" style="color: #059669; font-weight: 700;">+ Register New Asset</a>.</p>
+                        <p style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">No Depreciation Schedule Available</p>
+                        <p style="font-size: 13px;">Please register an asset via <a href="registernew.html" style="color: #059669; font-weight: 700;">+ Register New Asset</a> to generate the schedule.</p>
                     </div>
                 `;
                 return;
             }
 
-            // Group assets by category
             const groupedAssets = {};
             assets.forEach(asset => {
                 const categoryName = asset.category || 'Other Assets';
@@ -409,27 +407,26 @@
                     const totalCost = parseFloat(item.total || 0);
                     const salvage = parseFloat(item.salvage || 0);
                     const usefulLife = parseInt(item.usefulLife || 1);
-                    const depRate = (100 / usefulLife).toFixed(2);
-                    const annualDep = (totalCost - salvage) / usefulLife;
-                    const maxDepreciable = totalCost - salvage;
-
                     const purchaseYear = item.purchaseDate ? new Date(item.purchaseDate).getFullYear() : selectedYear;
+
+                    const depRate = (100 / usefulLife).toFixed(2);
+                    const annualDepreciation = (totalCost - salvage) / usefulLife;
 
                     let costOpening = 0, costAddition = 0, costDisposal = 0, costClosing = 0;
                     let accOpening = 0, accAddition = 0, accDisposal = 0, accClosing = 0;
 
                     if (selectedYear < purchaseYear) {
-                        // Asset not purchased yet in this year
+                        // Asset not acquired yet
                         costOpening = 0; costAddition = 0; costClosing = 0;
                         accOpening = 0; accAddition = 0; accClosing = 0;
                     } else if (selectedYear === purchaseYear) {
-                        // Purchased in selected year
+                        // Purchased in current selected year
                         costOpening = 0;
                         costAddition = totalCost;
                         costClosing = totalCost;
 
                         accOpening = 0;
-                        accAddition = Math.min(maxDepreciable, annualDep);
+                        accAddition = annualDepreciation;
                         accClosing = accAddition;
                     } else {
                         // Purchased in previous years
@@ -438,9 +435,12 @@
                         costAddition = 0;
                         costClosing = totalCost;
 
-                        accOpening = Math.min(maxDepreciable, annualDep * yearsElapsed);
-                        const remainingDep = maxDepreciable - accOpening;
-                        accAddition = Math.max(0, Math.min(remainingDep, annualDep));
+                        accOpening = Math.min(yearsElapsed * annualDepreciation, totalCost - salvage);
+                        if (accOpening < (totalCost - salvage)) {
+                            accAddition = Math.min(annualDepreciation, (totalCost - salvage) - accOpening);
+                        } else {
+                            accAddition = 0;
+                        }
                         accClosing = accOpening + accAddition;
                     }
 
@@ -484,7 +484,7 @@
 
                 htmlContent += `
                     <div class="category-card">
-                        <div class="category-header">ASSET TYPE: ${category.toUpperCase()} (YEAR ${selectedYear})</div>
+                        <div class="category-header">ASSET TYPE: ${category.toUpperCase()} (${selectedYear})</div>
                         <table>
                             <thead>
                                 <tr>
@@ -535,10 +535,8 @@
 
         function deleteAsset(id) {
             if (!confirm("Are you sure you want to delete this record?")) return;
-
             let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             assets = assets.filter(item => item.id !== id);
-
             localStorage.setItem(STORAGE_KEY, JSON.stringify(assets));
             renderDepreciationSchedule();
         }
@@ -546,13 +544,12 @@
         function openEditModal(id) {
             const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
             const asset = assets.find(item => item.id === id);
-
             if (!asset) return;
 
             document.getElementById('edit-id').value = id;
             document.getElementById('edit-name').value = asset.name || '';
             document.getElementById('edit-category').value = asset.category || '';
-            document.getElementById('edit-purchaseDate').value = asset.purchaseDate || '';
+            document.getElementById('edit-refNo').value = asset.refNo || '';
             document.getElementById('edit-usefulLife').value = asset.usefulLife || 1;
             document.getElementById('edit-unit').value = asset.unit || 1;
             document.getElementById('edit-unitPrice').value = asset.unitPrice || 0;
@@ -576,7 +573,6 @@
             event.preventDefault();
             const id = parseInt(document.getElementById('edit-id').value);
             let assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
             const index = assets.findIndex(item => item.id === id);
 
             if (index !== -1) {
@@ -585,7 +581,7 @@
 
                 assets[index].name = document.getElementById('edit-name').value;
                 assets[index].category = document.getElementById('edit-category').value;
-                assets[index].purchaseDate = document.getElementById('edit-purchaseDate').value;
+                assets[index].refNo = document.getElementById('edit-refNo').value;
                 assets[index].usefulLife = parseInt(document.getElementById('edit-usefulLife').value);
                 assets[index].unit = unit;
                 assets[index].unitPrice = unitPrice;
@@ -599,7 +595,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            initYearDropdown();
+            initYearOptions();
             renderDepreciationSchedule();
         });
     </script>
