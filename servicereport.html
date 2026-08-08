@@ -13,7 +13,7 @@
         }
 
         body {
-            background-color: #f8fafc;
+            background-color: #f4f6f9;
             color: #1e293b;
             min-height: 100vh;
             padding-bottom: 50px;
@@ -26,7 +26,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .header-brand h2 {
@@ -37,8 +37,8 @@
 
         .nav-links {
             display: flex;
-            align-items: center;
             gap: 10px;
+            align-items: center;
         }
 
         .btn-nav {
@@ -72,18 +72,30 @@
         .container {
             max-width: 98%;
             margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
             background: #ffffff;
-            border-radius: 10px;
             border: 1px solid #cbd5e1;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-radius: 12px;
             padding: 24px;
-            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
 
-        .card-header-title {
+        .card-title {
             font-size: 18px;
             font-weight: 700;
             color: #0f172a;
@@ -93,82 +105,57 @@
             gap: 8px;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        @media (max-width: 992px) {
-            .form-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 600px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            margin-bottom: 14px;
         }
 
-        .form-group.full-width {
-            grid-column: span 3;
-        }
-
-        @media (max-width: 992px) {
-            .form-group.full-width {
-                grid-column: span 2;
-            }
-        }
-
-        label {
+        .form-group label {
+            display: block;
             font-size: 12px;
             font-weight: 700;
             color: #475569;
+            margin-bottom: 6px;
             text-transform: uppercase;
         }
 
-        input, select, textarea {
-            padding: 10px 12px;
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 13.5px;
+            font-size: 13px;
             outline: none;
-            width: 100%;
+            transition: border-color 0.2s;
         }
 
-        input[readonly] {
-            background-color: #f1f5f9;
+        .form-control:focus {
+            border-color: #e11d48;
+        }
+
+        .form-control[readonly] {
+            background-color: #f8fafc;
             color: #64748b;
             cursor: not-allowed;
-            font-weight: 600;
         }
 
         .btn-submit {
-            grid-column: span 3;
+            width: 100%;
+            padding: 10px;
             background-color: #e11d48;
-            color: #ffffff;
+            color: white;
             border: none;
-            padding: 12px;
+            border-radius: 6px;
             font-size: 14px;
             font-weight: 700;
-            border-radius: 6px;
             cursor: pointer;
-            margin-top: 8px;
-            transition: background 0.2s ease;
+            margin-top: 10px;
+            transition: background 0.2s;
         }
 
         .btn-submit:hover {
             background-color: #be123c;
         }
 
-        /* Table Styling */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -177,7 +164,7 @@
         }
 
         th, td {
-            padding: 10px 12px;
+            padding: 12px;
             border: 1px solid #cbd5e1;
             vertical-align: middle;
         }
@@ -189,21 +176,16 @@
         }
 
         .btn-delete {
-            background-color: #ef4444;
-            color: #ffffff;
-            border: none;
             padding: 4px 8px;
+            background-color: #ef4444;
+            color: white;
+            border: none;
             border-radius: 4px;
             font-size: 11px;
-            font-weight: 600;
             cursor: pointer;
         }
 
-        .btn-delete:hover {
-            background-color: #dc2626;
-        }
-
-        .empty-text {
+        .empty-msg {
             text-align: center;
             padding: 30px;
             color: #64748b;
@@ -213,153 +195,149 @@
 </head>
 <body>
 
-    <!-- Hyperlinked Navigation Bar -->
+    <!-- Header Navigation Bar linked across all files -->
     <header>
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
         </div>
         <div class="nav-links">
-            <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
+            <a href="dashboard.html" class="btn-nav btn-secondary">🏠 Dashboard</a>
             <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
             <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
             <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="btn-nav btn-primary">🧰 Service Report</a>
+            <a href="servicereport.html" class="btn-nav btn-primary">🛠️ Service Report</a>
             <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
         </div>
     </header>
 
     <div class="container">
+        <div class="grid-layout">
 
-        <!-- Log Maintenance & Service Form Card -->
-        <div class="card">
-            <div class="card-header-title">
-                🧰 Log Maintenance & Service
-            </div>
-
-            <form id="service-form" onsubmit="saveServiceLog(event)">
-                <div class="form-grid">
-
-                    <!-- Select Asset from Asset Register -->
+            <!-- LOG MAINTENANCE & SERVICE FORM -->
+            <div class="card">
+                <h3 class="card-title">🛠️ Log Maintenance & Service</h3>
+                <form id="service-form" onsubmit="saveServiceLog(event)">
+                    
+                    <!-- Asset Selector -->
                     <div class="form-group">
-                        <label for="select-asset">Pilih Aset (Asset Register)</label>
-                        <select id="select-asset" onchange="autoFillAssetDetails()" required>
-                            <option value="">-- Pilih Aset --</option>
+                        <label for="select-asset">Select Asset</label>
+                        <select id="select-asset" class="form-control" onchange="autoFillAssetData()" required>
+                            <option value="">-- Choose Asset from Register --</option>
                         </select>
                     </div>
 
-                    <!-- Auto-filled Fields -->
+                    <!-- Auto-filled Fields (Readonly) -->
                     <div class="form-group">
-                        <label>Kategori Aset</label>
-                        <input type="text" id="auto-category" placeholder="Auto-filled" readonly>
-                    </div>
-
-                    <div class="form-group">
-                        <label>No. Rujukan / Invois Aset</label>
-                        <input type="text" id="auto-ref" placeholder="Auto-filled" readonly>
+                        <label>Category</label>
+                        <input type="text" id="asset-category" class="form-control" readonly placeholder="Auto-filled">
                     </div>
 
                     <div class="form-group">
-                        <label>Tarikh Penyelenggaraan</label>
-                        <input type="date" id="service-date" required>
+                        <label>Ref / Serial No.</label>
+                        <input type="text" id="asset-ref" class="form-control" readonly placeholder="Auto-filled">
+                    </div>
+
+                    <!-- Manual Input Fields -->
+                    <div class="form-group">
+                        <label for="service-date">Service Date</label>
+                        <input type="date" id="service-date" class="form-control" required>
                     </div>
 
                     <div class="form-group">
-                        <label>Penyedia Perkhidmatan / Vendor</label>
-                        <input type="text" id="service-vendor" placeholder="Contoh: Auto Tech Workshop" required>
+                        <label for="service-vendor">Vendor / Contractor</label>
+                        <input type="text" id="service-vendor" class="form-control" placeholder="e.g. ABC Engineering" required>
                     </div>
 
-                    <!-- Manual Service Cost Field -->
                     <div class="form-group">
-                        <label>Kos Selenggara / Service Cost (RM)</label>
-                        <input type="number" step="0.01" id="service-cost" placeholder="0.00" required>
+                        <label for="service-desc">Service / Repair Description</label>
+                        <input type="text" id="service-desc" class="form-control" placeholder="e.g. Engine Overhaul & Oil Filter" required>
                     </div>
 
-                    <div class="form-group full-width">
-                        <label>Butiran Penyelenggaraan / Service Details</label>
-                        <textarea id="service-details" rows="2" placeholder="Nyatakan servis yang dilakukan (Contoh: Tukar minyak hitam, pembaikan komponen)" required></textarea>
+                    <!-- Service Cost Manual Input -->
+                    <div class="form-group">
+                        <label for="service-cost" style="color: #e11d48;">Service Cost (RM)</label>
+                        <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold;" placeholder="0.00" required>
                     </div>
 
-                    <button type="submit" class="btn-submit">+ Simpan Rekod Penyelenggaraan</button>
+                    <div class="form-group">
+                        <label for="next-service">Next Due Date</label>
+                        <input type="date" id="next-service" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn-submit">Save Service Record</button>
+                </form>
+            </div>
+
+            <!-- SERVICE HISTORY TABLE -->
+            <div class="card">
+                <h3 class="card-title">📋 Maintenance History Log</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Date</th>
+                                <th>Asset Name</th>
+                                <th>Category</th>
+                                <th>Vendor</th>
+                                <th>Work Description</th>
+                                <th>Cost (RM)</th>
+                                <th>Next Service</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="service-history-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
                 </div>
-            </form>
-        </div>
-
-        <!-- Service History Table Card -->
-        <div class="card">
-            <div class="card-header-title">
-                📋 Senarai Rekod Penyelenggaraan & Servis
             </div>
 
-            <div style="overflow-x: auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 40px; text-align: center;">No.</th>
-                            <th style="width: 100px;">Tarikh Servis</th>
-                            <th>Nama Aset</th>
-                            <th>Kategori</th>
-                            <th>No. Rujukan</th>
-                            <th>Vendor</th>
-                            <th>Butiran Servis</th>
-                            <th style="width: 130px; text-align: right;">Kos Servis (RM)</th>
-                            <th style="width: 80px; text-align: center;">Tindakan</th>
-                        </tr>
-                    </thead>
-                    <tbody id="service-table-body">
-                        <!-- Rendered dynamically -->
-                    </tbody>
-                </table>
-            </div>
         </div>
-
     </div>
 
     <script>
-        const ASSETS_KEY = 'susut_nilai_assets';
-        const SERVICES_KEY = 'susut_nilai_services';
+        const ASSETS_STORAGE_KEY = 'susut_nilai_assets';
+        const SERVICES_STORAGE_KEY = 'susut_nilai_services';
 
-        // Load Registered Assets into Dropdown
+        let registeredAssets = [];
+
+        // Load Asset Dropdown Options
         function loadAssetOptions() {
+            registeredAssets = JSON.parse(localStorage.getItem(ASSETS_STORAGE_KEY)) || [];
             const select = document.getElementById('select-asset');
-            const assets = JSON.parse(localStorage.getItem(ASSETS_KEY)) || [];
+            select.innerHTML = '<option value="">-- Choose Asset from Register --</option>';
 
-            select.innerHTML = '<option value="">-- Pilih Aset --</option>';
-
-            assets.forEach(asset => {
-                if (asset.name && asset.name.trim() !== '') {
-                    const option = document.createElement('option');
-                    option.value = asset.id;
-                    option.textContent = `${asset.name} (${asset.category || 'N/A'})`;
-                    select.appendChild(option);
-                }
+            registeredAssets.forEach(asset => {
+                const option = document.createElement('option');
+                option.value = asset.id;
+                option.textContent = `${asset.name} (${asset.refNo || 'No Ref'})`;
+                select.appendChild(option);
             });
         }
 
-        // Auto-fill Asset Details when selected
-        function autoFillAssetDetails() {
+        // Auto-fill Asset Information on selection
+        function autoFillAssetData() {
             const selectedId = parseInt(document.getElementById('select-asset').value);
-            const assets = JSON.parse(localStorage.getItem(ASSETS_KEY)) || [];
-            const foundAsset = assets.find(item => item.id === selectedId);
+            const foundAsset = registeredAssets.find(item => item.id === selectedId);
 
             if (foundAsset) {
-                document.getElementById('auto-category').value = foundAsset.category || '-';
-                document.getElementById('auto-ref').value = foundAsset.refNo || '-';
+                document.getElementById('asset-category').value = foundAsset.category || 'N/A';
+                document.getElementById('asset-ref').value = foundAsset.refNo || 'N/A';
             } else {
-                document.getElementById('auto-category').value = '';
-                document.getElementById('auto-ref').value = '';
+                document.getElementById('asset-category').value = '';
+                document.getElementById('asset-ref').value = '';
             }
         }
 
-        // Save Maintenance Entry to LocalStorage
+        // Save Service Log to LocalStorage
         function saveServiceLog(event) {
             event.preventDefault();
-
             const assetId = parseInt(document.getElementById('select-asset').value);
-            const assets = JSON.parse(localStorage.getItem(ASSETS_KEY)) || [];
-            const foundAsset = assets.find(item => item.id === assetId);
+            const foundAsset = registeredAssets.find(item => item.id === assetId);
 
             if (!foundAsset) {
-                alert("Sila pilih aset yang sah!");
+                alert("Please select a valid asset.");
                 return;
             }
 
@@ -367,89 +345,61 @@
                 id: Date.now(),
                 assetId: foundAsset.id,
                 assetName: foundAsset.name,
-                category: foundAsset.category || '-',
-                refNo: foundAsset.refNo || '-',
-                date: document.getElementById('service-date').value,
+                category: foundAsset.category || 'N/A',
+                serviceDate: document.getElementById('service-date').value,
                 vendor: document.getElementById('service-vendor').value,
+                description: document.getElementById('service-desc').value,
                 cost: parseFloat(document.getElementById('service-cost').value) || 0,
-                details: document.getElementById('service-details').value
+                nextServiceDate: document.getElementById('next-service').value || '-'
             };
 
-            const services = JSON.parse(localStorage.getItem(SERVICES_KEY)) || [];
+            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
             services.push(newService);
-            localStorage.setItem(SERVICES_KEY, JSON.stringify(services));
+            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
 
-            // Reset form
             document.getElementById('service-form').reset();
-            document.getElementById('auto-category').value = '';
-            document.getElementById('auto-ref').value = '';
-            document.getElementById('service-date').valueAsDate = new Date();
-
-            renderServiceTable();
+            renderServiceHistory();
         }
 
-        // Render Service Log Table
-        function renderServiceTable() {
-            const tbody = document.getElementById('service-table-body');
-            const services = JSON.parse(localStorage.getItem(SERVICES_KEY)) || [];
+        // Render Service Records Table
+        function renderServiceHistory() {
+            const tbody = document.getElementById('service-history-body');
+            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
 
             if (services.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="9" class="empty-text">
-                            Tiada rekod penyelenggaraan disimpan. Sila tambah log penyelenggaraan di atas.
-                        </td>
-                    </tr>
-                `;
+                tbody.innerHTML = `<tr><td colspan="9" class="empty-msg">No maintenance records logged yet.</td></tr>`;
                 return;
             }
 
-            let totalServiceCost = 0;
-
-            const rowsHtml = services.map((item, index) => {
-                totalServiceCost += item.cost;
-                return `
-                    <tr>
-                        <td style="text-align: center;">${index + 1}</td>
-                        <td>${item.date || '-'}</td>
-                        <td><strong>${item.assetName}</strong></td>
-                        <td>${item.category}</td>
-                        <td>${item.refNo}</td>
-                        <td>${item.vendor}</td>
-                        <td>${item.details}</td>
-                        <td style="text-align: right; font-weight: 700; color: #e11d48;">
-                            RM ${item.cost.toFixed(2)}
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn-delete" onclick="deleteService(${item.id})">🗑️ Padam</button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-
-            const summaryRow = `
-                <tr style="background-color: #f8fafc; font-weight: 700;">
-                    <td colspan="7" style="text-align: right; padding-right: 12px;">JUMLAH KOS SELENGGARA:</td>
-                    <td style="text-align: right; color: #e11d48;">RM ${totalServiceCost.toFixed(2)}</td>
-                    <td>-</td>
+            tbody.innerHTML = services.map((item, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.serviceDate}</td>
+                    <td><strong>${item.assetName}</strong></td>
+                    <td>${item.category}</td>
+                    <td>${item.vendor}</td>
+                    <td>${item.description}</td>
+                    <td><strong style="color: #e11d48;">RM ${item.cost.toFixed(2)}</strong></td>
+                    <td>${item.nextServiceDate}</td>
+                    <td>
+                        <button class="btn-delete" onclick="deleteServiceLog(${item.id})">Delete</button>
+                    </td>
                 </tr>
-            `;
-
-            tbody.innerHTML = rowsHtml + summaryRow;
+            `).join('');
         }
 
-        // Delete Service Entry
-        function deleteService(id) {
-            if (!confirm("Adakah anda pasti mahu memadam rekod penyelenggaraan ini?")) return;
-            let services = JSON.parse(localStorage.getItem(SERVICES_KEY)) || [];
+        // Delete Service Record
+        function deleteServiceLog(id) {
+            if (!confirm("Are you sure you want to delete this maintenance record?")) return;
+            let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
             services = services.filter(item => item.id !== id);
-            localStorage.setItem(SERVICES_KEY, JSON.stringify(services));
-            renderServiceTable();
+            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
+            renderServiceHistory();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadAssetOptions();
-            renderServiceTable();
+            renderServiceHistory();
             document.getElementById('service-date').valueAsDate = new Date();
         });
     </script>
