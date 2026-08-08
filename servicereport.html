@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,11 +77,11 @@
 
         .grid-layout {
             display: grid;
-            grid-template-columns: 420px 1fr;
+            grid-template-columns: 400px 1fr;
             gap: 24px;
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1100px) {
             .grid-layout {
                 grid-template-columns: 1fr;
             }
@@ -102,17 +102,11 @@
             margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
         }
 
         .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            margin-bottom: 12px;
         }
 
         .form-group label {
@@ -120,8 +114,9 @@
             font-size: 11px;
             font-weight: 700;
             color: #475569;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-control {
@@ -138,11 +133,10 @@
             border-color: #e11d48;
         }
 
-        .form-control[readonly] {
-            background-color: #f8fafc;
-            color: #475569;
-            cursor: not-allowed;
-            border-color: #e2e8f0;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         .btn-submit {
@@ -161,6 +155,24 @@
 
         .btn-submit:hover {
             background-color: #be123c;
+        }
+
+        .btn-cancel {
+            width: 100%;
+            padding: 9px;
+            background-color: #94a3b8;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .btn-cancel:hover {
+            background-color: #64748b;
         }
 
         table {
@@ -183,14 +195,39 @@
             white-space: nowrap;
         }
 
-        .btn-delete {
-            padding: 4px 8px;
+        .action-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action-edit {
+            padding: 5px 10px;
+            background-color: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-action-edit:hover {
+            background-color: #0369a1;
+        }
+
+        .btn-action-delete {
+            padding: 5px 10px;
             background-color: #ef4444;
             color: white;
             border: none;
             border-radius: 4px;
             font-size: 11px;
+            font-weight: 600;
             cursor: pointer;
+        }
+
+        .btn-action-delete:hover {
+            background-color: #dc2626;
         }
 
         .empty-msg {
@@ -198,6 +235,15 @@
             padding: 30px;
             color: #64748b;
             font-size: 14px;
+        }
+
+        .badge-edit {
+            font-size: 11px;
+            background-color: #fef3c7;
+            color: #d97706;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -222,66 +268,73 @@
 
             <!-- LOG MAINTENANCE & SERVICE FORM -->
             <div class="card">
-                <h3 class="card-title">🛠️ Log Maintenance & Service</h3>
+                <div class="card-title">
+                    <span>🛠️ Maintenance & Service Log</span>
+                    <span id="edit-indicator" class="badge-edit" style="display: none;">Editing Record</span>
+                </div>
+                
                 <form id="service-form" onsubmit="saveServiceLog(event)">
-                    
-                    <!-- Pilih Aset -->
+                    <input type="hidden" id="editing-id" value="">
+
+                    <!-- Asset Selector -->
                     <div class="form-group">
-                        <label for="select-asset">Pilih Aset (Asset Register)</label>
-                        <select id="select-asset" class="form-control" onchange="autoFillAssetData()" required>
-                            <option value="">-- Pilih Aset Terdaftar --</option>
+                        <label for="select-asset">Select Asset from Register</label>
+                        <select id="select-asset" class="form-control" onchange="autoFillAssetData()">
+                            <option value="">-- Choose Asset --</option>
                         </select>
                     </div>
 
-                    <!-- Maklumat Automatik Dari Asset Register -->
+                    <!-- Auto-filled & Editable Asset Information -->
                     <div class="form-group">
-                        <label>Asset Name</label>
-                        <input type="text" id="asset-name" class="form-control" readonly placeholder="Auto-filled">
+                        <label for="asset-name">Asset Name</label>
+                        <input type="text" id="asset-name" class="form-control" placeholder="Enter or edit asset name" required>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Supplier Name</label>
-                            <input type="text" id="supplier-name" class="form-control" readonly placeholder="Auto-filled">
+                            <label for="supplier-name">Supplier Name</label>
+                            <input type="text" id="supplier-name" class="form-control" placeholder="Supplier name">
                         </div>
                         <div class="form-group">
-                            <label>Invoice Number</label>
-                            <input type="text" id="invoice-number" class="form-control" readonly placeholder="Auto-filled">
+                            <label for="invoice-number">Invoice Number</label>
+                            <input type="text" id="invoice-number" class="form-control" placeholder="Invoice / Ref No.">
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Asset Classification Category</label>
-                        <input type="text" id="asset-category" class="form-control" readonly placeholder="Auto-filled">
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Deployment Dept.</label>
-                            <input type="text" id="deployment-department" class="form-control" readonly placeholder="Auto-filled">
+                            <label for="asset-category">Classification Category</label>
+                            <input type="text" id="asset-category" class="form-control" placeholder="Category">
                         </div>
                         <div class="form-group">
-                            <label>Unit</label>
-                            <input type="text" id="asset-unit" class="form-control" readonly placeholder="Auto-filled">
+                            <label for="deployment-location">Deployment Location / Dept</label>
+                            <input type="text" id="deployment-location" class="form-control" placeholder="Department / Room">
                         </div>
                     </div>
 
-                    <!-- Input Manual -->
-                    <div class="form-group">
-                        <label for="service-date">Service Date</label>
-                        <input type="date" id="service-date" class="form-control" required>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="asset-unit">Unit / Qty</label>
+                            <input type="number" id="asset-unit" class="form-control" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="service-date">Service Date</label>
+                            <input type="date" id="service-date" class="form-control" required>
+                        </div>
                     </div>
 
+                    <!-- Manual Service Cost Input -->
                     <div class="form-group">
-                        <label for="service-cost" style="color: #e11d48;">Service Cost (RM) *[Manual]</label>
-                        <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold; background-color: #fff1f2;" placeholder="0.00" required>
+                        <label for="service-cost" style="color: #e11d48;">Service Cost (RM)</label>
+                        <input type="number" step="0.01" id="service-cost" class="form-control" style="border-color: #e11d48; font-weight: bold;" placeholder="0.00" required>
                     </div>
 
-                    <button type="submit" class="btn-submit">Simpan Log Penyelenggaraan</button>
+                    <button type="submit" id="btn-submit" class="btn-submit">Save Service Record</button>
+                    <button type="button" id="btn-cancel" class="btn-cancel" onclick="resetForm()">Cancel Edit</button>
                 </form>
             </div>
 
-            <!-- TABLE REKOD PENYELENGGARAAN -->
+            <!-- MAINTENANCE LOG HISTORY TABLE -->
             <div class="card">
                 <h3 class="card-title">📋 Maintenance & Service History Log</h3>
                 <div style="overflow-x: auto;">
@@ -291,17 +344,17 @@
                                 <th>No.</th>
                                 <th>Service Date</th>
                                 <th>Asset Name</th>
+                                <th>Category</th>
+                                <th>Department / Location</th>
                                 <th>Supplier</th>
                                 <th>Invoice No.</th>
-                                <th>Category</th>
-                                <th>Department</th>
                                 <th>Unit</th>
-                                <th>Service Cost (RM)</th>
-                                <th>Tindakan</th>
+                                <th>Cost (RM)</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="service-history-body">
-                            <!-- Dijana secara dinamik -->
+                            <!-- Populated dynamically via JS -->
                         </tbody>
                     </table>
                 </div>
@@ -316,84 +369,121 @@
 
         let registeredAssets = [];
 
-        // Isikan Pilihan Aset daripada LocalStorage Asset Register
+        // Load asset options into dropdown
         function loadAssetOptions() {
             registeredAssets = JSON.parse(localStorage.getItem(ASSETS_STORAGE_KEY)) || [];
             const select = document.getElementById('select-asset');
-            select.innerHTML = '<option value="">-- Pilih Aset Terdaftar --</option>';
+            select.innerHTML = '<option value="">-- Choose Asset --</option>';
 
             registeredAssets.forEach(asset => {
                 const option = document.createElement('option');
                 option.value = asset.id;
-                option.textContent = `${asset.name || asset.assetName} (${asset.invoiceNo || asset.refNo || 'Tiada Inv'})`;
+                option.textContent = `${asset.name} (${asset.refNo || asset.invoiceNo || 'No Ref'})`;
                 select.appendChild(option);
             });
         }
 
-        // Isi Maklumat Aset Secara Automatik Apabila Aset Dipilih
+        // Auto-fill fields from selected asset while keeping them fully editable
         function autoFillAssetData() {
             const selectedId = parseInt(document.getElementById('select-asset').value);
-            const asset = registeredAssets.find(item => item.id === selectedId);
+            const foundAsset = registeredAssets.find(item => item.id === selectedId);
 
-            if (asset) {
-                document.getElementById('asset-name').value = asset.name || asset.assetName || '-';
-                document.getElementById('supplier-name').value = asset.supplier || asset.supplierName || asset.vendor || '-';
-                document.getElementById('invoice-number').value = asset.invoiceNo || asset.invoiceNumber || asset.refNo || '-';
-                document.getElementById('asset-category').value = asset.category || asset.assetCategory || '-';
-                document.getElementById('deployment-department').value = asset.department || asset.location || asset.deploymentDepartment || '-';
-                document.getElementById('asset-unit').value = asset.unit || asset.quantity || '1';
-            } else {
-                document.getElementById('asset-name').value = '';
-                document.getElementById('supplier-name').value = '';
-                document.getElementById('invoice-number').value = '';
-                document.getElementById('asset-category').value = '';
-                document.getElementById('deployment-department').value = '';
-                document.getElementById('asset-unit').value = '';
+            if (foundAsset) {
+                document.getElementById('asset-name').value = foundAsset.name || '';
+                document.getElementById('supplier-name').value = foundAsset.supplier || foundAsset.vendor || '';
+                document.getElementById('invoice-number').value = foundAsset.invoiceNo || foundAsset.refNo || '';
+                document.getElementById('asset-category').value = foundAsset.category || '';
+                document.getElementById('deployment-location').value = foundAsset.department || foundAsset.location || '';
+                document.getElementById('asset-unit').value = foundAsset.unit || foundAsset.qty || 1;
             }
         }
 
-        // Simpan Rekod Penyelenggaraan
+        // Save or update service log entry
         function saveServiceLog(event) {
             event.preventDefault();
-            const selectedId = parseInt(document.getElementById('select-asset').value);
-            const asset = registeredAssets.find(item => item.id === selectedId);
 
-            if (!asset) {
-                alert("Sila pilih aset terlebih dahulu.");
-                return;
-            }
+            const editingId = document.getElementById('editing-id').value;
+            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
 
-            const newServiceRecord = {
-                id: Date.now(),
-                assetId: asset.id,
+            const serviceRecord = {
+                id: editingId ? parseInt(editingId) : Date.now(),
                 assetName: document.getElementById('asset-name').value,
-                supplierName: document.getElementById('supplier-name').value,
-                invoiceNumber: document.getElementById('invoice-number').value,
-                category: document.getElementById('asset-category').value,
-                department: document.getElementById('deployment-department').value,
-                unit: document.getElementById('asset-unit').value,
+                supplierName: document.getElementById('supplier-name').value || '-',
+                invoiceNumber: document.getElementById('invoice-number').value || '-',
+                category: document.getElementById('asset-category').value || '-',
+                departmentLocation: document.getElementById('deployment-location').value || '-',
+                unit: document.getElementById('asset-unit').value || 1,
                 serviceDate: document.getElementById('service-date').value,
                 serviceCost: parseFloat(document.getElementById('service-cost').value) || 0
             };
 
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            services.push(newServiceRecord);
-            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
+            if (editingId) {
+                const index = services.findIndex(item => item.id === parseInt(editingId));
+                if (index !== -1) {
+                    services[index] = serviceRecord;
+                }
+            } else {
+                services.push(serviceRecord);
+            }
 
-            // Reset Form & Input
-            document.getElementById('service-form').reset();
-            autoFillAssetData();
-            document.getElementById('service-date').valueAsDate = new Date();
+            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
+            resetForm();
             renderServiceHistory();
         }
 
-        // Paparkan Rekod Penyelenggaraan pada Jadual
+        // Populate form for editing existing record
+        function editServiceLog(id) {
+            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
+            const record = services.find(item => item.id === id);
+
+            if (!record) return;
+
+            document.getElementById('editing-id').value = record.id;
+            document.getElementById('select-asset').value = ''; // Reset selector
+            document.getElementById('asset-name').value = record.assetName || '';
+            document.getElementById('supplier-name').value = record.supplierName || '';
+            document.getElementById('invoice-number').value = record.invoiceNumber || '';
+            document.getElementById('asset-category').value = record.category || '';
+            document.getElementById('deployment-location').value = record.departmentLocation || '';
+            document.getElementById('asset-unit').value = record.unit || 1;
+            document.getElementById('service-date').value = record.serviceDate || '';
+            document.getElementById('service-cost').value = record.serviceCost || '';
+
+            document.getElementById('btn-submit').textContent = 'Update Service Record';
+            document.getElementById('btn-cancel').style.display = 'block';
+            document.getElementById('edit-indicator').style.display = 'inline-block';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Delete service record
+        function deleteServiceLog(id) {
+            if (!confirm("Are you sure you want to delete this maintenance record?")) return;
+
+            let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
+            services = services.filter(item => item.id !== id);
+            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
+
+            renderServiceHistory();
+        }
+
+        // Reset form to default state
+        function resetForm() {
+            document.getElementById('service-form').reset();
+            document.getElementById('editing-id').value = '';
+            document.getElementById('btn-submit').textContent = 'Save Service Record';
+            document.getElementById('btn-cancel').style.display = 'none';
+            document.getElementById('edit-indicator').style.display = 'none';
+            document.getElementById('service-date').valueAsDate = new Date();
+        }
+
+        // Render history table
         function renderServiceHistory() {
             const tbody = document.getElementById('service-history-body');
             const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
 
             if (services.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="empty-msg">Tiada rekod penyelenggaraan disimpan.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="empty-msg">No maintenance records logged yet.</td></tr>`;
                 return;
             }
 
@@ -402,26 +492,20 @@
                     <td>${index + 1}</td>
                     <td>${item.serviceDate}</td>
                     <td><strong>${item.assetName}</strong></td>
+                    <td>${item.category}</td>
+                    <td>${item.departmentLocation}</td>
                     <td>${item.supplierName}</td>
                     <td>${item.invoiceNumber}</td>
-                    <td>${item.category}</td>
-                    <td>${item.department}</td>
                     <td>${item.unit}</td>
                     <td><strong style="color: #e11d48;">RM ${item.serviceCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</strong></td>
                     <td>
-                        <button class="btn-delete" onclick="deleteServiceLog(${item.id})">Padam</button>
+                        <div class="action-btns">
+                            <button class="btn-action-edit" onclick="editServiceLog(${item.id})">Edit</button>
+                            <button class="btn-action-delete" onclick="deleteServiceLog(${item.id})">Delete</button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
-        }
-
-        // Padam Rekod Penyelenggaraan
-        function deleteServiceLog(id) {
-            if (!confirm("Adakah anda pasti untuk memadam rekod ini?")) return;
-            let services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            services = services.filter(item => item.id !== id);
-            localStorage.setItem(SERVICES_STORAGE_KEY, JSON.stringify(services));
-            renderServiceHistory();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
