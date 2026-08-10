@@ -140,7 +140,6 @@
             background-color: #334155;
         }
 
-        /* CATEGORY SECTION TABLE DESIGN MATCHING SPECIFICATION */
         .category-section {
             margin-bottom: 28px;
             border: 1px solid #cbd5e1;
@@ -205,7 +204,6 @@
             background-color: #0369a1;
         }
 
-        /* JOURNAL TABLE STYLING */
         table.journal-table {
             width: 100%;
             border-collapse: collapse;
@@ -227,7 +225,6 @@
             padding-left: 40px !important;
         }
 
-        /* EDIT MODAL */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -303,7 +300,6 @@
             cursor: pointer;
         }
 
-        /* PRINT STYLES */
         @media print {
             header, .nav-links, .controls-toolbar, .no-print, .col-action {
                 display: none !important;
@@ -376,7 +372,7 @@
                     <div>
                         <label for="select-year" style="font-size: 12px; font-weight: 800; color: #475569; margin-right: 6px;">FINANCIAL YEAR:</label>
                         <select id="select-year" class="select-input" onchange="renderAll()">
-                            <!-- Generated from Year 2000 to 2050 -->
+                            <!-- Year 2000 to 2050 -->
                         </select>
                     </div>
 
@@ -413,7 +409,7 @@
                         </tr>
                     </thead>
                     <tbody id="journal-tbody">
-                        <!-- Populated automatically from Depreciation Schedule -->
+                        <!-- Populated automatically -->
                     </tbody>
                     <tfoot id="journal-tfoot">
                         <!-- Totals -->
@@ -442,6 +438,7 @@
                 <div class="form-group">
                     <label>Category</label>
                     <select id="edit-category" class="form-control" required>
+                        <option value="Furniture & Fittings">Furniture & Fittings</option>
                         <option value="Furniture">Furniture</option>
                         <option value="Office Equipment">Office Equipment</option>
                         <option value="Electrical Installation">Electrical Installation</option>
@@ -485,7 +482,33 @@
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        // Read recorded asset data automatically from Asset Register
+        // Utility to parse any numerical string safely (handles "RM 1,000.00" -> 1000)
+        function parseNumber(val) {
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'number') return val;
+            const cleaned = String(val).replace(/[^0-9.-]+/g, '');
+            const num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
+        }
+
+        // Utility to extract purchase year from various date formats
+        function getPurchaseYear(dateStr) {
+            if (!dateStr) return new Date().getFullYear();
+            const str = String(dateStr).trim();
+            if (str.includes('-')) {
+                const parts = str.split('-');
+                if (parts[0].length === 4) return parseInt(parts[0], 10);
+                if (parts[2].length === 4) return parseInt(parts[2], 10);
+            }
+            if (str.includes('/')) {
+                const parts = str.split('/');
+                if (parts[0].length === 4) return parseInt(parts[0], 10);
+                if (parts[2].length === 4) return parseInt(parts[2], 10);
+            }
+            const d = new Date(str);
+            return isNaN(d.getFullYear()) ? new Date().getFullYear() : d.getFullYear();
+        }
+
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
@@ -494,7 +517,6 @@
             localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
         }
 
-        // Initialize Year Selector strictly from 2000 to 2050
         function initYearSelector() {
             const select = document.getElementById('select-year');
             const currentYear = new Date().getFullYear();
@@ -511,13 +533,26 @@
             }
         }
 
-        // Formula Calculation per asset
+        // Calculation function strictly upholding user rules
         function calculateAssetMetrics(asset, targetYear) {
-            const cost = parseFloat(asset.cost || asset.price || 0);
-            const ratePercent = parseFloat(asset.rate || (100 / (asset.lifespan || 5))) || 10;
-            const purchaseDate = new Date(asset.purchaseDate || `${targetYear}-01-01`);
-            const purchaseYear = purchaseDate.getFullYear();
-            const purchaseMonth = purchaseDate.getMonth() + 1; // 1 to 12
+            // Read cost flexibly across all possible field names
+            const rawCost = asset.cost !== undefined ? asset.cost : 
+                           (asset.price !== undefined ? asset.price : 
+                           (asset.purchasePrice !== undefined ? asset.purchasePrice : 
+                           (asset.assetCost !== undefined ? asset.assetCost : 
+                           (asset.amount !== undefined ? asset.amount : 0))));
+            const cost = parseNumber(rawCost);
+
+            // Read rate flexibly
+            const rawRate = asset.rate !== undefined ? asset.rate : 
+                           (asset.depRate !== undefined ? asset.depRate : 
+                           (asset.depreciationRate !== undefined ? asset.depreciationRate : 
+                           (asset.ratePercent !== undefined ? asset.ratePercent : 
+                           (asset.lifespan ? (100 / parseNumber(asset.lifespan)) : 20))));
+            const ratePercent = parseNumber(rawRate) || 20;
+
+            const purchaseDateStr = asset.purchaseDate || asset.date || asset.tarikh || asset.datePurchased || asset.a_date || '';
+            const purchaseYear = getPurchaseYear(purchaseDateStr);
 
             if (purchaseYear > targetYear || cost <= 0) {
                 return {
@@ -528,13 +563,12 @@
                 };
             }
 
-            // Cost Columns Calculation
+            // Cost Columns Logic
             let costOpening = purchaseYear < targetYear ? cost : 0;
             let costAddition = purchaseYear === targetYear ? cost : 0;
             let costDisposal = 0;
-            let costClosing = cost;
+            let costClosing = costOpening + costAddition - costDisposal; // Closing cost equals cost
 
-            // Calculate Accumulated Depreciation Opening from previous years
             const annualDepRate = ratePercent / 100;
             let accumPrior = 0;
 
@@ -545,10 +579,9 @@
 
             let depOpening = accumPrior;
 
-            // FORMULA ADDITION = CLOSING COST X DEP. RATE %
+            // STRICT FORMULA: ADDITION = CLOSING COST X DEP. RATE %
             let depAddition = costClosing * annualDepRate;
 
-            // Cap depreciation addition if total closing depreciation exceeds total cost
             if (depOpening + depAddition > costClosing) {
                 depAddition = Math.max(0, costClosing - depOpening);
             }
@@ -565,7 +598,6 @@
             };
         }
 
-        // Render Schedule automatically based on recorded Asset Register entries
         function renderAll() {
             const targetYear = parseInt(document.getElementById('select-year').value);
             document.getElementById('journal-year-label').innerText = `YEAR ${targetYear}`;
@@ -585,12 +617,14 @@
                 return;
             }
 
-            // Extract recorded asset categories dynamically
-            const recordedCategories = [...new Set(assets.map(a => a.category || 'Others'))];
+            const recordedCategories = [...new Set(assets.map(a => a.category || a.kategori || a.assetCategory || 'Others'))];
             let categoryDepTotals = {};
 
             recordedCategories.forEach(catName => {
-                const catAssets = assets.filter(a => (a.category || 'Others').toLowerCase() === catName.toLowerCase());
+                const catAssets = assets.filter(a => {
+                    const c = a.category || a.kategori || a.assetCategory || 'Others';
+                    return c.toLowerCase() === catName.toLowerCase();
+                });
 
                 if (catAssets.length === 0) return;
 
@@ -645,11 +679,14 @@
 
                     sumNBV += m.nbv;
 
+                    const pDate = asset.purchaseDate || asset.date || asset.tarikh || asset.datePurchased || '-';
+                    const aName = asset.name || asset.assetName || asset.nama || 'Asset';
+
                     catHtml += `
                         <tr>
                             <td>${idx + 1}</td>
-                            <td>${asset.purchaseDate || '-'}</td>
-                            <td class="text-left"><strong>${asset.name}</strong></td>
+                            <td>${pDate}</td>
+                            <td class="text-left"><strong>${aName}</strong></td>
                             <td class="text-right">${m.costOpening.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
                             <td class="text-right">${m.costAddition.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
                             <td class="text-right">${m.costDisposal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
@@ -696,11 +733,9 @@
                 wrapper.innerHTML += catHtml;
             });
 
-            // Automatically generate journal entries from calculated schedule totals
             renderJournalEntries(categoryDepTotals, targetYear);
         }
 
-        // Render Accounting Journal Entries automatically based on schedule calculations
         function renderJournalEntries(categoryDepTotals, targetYear) {
             const tbody = document.getElementById('journal-tbody');
             const tfoot = document.getElementById('journal-tfoot');
@@ -756,18 +791,21 @@
             `;
         }
 
-        // EDIT MODAL HANDLERS
         function openEditModal(assetId) {
             const assets = getAssets();
             const asset = assets.find(a => a.id === assetId);
             if (!asset) return;
 
             document.getElementById('edit-asset-id').value = asset.id;
-            document.getElementById('edit-name').value = asset.name || '';
-            document.getElementById('edit-category').value = asset.category || 'Furniture';
-            document.getElementById('edit-date').value = asset.purchaseDate || '';
-            document.getElementById('edit-cost').value = asset.cost || asset.price || 0;
-            document.getElementById('edit-rate').value = asset.rate || (100 / (asset.lifespan || 5));
+            document.getElementById('edit-name').value = asset.name || asset.assetName || asset.nama || '';
+            document.getElementById('edit-category').value = asset.category || asset.kategori || 'Furniture & Fittings';
+            document.getElementById('edit-date').value = asset.purchaseDate || asset.date || asset.tarikh || '';
+            
+            const rawCost = asset.cost !== undefined ? asset.cost : (asset.price || asset.purchasePrice || 0);
+            document.getElementById('edit-cost').value = parseNumber(rawCost);
+
+            const rawRate = asset.rate !== undefined ? asset.rate : (asset.depRate || asset.ratePercent || 20);
+            document.getElementById('edit-rate').value = parseNumber(rawRate);
             document.getElementById('edit-lifespan').value = asset.lifespan || 5;
 
             document.getElementById('edit-modal').style.display = 'flex';
@@ -788,7 +826,7 @@
                 assets[idx].category = document.getElementById('edit-category').value;
                 assets[idx].purchaseDate = document.getElementById('edit-date').value;
                 assets[idx].cost = parseFloat(document.getElementById('edit-cost').value) || 0;
-                assets[idx].rate = parseFloat(document.getElementById('edit-rate').value) || 10;
+                assets[idx].rate = parseFloat(document.getElementById('edit-rate').value) || 20;
                 assets[idx].lifespan = parseInt(document.getElementById('edit-lifespan').value) || 5;
 
                 saveAssets(assets);
