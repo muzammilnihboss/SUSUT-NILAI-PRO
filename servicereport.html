@@ -229,11 +229,11 @@
             font-size: 13.5px;
             outline: none;
             transition: border-color 0.2s, box-shadow 0.2s;
+            border: 1px solid #cbd5e1;
         }
 
         .form-control.prefilled {
             background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
             color: #334155;
         }
 
@@ -256,9 +256,9 @@
             gap: 16px;
         }
 
-        .form-row4 {
+        .form-row3 {
             display: grid;
-            grid-template-columns: 1fr 0.6fr 1fr 1fr;
+            grid-template-columns: 1fr 0.8fr 1.2fr;
             gap: 16px;
         }
 
@@ -382,7 +382,7 @@
         </div>
 
         <!-- 2. LOG MAINTENANCE & SERVICE FORM -->
-        <div class="card">
+        <div class="card" id="service-form-card">
             <div class="header-title-group" style="margin-bottom: 20px;">
                 <div class="icon-box-pink">🧾</div>
                 <div>
@@ -428,7 +428,7 @@
                     </div>
                 </div>
 
-                <div class="form-row4">
+                <div class="form-row3">
                     <div class="form-group">
                         <label>SERVICE COST (RM) <span class="required">*</span></label>
                         <input type="number" step="0.01" id="input-cost" class="form-control highlight-input" placeholder="0.00" required>
@@ -439,11 +439,7 @@
                     </div>
                     <div class="form-group">
                         <label>SERVICE DATE <span class="required">*</span></label>
-                        <input type="date" id="input-service-date" class="form-control highlight-input" required onchange="calculateNextDueDate()">
-                    </div>
-                    <div class="form-group">
-                        <label>NEXT SERVICE DUE <span class="required">*</span></label>
-                        <input type="date" id="input-next-date" class="form-control highlight-input" required>
+                        <input type="date" id="input-service-date" class="form-control highlight-input" required>
                     </div>
                 </div>
 
@@ -473,7 +469,7 @@
                             <th>Unit</th>
                             <th>Service Cost (RM)</th>
                             <th>Service Date</th>
-                            <th>Next Due Date</th>
+                            <th>Next Service Due</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -498,6 +494,14 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES)) || [];
         }
 
+        // Helper to add months to a given YYYY-MM-DD date string
+        function addMonths(dateStr, months = 1) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            d.setMonth(d.getMonth() + months);
+            return d.toISOString().split('T')[0];
+        }
+
         function populateAssetDropdown() {
             const assets = getAssets();
             const select = document.getElementById('select-asset');
@@ -512,14 +516,14 @@
         }
 
         function onAssetSelect() {
-            const assetId = parseInt(document.getElementById('select-asset').value);
+            const assetId = document.getElementById('select-asset').value;
             if (!assetId) {
                 clearPrefilledFields();
                 return;
             }
 
             const assets = getAssets();
-            const selectedAsset = assets.find(a => a.id === assetId);
+            const selectedAsset = assets.find(a => String(a.id) === String(assetId));
 
             if (selectedAsset) {
                 document.getElementById('input-asset-name').value = selectedAsset.name || '';
@@ -540,20 +544,15 @@
             document.getElementById('input-unit').value = 1;
         }
 
-        function calculateNextDueDate() {
-            const serviceDateVal = document.getElementById('input-service-date').value;
-            if (serviceDateVal) {
-                const date = new Date(serviceDateVal);
-                date.setMonth(date.getMonth() + 6); // Auto-add 6 months
-                document.getElementById('input-next-date').value = date.toISOString().split('T')[0];
-            }
-        }
-
         function handleFormSubmit(e) {
             e.preventDefault();
 
             const editId = document.getElementById('editing-service-id').value;
             const services = getServices();
+            const serviceDateVal = document.getElementById('input-service-date').value;
+
+            // Automatically project next service date to 1 month after the logged service date
+            const nextDueDateVal = addMonths(serviceDateVal, 1);
 
             const record = {
                 id: editId ? parseInt(editId) : Date.now(),
@@ -565,8 +564,8 @@
                 department: document.getElementById('input-department').value,
                 cost: parseFloat(document.getElementById('input-cost').value) || 0,
                 unit: parseInt(document.getElementById('input-unit').value) || 1,
-                serviceDate: document.getElementById('input-service-date').value,
-                nextDate: document.getElementById('input-next-date').value
+                serviceDate: serviceDateVal,
+                nextDate: nextDueDateVal
             };
 
             if (editId) {
@@ -586,7 +585,6 @@
             document.getElementById('editing-service-id').value = '';
             document.getElementById('btn-submit-text').innerText = 'Register Maintenance Service Record';
             document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
-            calculateNextDueDate();
         }
 
         function renderAll() {
@@ -614,7 +612,7 @@
                     <td>${s.unit || 1}</td>
                     <td>RM ${parseFloat(s.cost || 0).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                     <td>${s.serviceDate || '-'}</td>
-                    <td><strong style="color: #9f1239;">${s.nextDate || '-'}</strong></td>
+                    <td><strong style="color: #059669;">${s.nextDate || '-'}</strong></td>
                     <td>
                         <div class="action-btns">
                             <button class="btn-edit" onclick="editRecord(${s.id})">Edit</button>
@@ -625,37 +623,38 @@
             `).join('');
         }
 
+        // Calculate and render Active Maintenance & Servicing Alerts
         function renderAlerts() {
             const assets = getAssets();
             const services = getServices();
             const today = new Date().toISOString().split('T')[0];
 
-            let alertItems = [];
+            let activeAlerts = [];
 
-            // 1. Semak tarikh seterusnya daripada Log Rekod Servis
-            services.forEach(s => {
-                if (s.nextDate && s.nextDate <= today) {
-                    alertItems.push({
-                        id: s.assetId || s.id,
-                        name: s.assetName,
-                        department: s.department || 'N/A',
-                        dueDate: s.nextDate,
-                        fromLog: true,
-                        logId: s.id
-                    });
+            assets.forEach(asset => {
+                // Check if there are any historical service logs for this asset
+                const assetLogs = services.filter(s => String(s.assetId) === String(asset.id));
+
+                let nextDueDate = '';
+
+                if (assetLogs.length > 0) {
+                    // Sort logs to find the most recent logged service
+                    assetLogs.sort((a, b) => new Date(b.serviceDate) - new Date(a.serviceDate));
+                    const latestLog = assetLogs[0];
+                    nextDueDate = latestLog.nextDate || addMonths(latestLog.serviceDate, 1);
+                } else {
+                    // No logs yet -> Use Last Service Date from Register + 1 Month
+                    const lastService = asset.lastServiceDate || asset.purchaseDate || today;
+                    nextDueDate = addMonths(lastService, 1);
                 }
-            });
 
-            // 2. Semak tarikh penyelenggaraan dalam Asset Register (jika ada)
-            assets.forEach(a => {
-                const alreadyAlerted = alertItems.some(item => item.id == a.id);
-                if (!alreadyAlerted && a.nextServiceDate && a.nextServiceDate <= today) {
-                    alertItems.push({
-                        id: a.id,
-                        name: a.name,
-                        department: a.location || a.department || 'N/A',
-                        dueDate: a.nextServiceDate,
-                        fromLog: false
+                // If next due date is reached or passed, push to active alerts
+                if (nextDueDate && nextDueDate <= today) {
+                    activeAlerts.push({
+                        assetId: asset.id,
+                        name: asset.name,
+                        department: asset.location || asset.department || 'N/A',
+                        dueDate: nextDueDate
                     });
                 }
             });
@@ -663,9 +662,9 @@
             const badge = document.getElementById('overdue-count-badge');
             const container = document.getElementById('alerts-body-container');
 
-            badge.innerText = `${alertItems.length} Overdue Services`;
+            badge.innerText = `${activeAlerts.length} Overdue Services`;
 
-            if (alertItems.length === 0) {
+            if (activeAlerts.length === 0) {
                 container.innerHTML = `
                     <div class="check-circle">✓</div>
                     <p>All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</p>
@@ -673,13 +672,13 @@
             } else {
                 container.innerHTML = `
                     <div class="overdue-grid">
-                        ${alertItems.map(item => `
+                        ${activeAlerts.map(item => `
                             <div class="overdue-item">
                                 <div>
                                     <h4>${item.name}</h4>
                                     <p>⚠️ Maintenance Due: <strong>${item.dueDate}</strong> (${item.department})</p>
                                 </div>
-                                <button class="btn-action-alert" onclick="triggerQuickService('${item.id}')">Service Now</button>
+                                <button class="btn-action-alert" onclick="triggerQuickService('${item.assetId}')">Service Now</button>
                             </div>
                         `).join('')}
                     </div>
@@ -690,7 +689,7 @@
         function triggerQuickService(assetId) {
             document.getElementById('select-asset').value = assetId;
             onAssetSelect();
-            window.scrollTo({ top: 320, behavior: 'smooth' });
+            document.getElementById('service-form-card').scrollIntoView({ behavior: 'smooth' });
         }
 
         function editRecord(id) {
@@ -708,10 +707,9 @@
             document.getElementById('input-cost').value = service.cost || 0;
             document.getElementById('input-unit').value = service.unit || 1;
             document.getElementById('input-service-date').value = service.serviceDate || '';
-            document.getElementById('input-next-date').value = service.nextDate || '';
 
             document.getElementById('btn-submit-text').innerText = 'Update Maintenance Service Record';
-            window.scrollTo({ top: 320, behavior: 'smooth' });
+            document.getElementById('service-form-card').scrollIntoView({ behavior: 'smooth' });
         }
 
         function deleteRecord(id) {
@@ -725,7 +723,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateAssetDropdown();
             document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
-            calculateNextDueDate();
             renderAll();
         });
     </script>
