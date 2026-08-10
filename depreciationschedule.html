@@ -533,7 +533,7 @@
             }
         }
 
-        // Calculation function strictly upholding user rules
+        // Calculation function strictly upholding dep.rate = (1 ÷ useful life) × 100
         function calculateAssetMetrics(asset, targetYear) {
             // Read cost flexibly
             const rawCost = asset.cost !== undefined ? asset.cost : 
@@ -543,13 +543,13 @@
                            (asset.amount !== undefined ? asset.amount : 0))));
             const cost = parseNumber(rawCost);
 
-            // Dep. Rate MUST follow Useful Life recorded for the asset (Rate % = 100 / Useful Life)
+            // Dep. Rate FORMULA: (1 ÷ Useful Life) × 100
             const rawLifespan = asset.usefulLife || asset.lifespan || asset.useful_life || asset.tempoh || asset.hayat || asset.life;
             const lifespanNum = parseNumber(rawLifespan);
 
             let ratePercent = 0;
             if (lifespanNum > 0) {
-                ratePercent = 100 / lifespanNum;
+                ratePercent = (1 / lifespanNum) * 100;
             } else {
                 const rawRate = asset.rate || asset.depRate || asset.depreciationRate || asset.ratePercent || 20;
                 ratePercent = parseNumber(rawRate) || 20;
@@ -795,10 +795,11 @@
             `;
         }
 
+        // Auto calculate rate using formula: (1 ÷ Useful Life) × 100
         function updateRateFromLife() {
             const life = parseNumber(document.getElementById('edit-lifespan').value);
             if (life > 0) {
-                document.getElementById('edit-rate').value = (100 / life);
+                document.getElementById('edit-rate').value = (1 / life) * 100;
             }
         }
 
@@ -818,7 +819,7 @@
             const rawLifespan = asset.usefulLife || asset.lifespan || asset.useful_life || 5;
             const lifespanNum = parseNumber(rawLifespan) || 5;
             document.getElementById('edit-lifespan').value = lifespanNum;
-            document.getElementById('edit-rate').value = 100 / lifespanNum;
+            document.getElementById('edit-rate').value = (1 / lifespanNum) * 100;
 
             document.getElementById('edit-modal').style.display = 'flex';
         }
@@ -842,7 +843,7 @@
                 assets[idx].cost = parseFloat(document.getElementById('edit-cost').value) || 0;
                 assets[idx].lifespan = lifespanVal;
                 assets[idx].usefulLife = lifespanVal;
-                assets[idx].rate = 100 / lifespanVal;
+                assets[idx].rate = (1 / lifespanVal) * 100;
 
                 saveAssets(assets);
                 closeModal();
