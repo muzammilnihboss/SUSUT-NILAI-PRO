@@ -462,12 +462,12 @@
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div class="form-group">
-                        <label>Depreciation Rate (%)</label>
-                        <input type="number" step="0.01" id="edit-rate" class="form-control" required>
+                        <label>Useful Life (Years)</label>
+                        <input type="number" id="edit-lifespan" class="form-control" oninput="updateRateFromLife()" required>
                     </div>
                     <div class="form-group">
-                        <label>Useful Life (Years)</label>
-                        <input type="number" id="edit-lifespan" class="form-control" required>
+                        <label>Depreciation Rate (%)</label>
+                        <input type="number" step="0.01" id="edit-rate" class="form-control" required readonly style="background-color: #f1f5f9;">
                     </div>
                 </div>
 
@@ -482,7 +482,7 @@
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        // Utility to parse any numerical string safely (handles "RM 1,000.00" -> 1000)
+        // Utility to parse any numerical string safely
         function parseNumber(val) {
             if (val === undefined || val === null) return 0;
             if (typeof val === 'number') return val;
@@ -491,7 +491,7 @@
             return isNaN(num) ? 0 : num;
         }
 
-        // Utility to extract purchase year from various date formats
+        // Utility to extract purchase year
         function getPurchaseYear(dateStr) {
             if (!dateStr) return new Date().getFullYear();
             const str = String(dateStr).trim();
@@ -535,7 +535,7 @@
 
         // Calculation function strictly upholding user rules
         function calculateAssetMetrics(asset, targetYear) {
-            // Read cost flexibly across all possible field names
+            // Read cost flexibly
             const rawCost = asset.cost !== undefined ? asset.cost : 
                            (asset.price !== undefined ? asset.price : 
                            (asset.purchasePrice !== undefined ? asset.purchasePrice : 
@@ -543,13 +543,17 @@
                            (asset.amount !== undefined ? asset.amount : 0))));
             const cost = parseNumber(rawCost);
 
-            // Read rate flexibly
-            const rawRate = asset.rate !== undefined ? asset.rate : 
-                           (asset.depRate !== undefined ? asset.depRate : 
-                           (asset.depreciationRate !== undefined ? asset.depreciationRate : 
-                           (asset.ratePercent !== undefined ? asset.ratePercent : 
-                           (asset.lifespan ? (100 / parseNumber(asset.lifespan)) : 20))));
-            const ratePercent = parseNumber(rawRate) || 20;
+            // Dep. Rate MUST follow Useful Life recorded for the asset (Rate % = 100 / Useful Life)
+            const rawLifespan = asset.usefulLife || asset.lifespan || asset.useful_life || asset.tempoh || asset.hayat || asset.life;
+            const lifespanNum = parseNumber(rawLifespan);
+
+            let ratePercent = 0;
+            if (lifespanNum > 0) {
+                ratePercent = 100 / lifespanNum;
+            } else {
+                const rawRate = asset.rate || asset.depRate || asset.depreciationRate || asset.ratePercent || 20;
+                ratePercent = parseNumber(rawRate) || 20;
+            }
 
             const purchaseDateStr = asset.purchaseDate || asset.date || asset.tarikh || asset.datePurchased || asset.a_date || '';
             const purchaseYear = getPurchaseYear(purchaseDateStr);
@@ -567,7 +571,7 @@
             let costOpening = purchaseYear < targetYear ? cost : 0;
             let costAddition = purchaseYear === targetYear ? cost : 0;
             let costDisposal = 0;
-            let costClosing = costOpening + costAddition - costDisposal; // Closing cost equals cost
+            let costClosing = costOpening + costAddition - costDisposal;
 
             const annualDepRate = ratePercent / 100;
             let accumPrior = 0;
@@ -791,6 +795,13 @@
             `;
         }
 
+        function updateRateFromLife() {
+            const life = parseNumber(document.getElementById('edit-lifespan').value);
+            if (life > 0) {
+                document.getElementById('edit-rate').value = (100 / life);
+            }
+        }
+
         function openEditModal(assetId) {
             const assets = getAssets();
             const asset = assets.find(a => a.id === assetId);
@@ -804,9 +815,10 @@
             const rawCost = asset.cost !== undefined ? asset.cost : (asset.price || asset.purchasePrice || 0);
             document.getElementById('edit-cost').value = parseNumber(rawCost);
 
-            const rawRate = asset.rate !== undefined ? asset.rate : (asset.depRate || asset.ratePercent || 20);
-            document.getElementById('edit-rate').value = parseNumber(rawRate);
-            document.getElementById('edit-lifespan').value = asset.lifespan || 5;
+            const rawLifespan = asset.usefulLife || asset.lifespan || asset.useful_life || 5;
+            const lifespanNum = parseNumber(rawLifespan) || 5;
+            document.getElementById('edit-lifespan').value = lifespanNum;
+            document.getElementById('edit-rate').value = 100 / lifespanNum;
 
             document.getElementById('edit-modal').style.display = 'flex';
         }
@@ -822,12 +834,15 @@
 
             const idx = assets.findIndex(a => a.id === id);
             if (idx !== -1) {
+                const lifespanVal = parseInt(document.getElementById('edit-lifespan').value) || 5;
+                
                 assets[idx].name = document.getElementById('edit-name').value;
                 assets[idx].category = document.getElementById('edit-category').value;
                 assets[idx].purchaseDate = document.getElementById('edit-date').value;
                 assets[idx].cost = parseFloat(document.getElementById('edit-cost').value) || 0;
-                assets[idx].rate = parseFloat(document.getElementById('edit-rate').value) || 20;
-                assets[idx].lifespan = parseInt(document.getElementById('edit-lifespan').value) || 5;
+                assets[idx].lifespan = lifespanVal;
+                assets[idx].usefulLife = lifespanVal;
+                assets[idx].rate = 100 / lifespanVal;
 
                 saveAssets(assets);
                 closeModal();
