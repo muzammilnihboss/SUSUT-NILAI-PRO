@@ -13,10 +13,10 @@
         }
 
         body {
-            background-color: #f4f6f9;
+            background-color: #f8fafc;
             color: #1e293b;
             min-height: 100vh;
-            padding-bottom: 40px;
+            padding-bottom: 60px;
         }
 
         header {
@@ -26,7 +26,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .header-brand h2 {
@@ -38,6 +38,7 @@
         .nav-links {
             display: flex;
             gap: 10px;
+            align-items: center;
         }
 
         .btn-nav {
@@ -59,237 +60,122 @@
             color: #0f172a;
         }
 
-        .container {
-            max-width: 98%;
-            margin: 0 auto;
-            padding: 0 10px;
+        .btn-primary {
+            background-color: #2563eb;
+            color: #ffffff;
         }
 
-        /* ---------------- WARNING BANNER ---------------- */
-        .dashboard-alert-banner {
+        .container {
+            max-width: 96%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* BANNER NOTIFIKASI MERAH */
+        .alert-banner-box {
             background-color: #fff1f2;
             border: 1px solid #fecdd3;
             border-radius: 14px;
-            padding: 16px 22px;
-            margin-bottom: 24px;
+            padding: 16px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            transition: all 0.3s ease-in-out;
         }
 
-        .alert-banner-info {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .alert-banner-icon {
-            font-size: 24px;
-        }
-
-        .alert-banner-text h4 {
-            font-size: 15px;
-            font-weight: 700;
-            color: #be123c;
-        }
-
-        .alert-banner-text p {
-            font-size: 13px;
-            color: #9f1239;
-            margin-top: 2px;
-        }
-
-        .btn-banner-action {
+        .btn-alert-link {
             background-color: #e11d48;
             color: white;
-            padding: 9px 18px;
+            padding: 10px 18px;
             border-radius: 8px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 700;
+            white-space: nowrap;
             transition: background 0.2s;
         }
 
-        .btn-banner-action:hover {
+        .btn-alert-link:hover {
             background-color: #be123c;
         }
 
-        /* ---------------- TOP KPI SUMMARY STATS GRID ---------------- */
+        /* GRID KAD RINGKASAN */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        @media (max-width: 992px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 576px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
         }
 
         .stat-card {
             background: #ffffff;
-            border-radius: 18px;
-            padding: 20px 22px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
-        .stat-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .stat-label {
-            font-size: 11px;
+        .stat-card p {
+            font-size: 12px;
             font-weight: 700;
-            color: #94a3b8;
-            letter-spacing: 0.6px;
+            color: #64748b;
             text-transform: uppercase;
-            margin-bottom: 8px;
+            letter-spacing: 0.5px;
         }
 
-        .stat-value {
-            font-size: 20px;
+        .stat-card h3 {
+            font-size: 24px;
             font-weight: 800;
             color: #0f172a;
-        }
-
-        .stat-value.green-text { color: #059669; }
-        .stat-value.red-text { color: #e11d48; }
-
-        .stat-icon-box {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .stat-icon-box svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .kpi-1 { background-color: #e6f7ed; color: #10b981; }
-        .kpi-2 { background-color: #e6f7ed; color: #059669; }
-        .kpi-3 { background-color: #ffe4e6; color: #e11d48; }
-        .kpi-4 { background-color: #e0e7ff; color: #6366f1; }
-
-        /* ---------------- 5-CARD CONTROL PANEL GRID ---------------- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
-        }
-
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            }
+            margin-top: 8px;
         }
 
         .card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 24px 20px 20px 20px;
-            position: relative;
-            overflow: hidden;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 280px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 16px;
+            padding: 24px 28px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
-        .card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-        }
-
-        .card.active-card {
-            border: 1.5px solid #6366f1;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12);
-        }
-
-        .icon-box {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+        .header-title-group {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 18px;
+            gap: 14px;
+            margin-bottom: 16px;
         }
 
-        .icon-box svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        .c1 .icon-box { background-color: #dcfce7; color: #16a34a; }
-        .c1 .card-title { color: #0f172a; }
-        .c1 .card-link { color: #16a34a; }
-
-        .c2 .icon-box { background-color: #e0e7ff; color: #4f46e5; }
-        .c2 .card-title { color: #4f46e5; }
-        .c2 .card-link { color: #4f46e5; }
-
-        .c3 .icon-box { background-color: #dbeafe; color: #2563eb; }
-        .c3 .card-title { color: #0f172a; }
-        .c3 .card-link { color: #2563eb; }
-
-        .c4 .icon-box { background-color: #ffe4e6; color: #e11d48; }
-        .c4 .card-title { color: #0f172a; }
-        .c4 .card-link { color: #e11d48; }
-
-        .c5 .icon-box { background-color: #fef3c7; color: #d97706; }
-        .c5 .card-title { color: #0f172a; }
-        .c5 .card-link { color: #d97706; }
-
-        .card-content {
-            flex-grow: 1;
-        }
-
-        .card-title {
-            font-size: 17px;
+        .header-title-group h3 {
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 10px;
+            color: #0f172a;
         }
 
-        .card-desc {
-            font-size: 12.5px;
-            color: #64748b;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        .card-link {
-            text-decoration: none;
+        table {
+            width: 100%;
+            border-collapse: collapse;
             font-size: 13px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: gap 0.2s ease;
+            margin-top: 10px;
         }
 
-        .card-link:hover {
-            gap: 9px;
+        th, td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .empty-row {
+            text-align: center;
+            color: #64748b;
+            padding: 24px;
         }
     </style>
 </head>
@@ -300,6 +186,7 @@
             <h2>Susut Nilai Pro</h2>
         </div>
         <div class="nav-links">
+            <a href="dashboard.html" class="btn-nav btn-primary">🏠 Dashboard</a>
             <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
             <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
             <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
@@ -310,235 +197,168 @@
 
     <div class="container">
 
-        <!-- DASHBOARD MAINTENANCE WARNING BANNER -->
-        <div id="maintenance-warning-banner" class="dashboard-alert-banner" style="display: none;">
-            <div class="alert-banner-info">
-                <span class="alert-banner-icon">🚨</span>
-                <div class="alert-banner-text">
-                    <h4 id="banner-title">Maintenance Alert Required!</h4>
-                    <p id="banner-desc">You have assets that are overdue or approaching their service due date.</p>
-                </div>
-            </div>
-            <a href="servicereport.html" class="btn-banner-action">View Service Desk &rarr;</a>
+        <!-- DYNAMIC NOTIFICATION BANNER -->
+        <div id="dashboard-alert-banner" class="alert-banner-box" style="display: none;">
+            <!-- Content dynamically generated via JS -->
         </div>
 
-        <!-- 4 SUMMARY KPI CARDS -->
+        <!-- STATS OVERVIEW -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Total Asset Cost</span>
-                    <span class="stat-value" id="kpi-total-cost">RM 0.00</span>
-                </div>
-                <div class="stat-icon-box kpi-1">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 4.02 2 6.5s4.48 4.5 10 4.5 10-2.02 10-4.5S17.52 2 12 2zm0 3c-4.42 0-8-.9-8-1.5S7.58 2 12 2s8 .9 8 1.5S16.42 5 12 5zm0 4c-4.42 0-8-.9-8-1.5V11c0 1.66 3.58 3 8 3s8-1.34 8-3V7.5c0 .6-3.58 1.5-8 1.5zm0 5c-4.42 0-8-.9-8-1.5V16c0 1.66 3.58 3 8 3s8-1.34 8-3v-3.5c0 .6-3.58 1.5-8 1.5z"/>
-                    </svg>
-                </div>
+                <p>Total Registered Assets</p>
+                <h3 id="stat-total-assets">0</h3>
             </div>
-
             <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Current Book Value</span>
-                    <span class="stat-value green-text" id="kpi-book-value">RM 0.00</span>
-                </div>
-                <div class="stat-icon-box kpi-2">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
-                    </svg>
-                </div>
+                <p>Total Asset Cost Value</p>
+                <h3 id="stat-total-value">RM 0.00</h3>
             </div>
-
             <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Accumulated Dep.</span>
-                    <span class="stat-value red-text" id="kpi-accum-dep">RM 0.00</span>
-                </div>
-                <div class="stat-icon-box kpi-3">
-                    <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"/>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-info">
-                    <span class="stat-label">Registered Assets</span>
-                    <span class="stat-value" id="kpi-total-count">0</span>
-                </div>
-                <div class="stat-icon-box kpi-4">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                </div>
+                <p>Overdue Maintenance</p>
+                <h3 id="stat-alert-count" style="color: #e11d48;">0</h3>
             </div>
         </div>
 
-        <!-- 5 CONTROL PANELS -->
-        <div class="dashboard-grid">
-
-            <div class="card c1">
-                <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Invoice Manager</h3>
-                    <p class="card-desc">Upload purchase receipts or invoices. Our smart AI scanner automatically extracts values, dates, and suggests classifications!</p>
-                </div>
-                <div>
-                    <a href="#" class="card-link">Manage Invoices &rarr;</a>
-                </div>
+        <!-- RECENT ASSETS OVERVIEW -->
+        <div class="card">
+            <div class="header-title-group">
+                <h3>Asset Summary Overview</h3>
             </div>
-
-            <div class="card c2 active-card">
-                <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                    </svg>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Register New Asset</h3>
-                    <p class="card-desc">No receipt? Safely log any business asset manually by entering purchase costs, dates, and useful lifespans in seconds.</p>
-                </div>
-                <div>
-                    <a href="registernew.html" class="card-link">Register Asset &rarr;</a>
-                </div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Asset Name</th>
+                            <th>Category</th>
+                            <th>Location / Dept</th>
+                            <th>Cost (RM)</th>
+                            <th>Purchase Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboard-asset-table-body">
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
             </div>
-
-            <div class="card c3">
-                <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Asset Register</h3>
-                    <p class="card-desc">Your central assets library. Browse, search, filter, edit, or delete any of your registered business equipment at any time.</p>
-                </div>
-                <div>
-                    <a href="assetregister.html" class="card-link">View Register &rarr;</a>
-                </div>
-            </div>
-
-            <div class="card c4">
-                <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Service Report</h3>
-                    <p class="card-desc">Keep your assets in top shape! Monitor maintenance schedules, track equipment health status, and get alerts for overdue servicing.</p>
-                </div>
-                <div>
-                    <a href="servicereport.html" class="card-link">View Service Desk &rarr;</a>
-                </div>
-            </div>
-
-            <div class="card c5">
-                <div class="icon-box">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                    </svg>
-                </div>
-                <div class="card-content">
-                    <h3 class="card-title">Depreciation Schedule</h3>
-                    <p class="card-desc">View precise, GAAP-compliant valuation sheets year-by-year. Great for tax season, general ledger auditing, or exporting reports.</p>
-                </div>
-                <div>
-                    <a href="depreciationschedule.html" class="card-link">Open Schedule &rarr;</a>
-                </div>
-            </div>
-
         </div>
+
     </div>
 
     <script>
-        function checkMaintenanceAlerts() {
-            const SERVICES_STORAGE_KEY = 'susut_nilai_services';
-            const services = JSON.parse(localStorage.getItem(SERVICES_STORAGE_KEY)) || [];
-            
-            if (services.length === 0) return;
+        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
+        const STORAGE_KEY_SERVICES = 'susut_nilai_services';
 
-            const today = new Date();
-            today.setHours(0,0,0,0);
+        function getAssets() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+        }
+
+        function getServices() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES)) || [];
+        }
+
+        function addMonths(dateStr, months = 1) {
+            if (!dateStr) return '';
+            const d = new Date(dateStr);
+            d.setMonth(d.getMonth() + months);
+            return d.toISOString().split('T')[0];
+        }
+
+        function updateDashboardNotification() {
+            const assets = getAssets();
+            const services = getServices();
+            const today = new Date().toISOString().split('T')[0];
 
             let overdueCount = 0;
-            let dueSoonCount = 0;
+            let upcomingCount = 0;
 
-            const latestRecordsMap = {};
-            services.forEach(rec => {
-                if (!latestRecordsMap[rec.assetName] || new Date(rec.serviceDate) > new Date(latestRecordsMap[rec.assetName].serviceDate)) {
-                    latestRecordsMap[rec.assetName] = rec;
-                }
-            });
+            assets.forEach(asset => {
+                const assetLogs = services.filter(s => String(s.assetId) === String(asset.id));
+                let nextDueDate = '';
 
-            Object.values(latestRecordsMap).forEach(item => {
-                const dueDate = new Date(item.nextServiceDate || item.serviceDate);
-                dueDate.setHours(0,0,0,0);
-
-                const diffTime = dueDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays <= 0) {
-                    overdueCount++;
-                } else if (diffDays <= 30) {
-                    dueSoonCount++;
-                }
-            });
-
-            const banner = document.getElementById('maintenance-warning-banner');
-            const title = document.getElementById('banner-title');
-            const desc = document.getElementById('banner-desc');
-
-            if (overdueCount > 0 || dueSoonCount > 0) {
-                banner.style.display = 'flex';
-                if (overdueCount > 0) {
-                    title.textContent = `🚨 Attention Required: ${overdueCount} Asset(s) Overdue for Service!`;
-                    desc.textContent = `You have ${overdueCount} asset(s) past their service due date and ${dueSoonCount} approaching soon. Click to resolve.`;
+                if (assetLogs.length > 0) {
+                    assetLogs.sort((a, b) => new Date(b.serviceDate) - new Date(a.serviceDate));
+                    const latestLog = assetLogs[0];
+                    nextDueDate = latestLog.nextDate || addMonths(latestLog.serviceDate, 1);
                 } else {
-                    title.textContent = `⚡ Upcoming Maintenance: ${dueSoonCount} Asset(s) Due Soon!`;
-                    desc.textContent = `You have ${dueSoonCount} asset(s) scheduled for service within the next 30 days.`;
+                    const lastService = asset.lastServiceDate || asset.purchaseDate || today;
+                    nextDueDate = addMonths(lastService, 1);
                 }
+
+                if (nextDueDate) {
+                    if (nextDueDate <= today) {
+                        overdueCount++;
+                    } else {
+                        const due = new Date(nextDueDate);
+                        const now = new Date(today);
+                        const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+                        if (diffDays > 0 && diffDays <= 7) {
+                            upcomingCount++;
+                        }
+                    }
+                }
+            });
+
+            // Kemas kini angka pada kad Overdue Maintenance
+            const alertStatCount = document.getElementById('stat-alert-count');
+            if (alertStatCount) alertStatCount.innerText = overdueCount;
+
+            const alertBanner = document.getElementById('dashboard-alert-banner');
+            if (!alertBanner) return;
+
+            // JIKA TIADA TERTUNGGAK -> HILANGKAN BANNER (display: none)
+            if (overdueCount === 0 && upcomingCount === 0) {
+                alertBanner.style.display = 'none';
+            } else {
+                alertBanner.style.display = 'flex';
+                alertBanner.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <span style="font-size: 24px;">🚨</span>
+                        <div>
+                            <h4 style="color: #9f1239; font-size: 14px; font-weight: 700; margin-bottom: 2px;">
+                                Attention Required: ${overdueCount} Asset(s) Overdue for Service!
+                            </h4>
+                            <p style="color: #be123c; font-size: 12.5px;">
+                                You have ${overdueCount} asset(s) past their service due date and ${upcomingCount} approaching soon. Click to resolve.
+                            </p>
+                        </div>
+                    </div>
+                    <a href="servicereport.html" class="btn-alert-link">View Service Desk →</a>
+                `;
             }
         }
 
-        function calculateDashboardKPIs() {
-            const STORAGE_KEY = 'susut_nilai_assets';
-            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        function renderMetricsAndTable() {
+            const assets = getAssets();
+            let totalVal = 0;
 
-            let totalCost = 0;
-            let totalAccumDep = 0;
-            let currentYear = new Date().getFullYear();
+            const tbody = document.getElementById('dashboard-asset-table-body');
 
-            assets.forEach(asset => {
-                const cost = parseFloat(asset.total || 0);
-                const salvage = parseFloat(asset.salvage || 0);
-                const usefulLife = parseInt(asset.usefulLife || 1);
-                const purchaseYear = asset.purchaseDate ? new Date(asset.purchaseDate).getFullYear() : currentYear;
+            if (assets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-row">No registered assets found in system.</td></tr>`;
+            } else {
+                tbody.innerHTML = assets.map((a, idx) => {
+                    const cost = parseFloat(a.cost || a.price || 0);
+                    totalVal += cost;
+                    return `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td><strong>${a.name || '-'}</strong></td>
+                            <td>${a.category || '-'}</td>
+                            <td>${a.location || a.department || '-'}</td>
+                            <td>RM ${cost.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                            <td>${a.purchaseDate || '-'}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
 
-                totalCost += cost;
-
-                if (currentYear >= purchaseYear) {
-                    const annualDep = (cost - salvage) / usefulLife;
-                    const yearsElapsed = currentYear - purchaseYear + 1;
-                    const accumulated = Math.min(yearsElapsed * annualDep, cost - salvage);
-                    totalAccumDep += Math.max(0, accumulated);
-                }
-            });
-
-            const currentBookValue = totalCost - totalAccumDep;
-
-            document.getElementById('kpi-total-cost').textContent = `RM ${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('kpi-book-value').textContent = `RM ${Math.max(0, currentBookValue).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('kpi-accum-dep').textContent = `RM ${totalAccumDep.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            document.getElementById('kpi-total-count').textContent = assets.length;
+            document.getElementById('stat-total-assets').innerText = assets.length;
+            document.getElementById('stat-total-value').innerText = `RM ${totalVal.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            calculateDashboardKPIs();
-            checkMaintenanceAlerts();
+            renderMetricsAndTable();
+            updateDashboardNotification();
         });
     </script>
 </body>
