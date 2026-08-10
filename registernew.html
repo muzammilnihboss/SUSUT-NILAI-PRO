@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manual Asset Registration Protocol - Susut Nilai Pro</title>
+    <title>Asset Register - Susut Nilai Pro</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             background-color: #f8fafc;
             color: #1e293b;
             min-height: 100vh;
-            padding-bottom: 50px;
+            padding-bottom: 60px;
         }
 
         header {
@@ -26,7 +26,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .header-brand h2 {
@@ -37,12 +37,12 @@
 
         .nav-links {
             display: flex;
+            gap: 10px;
             align-items: center;
-            gap: 12px;
         }
 
         .btn-nav {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 6px;
             text-decoration: none;
             font-size: 13px;
@@ -60,374 +60,516 @@
             color: #0f172a;
         }
 
-        .btn-view-register {
+        .btn-primary {
             background-color: #2563eb;
             color: #ffffff;
         }
 
-        .btn-view-register:hover {
-            background-color: #1d4ed8;
-        }
-
-        .form-card {
-            max-width: 900px;
+        .container {
+            max-width: 98%;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
             background: #ffffff;
-            border-radius: 16px;
-            padding: 36px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
             border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px 28px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
-        .protocol-header {
+        .card-header {
             display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .protocol-icon {
-            background: #ecfdf5;
-            color: #059669;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 20px;
         }
 
-        .protocol-titles h1 {
-            font-size: 20px;
-            font-weight: 700;
+        .header-title-group h3 {
+            font-size: 18px;
+            font-weight: 800;
             color: #0f172a;
-            margin-bottom: 4px;
-        }
-
-        .protocol-titles p {
-            font-size: 13px;
-            color: #64748b;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 18px;
-        }
-
-        .col-12 { grid-column: span 12; }
-        .col-6  { grid-column: span 6; }
-        .col-4  { grid-column: span 4; }
-        .col-2  { grid-column: span 2; }
-
-        @media (max-width: 768px) {
-            .col-6, .col-4, .col-2 {
-                grid-column: span 12;
-            }
-        }
-
-        label {
-            display: block;
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.6px;
-            margin-bottom: 6px;
+            letter-spacing: 0.5px;
         }
 
-        label span.required {
-            color: #ef4444;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            font-size: 14px;
-            color: #0f172a;
-            background-color: #ffffff;
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        input:focus, select:focus {
-            border-color: #059669;
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
-        }
-
-        input[readonly] {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 600;
-        }
-
-        #custom-category-wrapper {
-            display: none;
-        }
-
-        .servicing-box {
-            background-color: #f8fafc;
-            border: 1px solid #f1f5f9;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
-
-        .servicing-title {
+        .subtitle {
             font-size: 13px;
-            font-weight: 700;
-            color: #0f172a;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .controls-toolbar {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 14px;
+            gap: 12px;
         }
 
-        .btn-submit-container {
-            margin-top: 24px;
+        .search-input {
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 13px;
+            outline: none;
+            width: 240px;
         }
 
-        .btn-save-ledger {
-            width: 100%;
-            background-color: #059669;
+        .btn-add {
+            background-color: #2563eb;
             color: #ffffff;
-            padding: 14px 20px;
             border: none;
-            border-radius: 10px;
-            font-size: 15px;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: background-color 0.2s ease;
+            gap: 6px;
         }
 
-        .btn-save-ledger:hover {
-            background-color: #047857;
+        table.register-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        table.register-table th, table.register-table td {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        table.register-table th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .text-right { text-align: right !important; }
+        .text-left { text-align: left !important; }
+
+        .btn-action-delete {
+            background-color: #ef4444;
+            color: #ffffff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 4px;
+        }
+
+        .btn-action-edit {
+            background-color: #0284c7;
+            color: #ffffff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 540px;
+            padding: 24px 28px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .btn-cancel {
+            background-color: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        @media print {
+            header, .controls-toolbar, .col-action {
+                display: none !important;
+            }
+            body { background: #fff; }
+            .card { border: none; box-shadow: none; padding: 0; }
         }
     </style>
 </head>
 <body>
 
-    <header>
+    <header class="no-print">
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
         </div>
         <div class="nav-links">
-            <a href="dashboard.html" class="btn-nav btn-secondary">&larr; Dashboard</a>
-            <a href="assetregister.html" class="btn-nav btn-view-register">📋 View Asset Register</a>
+            <a href="dashboard.html" class="btn-nav btn-secondary">🏠 Dashboard</a>
+            <a href="assetregister.html" class="btn-nav btn-primary">📋 Asset Register</a>
+            <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
             <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
+            <a href="servicereport.html" class="btn-nav btn-secondary">🛠️ Service Report</a>
             <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
         </div>
     </header>
 
-    <div class="form-card">
-        <div class="protocol-header">
-            <div class="protocol-icon">📝</div>
-            <div class="protocol-titles">
-                <h1>Manual Asset Registration Protocol</h1>
-                <p>Configure parameters accurately to execute general ledger amortization plans.</p>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <div class="header-title-group">
+                    <h3>FIXED ASSET REGISTER</h3>
+                    <p class="subtitle">Master list of registered assets with automatic Unit Price and Depreciation Rate calculations.</p>
+                </div>
+
+                <div class="controls-toolbar no-print">
+                    <input type="text" id="search-input" class="search-input" placeholder="🔍 Search asset name..." onkeyup="renderTable()">
+                    <a href="registernew.html" class="btn-add">+ Register New Asset</a>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="register-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 35px;">No.</th>
+                            <th style="width: 90px;">Date</th>
+                            <th>Asset Name</th>
+                            <th>Category</th>
+                            <th style="width: 50px;">Qty</th>
+                            <th style="width: 110px;">Unit Price (RM)</th>
+                            <th style="width: 110px;">Total Cost (RM)</th>
+                            <th style="width: 80px;">Useful Life (Yrs)</th>
+                            <th style="width: 80px;">Dep. Rate (%)</th>
+                            <th style="width: 120px;">Location</th>
+                            <th style="width: 90px;" class="col-action no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="asset-register-tbody">
+                        <!-- Auto populated from LocalStorage -->
+                    </tbody>
+                    <tfoot id="asset-register-tfoot">
+                        <!-- Totals auto calculated -->
+                    </tfoot>
+                </table>
             </div>
         </div>
+    </div>
 
-        <form id="asset-registration-form" onsubmit="handleSaveAsset(event)">
-            <div class="form-grid">
-
-                <div class="col-12">
-                    <label for="asset-name">ASSET NAME / DESCRIPTION <span class="required">*</span></label>
-                    <input type="text" id="asset-name" placeholder="e.g. Ergonomic Office Chair" required>
+    <!-- EDIT MODAL -->
+    <div id="edit-modal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 style="font-size: 16px; font-weight: 800; color: #0f172a;">Edit Asset Record</h3>
+                <button onclick="closeModal()" style="border:none; background:none; font-size: 20px; cursor:pointer;">&times;</button>
+            </div>
+            <form id="edit-form" onsubmit="saveAssetEdit(event)">
+                <input type="hidden" id="edit-asset-id">
+                
+                <div class="form-group">
+                    <label>Asset Name</label>
+                    <input type="text" id="edit-name" class="form-control" required>
                 </div>
 
-                <div class="col-6">
-                    <label for="supplier-name">SUPPLIER NAME <span class="required">*</span></label>
-                    <input type="text" id="supplier-name" placeholder="e.g. Apex Furniture Sdn Bhd" required>
-                </div>
-
-                <div class="col-6">
-                    <label for="invoice-number">INVOICE NUMBER <span class="required">*</span></label>
-                    <input type="text" id="invoice-number" placeholder="e.g. INV/2026/0912" required>
-                </div>
-
-                <div class="col-6">
-                    <label for="asset-category">ASSET CLASSIFICATION CATEGORY</label>
-                    <select id="asset-category" onchange="toggleCustomCategory()" required>
-                        <option value="Office Equipment">Office Equipment</option>
-                        <option value="Computer & Hardware">Computer & Hardware</option>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="edit-category" class="form-control" required>
                         <option value="Furniture & Fittings">Furniture & Fittings</option>
-                        <option value="Motor Vehicle">Motor Vehicle</option>
-                        <option value="System & Development">System & Development</option>
-                        <option value="Renovation">Renovation</option>
-                        <option value="Shop Lot">Shop Lot</option>
-                        <option value="Other Asset">Other Asset</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Office Equipment">Office Equipment</option>
+                        <option value="Electrical Installation">Electrical Installation</option>
+                        <option value="Computers">Computers</option>
+                        <option value="Vehicles">Vehicles</option>
+                        <option value="Machinery">Machinery</option>
+                        <option value="Others">Others</option>
                     </select>
                 </div>
 
-                <div class="col-6">
-                    <label for="purchase-date">PURCHASE DATE</label>
-                    <input type="date" id="purchase-date" required>
-                </div>
-
-                <div class="col-12" id="custom-category-wrapper">
-                    <label for="custom-category-input">SPECIFY CUSTOM CATEGORY <span class="required">*</span></label>
-                    <input type="text" id="custom-category-input" placeholder="e.g. Heavy Machinery">
-                </div>
-
-                <div class="col-6">
-                    <label for="department">DEPLOYMENT DEPARTMENT <span class="required">*</span></label>
-                    <input type="text" id="department" placeholder="e.g. Administrative Office HQ" required>
-                </div>
-
-                <div class="col-2">
-                    <label for="unit">UNIT</label>
-                    <input type="number" id="unit" value="1" min="1" oninput="calculateTotal()" required>
-                </div>
-
-                <div class="col-2">
-                    <label for="unit-price">UNIT PRICE (RM)</label>
-                    <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()" required>
-                </div>
-
-                <div class="col-2">
-                    <label for="total-cost">TOTAL (RM)</label>
-                    <input type="text" id="total-cost" value="0.00" readonly>
-                </div>
-
-                <div class="col-4">
-                    <label for="estimated-salvage">ESTIMATED SALVAGE (RM)</label>
-                    <input type="number" step="0.01" id="estimated-salvage" placeholder="0.00" value="0.00">
-                </div>
-
-                <div class="col-4">
-                    <label for="useful-life">ESTIMATED USEFUL LIFE (YRS) <span class="required">*</span></label>
-                    <input type="number" id="useful-life" placeholder="e.g. 5" min="1" required>
-                </div>
-
-                <div class="col-4">
-                    <label for="amortization-method">AMORTIZATION METHOD</label>
-                    <select id="amortization-method" disabled>
-                        <option value="Straight Line (Equal Amortization)" selected>Straight Line (Equal Amortization)</option>
-                    </select>
-                </div>
-
-                <div class="col-12">
-                    <div class="servicing-box">
-                        <div class="servicing-title">
-                            <span>🔧</span> Preventive Servicing Intervals
-                        </div>
-                        <div class="form-grid">
-                            <div class="col-6">
-                                <label for="last-service-date">LAST SERVICE DATE</label>
-                                <input type="date" id="last-service-date">
-                            </div>
-                            <div class="col-6">
-                                <label for="service-interval">SERVICE INTERVAL (MONTHS)</label>
-                                <input type="number" id="service-interval" value="6" min="1">
-                            </div>
-                        </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Purchase Date</label>
+                        <input type="date" id="edit-date" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" min="1" id="edit-qty" class="form-control" oninput="calculateEditTotals()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Cost (RM)</label>
+                        <input type="number" step="0.01" id="edit-cost" class="form-control" oninput="calculateEditTotals()" required>
                     </div>
                 </div>
 
-            </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                    <div class="form-group">
+                        <label>Unit Price (RM)</label>
+                        <input type="number" step="0.01" id="edit-unit-price" class="form-control" readonly style="background-color: #f1f5f9;">
+                    </div>
+                    <div class="form-group">
+                        <label>Useful Life (Yrs)</label>
+                        <input type="number" id="edit-lifespan" class="form-control" oninput="calculateEditTotals()" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Dep. Rate (%)</label>
+                        <input type="number" step="0.01" id="edit-rate" class="form-control" readonly style="background-color: #f1f5f9;">
+                    </div>
+                </div>
 
-            <div class="btn-submit-container">
-                <button type="submit" class="btn-save-ledger">
-                    💾 Save Asset to Ledger Book
-                </button>
-            </div>
-        </form>
+                <div class="form-group">
+                    <label>Location / Department</label>
+                    <input type="text" id="edit-location" class="form-control">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-save">Save Changes</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
-        const STORAGE_KEY = 'susut_nilai_assets';
+        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        function initCurrentDates() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            const formattedCurrentDate = `${year}-${month}-${day}`;
-
-            document.getElementById('purchase-date').value = formattedCurrentDate;
-            document.getElementById('last-service-date').value = formattedCurrentDate;
+        function parseNumber(val) {
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'number') return val;
+            const cleaned = String(val).replace(/[^0-9.-]+/g, '');
+            const num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
         }
 
-        function toggleCustomCategory() {
-            const categorySelect = document.getElementById('asset-category');
-            const customWrapper = document.getElementById('custom-category-wrapper');
-            const customInput = document.getElementById('custom-category-input');
+        function getAssets() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+        }
 
-            if (categorySelect.value === 'Other Asset') {
-                customWrapper.style.display = 'block';
-                customInput.required = true;
-            } else {
-                customWrapper.style.display = 'none';
-                customInput.required = false;
-                customInput.value = '';
+        function saveAssets(assets) {
+            localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
+        }
+
+        function renderTable() {
+            const assets = getAssets();
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const tbody = document.getElementById('asset-register-tbody');
+            const tfoot = document.getElementById('asset-register-tfoot');
+
+            tbody.innerHTML = '';
+
+            const filtered = assets.filter(a => {
+                const name = (a.name || a.assetName || a.nama || '').toLowerCase();
+                const cat = (a.category || a.kategori || '').toLowerCase();
+                return name.includes(searchVal) || cat.includes(searchVal);
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" style="padding: 30px; color: #64748b; font-weight: 600;">
+                            No registered assets found in system.
+                        </td>
+                    </tr>
+                `;
+                tfoot.innerHTML = '';
+                return;
+            }
+
+            let sumQty = 0;
+            let sumTotalCost = 0;
+
+            filtered.forEach((asset, idx) => {
+                const name = asset.name || asset.assetName || asset.nama || 'Asset';
+                const category = asset.category || asset.kategori || 'Others';
+                const date = asset.purchaseDate || asset.date || asset.tarikh || '-';
+                const qty = parseNumber(asset.quantity || asset.qty) || 1;
+                
+                const totalCost = parseNumber(asset.cost !== undefined ? asset.cost : (asset.price || asset.purchasePrice || asset.amount || 0));
+                
+                // AUTOMATIC UNIT PRICE CALCULATION: (Total Cost / Qty) or registered unit price
+                const unitPrice = asset.unitPrice !== undefined && asset.unitPrice > 0 
+                    ? parseNumber(asset.unitPrice) 
+                    : (totalCost / qty);
+
+                const lifespan = parseNumber(asset.usefulLife || asset.lifespan || asset.useful_life || 5) || 5;
+                
+                // STRICT FORMULA: Dep Rate % = (1 ÷ Useful Life) × 100
+                const depRate = (1 / lifespan) * 100;
+
+                const location = asset.location || asset.lokasi || '-';
+
+                sumQty += qty;
+                sumTotalCost += totalCost;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td>${date}</td>
+                        <td class="text-left"><strong>${name}</strong></td>
+                        <td>${category}</td>
+                        <td>${qty}</td>
+                        <td class="text-right">RM ${unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td class="text-right" style="font-weight: 700;">RM ${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                        <td>${lifespan} Yrs</td>
+                        <td>${depRate.toFixed(2)}%</td>
+                        <td>${location}</td>
+                        <td class="col-action no-print">
+                            <button class="btn-action-edit" onclick="openEditModal(${asset.id})">Edit</button>
+                            <button class="btn-action-delete" onclick="deleteAsset(${asset.id})">Del</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tfoot.innerHTML = `
+                <tr style="font-weight: 800; background-color: #f1f5f9;">
+                    <td colspan="4" class="text-right">TOTAL RECORDED ASSETS:</td>
+                    <td>${sumQty}</td>
+                    <td>-</td>
+                    <td class="text-right" style="color: #2563eb;">RM ${sumTotalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td colspan="4"></td>
+                </tr>
+            `;
+        }
+
+        function calculateEditTotals() {
+            const qty = parseNumber(document.getElementById('edit-qty').value) || 1;
+            const cost = parseNumber(document.getElementById('edit-cost').value) || 0;
+            const life = parseNumber(document.getElementById('edit-lifespan').value) || 5;
+
+            document.getElementById('edit-unit-price').value = (cost / qty).toFixed(2);
+            document.getElementById('edit-rate').value = ((1 / life) * 100).toFixed(2);
+        }
+
+        function openEditModal(id) {
+            const assets = getAssets();
+            const asset = assets.find(a => a.id === id);
+            if (!asset) return;
+
+            document.getElementById('edit-asset-id').value = asset.id;
+            document.getElementById('edit-name').value = asset.name || asset.assetName || asset.nama || '';
+            document.getElementById('edit-category').value = asset.category || asset.kategori || 'Furniture & Fittings';
+            document.getElementById('edit-date').value = asset.purchaseDate || asset.date || asset.tarikh || '';
+            
+            const qty = parseNumber(asset.quantity || asset.qty) || 1;
+            const cost = parseNumber(asset.cost !== undefined ? asset.cost : (asset.price || 0));
+            const life = parseNumber(asset.usefulLife || asset.lifespan) || 5;
+
+            document.getElementById('edit-qty').value = qty;
+            document.getElementById('edit-cost').value = cost;
+            document.getElementById('edit-lifespan').value = life;
+            document.getElementById('edit-location').value = asset.location || asset.lokasi || '';
+
+            calculateEditTotals();
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('edit-modal').style.display = 'none';
+        }
+
+        function saveAssetEdit(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-asset-id').value);
+            let assets = getAssets();
+
+            const idx = assets.findIndex(a => a.id === id);
+            if (idx !== -1) {
+                const qty = parseInt(document.getElementById('edit-qty').value) || 1;
+                const cost = parseFloat(document.getElementById('edit-cost').value) || 0;
+                const life = parseInt(document.getElementById('edit-lifespan').value) || 5;
+
+                assets[idx].name = document.getElementById('edit-name').value;
+                assets[idx].category = document.getElementById('edit-category').value;
+                assets[idx].purchaseDate = document.getElementById('edit-date').value;
+                assets[idx].quantity = qty;
+                assets[idx].cost = cost;
+                assets[idx].unitPrice = cost / qty;
+                assets[idx].usefulLife = life;
+                assets[idx].lifespan = life;
+                assets[idx].rate = (1 / life) * 100;
+                assets[idx].location = document.getElementById('edit-location').value;
+
+                saveAssets(assets);
+                closeModal();
+                renderTable();
             }
         }
 
-        function calculateTotal() {
-            const unitVal = parseFloat(document.getElementById('unit').value) || 0;
-            const priceVal = parseFloat(document.getElementById('unit-price').value) || 0;
-            const total = unitVal * priceVal;
-            document.getElementById('total-cost').value = total.toFixed(2);
-        }
-
-        function handleSaveAsset(event) {
-            event.preventDefault();
-
-            let storedAssets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
-            const categoryDropdown = document.getElementById('asset-category').value;
-            let finalCategory = categoryDropdown;
-            if (categoryDropdown === 'Other Asset') {
-                const customCategoryVal = document.getElementById('custom-category-input').value.trim();
-                finalCategory = customCategoryVal ? customCategoryVal : 'Other Asset';
+        function deleteAsset(id) {
+            if (confirm("Adakah anda pasti mahu memadamkan rekod aset ini?")) {
+                let assets = getAssets();
+                assets = assets.filter(a => a.id !== id);
+                saveAssets(assets);
+                renderTable();
             }
-
-            const unitNum = parseFloat(document.getElementById('unit').value) || 0;
-            const unitPriceNum = parseFloat(document.getElementById('unit-price').value) || 0;
-            const totalNum = unitNum * unitPriceNum;
-
-            const newAssetObject = {
-                id: Date.now(),
-                name: document.getElementById('asset-name').value,
-                supplier: document.getElementById('supplier-name').value,
-                refNo: document.getElementById('invoice-number').value,
-                category: finalCategory,
-                purchaseDate: document.getElementById('purchase-date').value,
-                disposalDate: '-',
-                location: document.getElementById('department').value,
-                unit: unitNum,
-                unitPrice: unitPriceNum,
-                total: totalNum,
-                salvage: parseFloat(document.getElementById('estimated-salvage').value) || 0,
-                usefulLife: parseInt(document.getElementById('useful-life').value),
-                amortizationMethod: 'Straight Line (Equal Amortization)',
-                lastServiceDate: document.getElementById('last-service-date').value,
-                serviceInterval: document.getElementById('service-interval').value,
-                model: '-',
-                updatedDate: new Date().toISOString().split('T')[0],
-                updatedBy: document.getElementById('supplier-name').value || 'Admin'
-            };
-
-            storedAssets.push(newAssetObject);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(storedAssets));
-
-            alert(`Asset "${newAssetObject.name}" has been successfully recorded into the system!`);
-            window.location.href = 'assetregister.html';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initCurrentDates();
-        });
+        document.addEventListener('DOMContentLoaded', renderTable);
     </script>
 </body>
 </html>
