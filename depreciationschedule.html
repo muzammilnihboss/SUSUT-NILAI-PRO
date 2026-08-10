@@ -140,7 +140,7 @@
             background-color: #334155;
         }
 
-        /* CATEGORY SECTION TABLE DESIGN MATCHING FORM SPECIFICATION */
+        /* CATEGORY SECTION TABLE DESIGN MATCHING SPECIFICATION */
         .category-section {
             margin-bottom: 28px;
             border: 1px solid #cbd5e1;
@@ -368,7 +368,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="header-title-group">
-                    <h3 id="schedule-title">DEPRECIATION SCHEDULE FOR : <u>ALL ASSET CATEGORIES</u></h3>
+                    <h3 id="schedule-title">DEPRECIATION SCHEDULE FOR : <u>RECORDED ASSETS</u></h3>
                     <p class="subtitle">Categorized breakdown of Asset Cost, Accumulated Depreciation, and Net Book Value.</p>
                 </div>
 
@@ -388,7 +388,7 @@
 
             <!-- DYNAMIC CATEGORY TABLES WRAPPER -->
             <div id="category-tables-wrapper">
-                <!-- Dynamically populated per category -->
+                <!-- Dynamically populated for recorded asset categories only -->
             </div>
         </div>
 
@@ -485,14 +485,6 @@
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        // Predefined Categories based on the form specifications
-        const DEFAULT_CATEGORIES = [
-            'Furniture',
-            'Office Equipment',
-            'Electrical Installation',
-            'Computers'
-        ];
-
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
@@ -515,13 +507,13 @@
             }
         }
 
-        // Calculation helper per asset for a given target financial year
+        // Formula Calculation per asset based on Purchase Date (Pro-Rata) & Straight Line Rate
         function calculateAssetMetrics(asset, targetYear) {
             const cost = parseFloat(asset.cost || asset.price || 0);
             const ratePercent = parseFloat(asset.rate || (100 / (asset.lifespan || 5))) || 10;
             const purchaseDate = new Date(asset.purchaseDate || `${targetYear}-01-01`);
             const purchaseYear = purchaseDate.getFullYear();
-            const purchaseMonth = purchaseDate.getMonth() + 1; // 1-12
+            const purchaseMonth = purchaseDate.getMonth() + 1; // 1 to 12
 
             if (purchaseYear > targetYear || cost <= 0) {
                 return {
@@ -532,13 +524,13 @@
                 };
             }
 
-            // Cost Columns
+            // Cost Columns Calculation
             let costOpening = purchaseYear < targetYear ? cost : 0;
             let costAddition = purchaseYear === targetYear ? cost : 0;
             let costDisposal = 0;
             let costClosing = cost;
 
-            // Annual Depreciation Straight-Line Pro-Rata
+            // Pro-Rata Monthly Straight-Line Depreciation Formula
             const annualDepRate = ratePercent / 100;
             const fullYearDep = cost * annualDepRate;
             const year1Months = 13 - purchaseMonth;
@@ -550,7 +542,6 @@
             for (let y = purchaseYear; y <= targetYear; y++) {
                 let depForY = (y === purchaseYear) ? year1Dep : fullYearDep;
                 
-                // Cap accumulated depreciation to cost
                 if (y < targetYear) {
                     accumPrior = Math.min(cost, accumPrior + depForY);
                 } else if (y === targetYear) {
@@ -578,17 +569,29 @@
             document.getElementById('journal-year-label').innerText = `YEAR ${targetYear}`;
 
             const assets = getAssets();
-            
-            // Group assets by category
-            const categories = [...new Set([...DEFAULT_CATEGORIES, ...assets.map(a => a.category || 'Others')])];
-            
             const wrapper = document.getElementById('category-tables-wrapper');
             wrapper.innerHTML = '';
 
+            // If no recorded assets exist at all
+            if (assets.length === 0) {
+                wrapper.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                        <p style="font-weight: 700; font-size: 15px;">No recorded assets found in the system.</p>
+                        <p style="font-size: 13px; margin-top: 4px;">Please add new assets first to display the depreciation schedule.</p>
+                    </div>
+                `;
+                renderJournalEntries({}, targetYear);
+                return;
+            }
+
+            // ONLY extract categories that actually exist in the recorded assets
+            const recordedCategories = [...new Set(assets.map(a => a.category || 'Others'))];
             let categoryDepTotals = {};
 
-            categories.forEach(catName => {
+            recordedCategories.forEach(catName => {
                 const catAssets = assets.filter(a => (a.category || 'Others').toLowerCase() === catName.toLowerCase());
+
+                if (catAssets.length === 0) return;
 
                 let catHtml = `
                     <div class="category-section">
@@ -622,73 +625,65 @@
                                 <tbody>
                 `;
 
-                if (catAssets.length === 0) {
+                let sumCostOpen = 0, sumCostAdd = 0, sumCostDisp = 0, sumCostClose = 0;
+                let sumDepOpen = 0, sumDepAdd = 0, sumDepDisp = 0, sumDepClose = 0;
+                let sumNBV = 0;
+
+                catAssets.forEach((asset, idx) => {
+                    const m = calculateAssetMetrics(asset, targetYear);
+
+                    sumCostOpen += m.costOpening;
+                    sumCostAdd += m.costAddition;
+                    sumCostDisp += m.costDisposal;
+                    sumCostClose += m.costClosing;
+
+                    sumDepOpen += m.depOpening;
+                    sumDepAdd += m.depAddition;
+                    sumDepDisp += m.depDisposal;
+                    sumDepClose += m.depClosing;
+
+                    sumNBV += m.nbv;
+
                     catHtml += `
                         <tr>
-                            <td colspan="14" style="color: #94a3b8; padding: 16px;">No assets recorded under ${catName}.</td>
+                            <td>${idx + 1}</td>
+                            <td>${asset.purchaseDate || '-'}</td>
+                            <td class="text-left"><strong>${asset.name}</strong></td>
+                            <td class="text-right">${m.costOpening.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                            <td class="text-right">${m.costAddition.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                            <td class="text-right">${m.costDisposal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                            <td class="text-right"><strong>${m.costClosing.toLocaleString('en-US', {minimumFractionDigits:2})}</strong></td>
+                            <td>${m.rate}%</td>
+                            <td class="text-right">${m.depOpening.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                            <td class="text-right" style="color: #2563eb;">${m.depAddition.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                            <td class="text-right">${m.depDisposal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                            <td class="text-right" style="color: #dc2626;"><strong>${m.depClosing.toLocaleString('en-US', {minimumFractionDigits:2})}</strong></td>
+                            <td class="text-right" style="color: #059669;"><strong>${m.nbv.toLocaleString('en-US', {minimumFractionDigits:2})}</strong></td>
+                            <td class="col-action no-print">
+                                <button class="btn-edit-sm" onclick="openEditModal(${asset.id})">Edit</button>
+                            </td>
                         </tr>
                     `;
-                } else {
-                    let sumCostOpen = 0, sumCostAdd = 0, sumCostDisp = 0, sumCostClose = 0;
-                    let sumDepOpen = 0, sumDepAdd = 0, sumDepDisp = 0, sumDepClose = 0;
-                    let sumNBV = 0;
+                });
 
-                    catAssets.forEach((asset, idx) => {
-                        const m = calculateAssetMetrics(asset, targetYear);
+                categoryDepTotals[catName] = sumDepAdd;
 
-                        sumCostOpen += m.costOpening;
-                        sumCostAdd += m.costAddition;
-                        sumCostDisp += m.costDisposal;
-                        sumCostClose += m.costClosing;
-
-                        sumDepOpen += m.depOpening;
-                        sumDepAdd += m.depAddition;
-                        sumDepDisp += m.depDisposal;
-                        sumDepClose += m.depClosing;
-
-                        sumNBV += m.nbv;
-
-                        catHtml += `
-                            <tr>
-                                <td>${idx + 1}</td>
-                                <td>${asset.purchaseDate || '-'}</td>
-                                <td class="text-left"><strong>${asset.name}</strong></td>
-                                <td class="text-right">${m.costOpening.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                                <td class="text-right">${m.costAddition.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                                <td class="text-right">${m.costDisposal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                                <td class="text-right"><strong>${m.costClosing.toLocaleString('en-US', {minimumFractionDigits:2})}</strong></td>
-                                <td>${m.rate}%</td>
-                                <td class="text-right">${m.depOpening.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                                <td class="text-right" style="color: #2563eb;">${m.depAddition.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                                <td class="text-right">${m.depDisposal.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                                <td class="text-right" style="color: #dc2626;"><strong>${m.depClosing.toLocaleString('en-US', {minimumFractionDigits:2})}</strong></td>
-                                <td class="text-right" style="color: #059669;"><strong>${m.nbv.toLocaleString('en-US', {minimumFractionDigits:2})}</strong></td>
-                                <td class="col-action no-print">
-                                    <button class="btn-edit-sm" onclick="openEditModal(${asset.id})">Edit</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-
-                    categoryDepTotals[catName] = sumDepAdd;
-
-                    catHtml += `
-                        <tr class="row-total">
-                            <td colspan="3" class="text-right">TOTAL ${catName.toUpperCase()} (RM):</td>
-                            <td class="text-right">${sumCostOpen.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right">${sumCostAdd.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right">${sumCostDisp.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right">${sumCostClose.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td>-</td>
-                            <td class="text-right">${sumDepOpen.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right" style="color: #2563eb;">${sumDepAdd.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right">${sumDepDisp.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right" style="color: #dc2626;">${sumDepClose.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="text-right" style="color: #059669;">${sumNBV.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="col-action no-print"></td>
-                        </tr>
-                    `;
-                }
+                catHtml += `
+                    <tr class="row-total">
+                        <td colspan="3" class="text-right">TOTAL ${catName.toUpperCase()} (RM):</td>
+                        <td class="text-right">${sumCostOpen.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right">${sumCostAdd.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right">${sumCostDisp.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right">${sumCostClose.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td>-</td>
+                        <td class="text-right">${sumDepOpen.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right" style="color: #2563eb;">${sumDepAdd.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right">${sumDepDisp.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right" style="color: #dc2626;">${sumDepClose.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="text-right" style="color: #059669;">${sumNBV.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+                        <td class="col-action no-print"></td>
+                    </tr>
+                `;
 
                 catHtml += `
                                 </tbody>
@@ -703,7 +698,7 @@
             renderJournalEntries(categoryDepTotals, targetYear);
         }
 
-        // Render Accounting Journal Entries matching the exact Debit/Credit structure
+        // Render Accounting Journal Entries for active categories
         function renderJournalEntries(categoryDepTotals, targetYear) {
             const tbody = document.getElementById('journal-tbody');
             const tfoot = document.getElementById('journal-tfoot');
