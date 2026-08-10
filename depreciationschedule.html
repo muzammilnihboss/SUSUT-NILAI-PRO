@@ -376,7 +376,7 @@
                     <div>
                         <label for="select-year" style="font-size: 12px; font-weight: 800; color: #475569; margin-right: 6px;">FINANCIAL YEAR:</label>
                         <select id="select-year" class="select-input" onchange="renderAll()">
-                            <!-- Generated via JavaScript -->
+                            <!-- Generated from Year 2000 to 2050 -->
                         </select>
                     </div>
 
@@ -388,7 +388,7 @@
 
             <!-- DYNAMIC CATEGORY TABLES WRAPPER -->
             <div id="category-tables-wrapper">
-                <!-- Dynamically populated for recorded asset categories only -->
+                <!-- Populated automatically from Asset Register -->
             </div>
         </div>
 
@@ -413,7 +413,7 @@
                         </tr>
                     </thead>
                     <tbody id="journal-tbody">
-                        <!-- Dynamically populated -->
+                        <!-- Populated automatically from Depreciation Schedule -->
                     </tbody>
                     <tfoot id="journal-tfoot">
                         <!-- Totals -->
@@ -485,6 +485,7 @@
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
+        // Read recorded asset data automatically from Asset Register
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
@@ -493,16 +494,19 @@
             localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
         }
 
+        // Initialize Year Selector strictly from 2000 to 2050
         function initYearSelector() {
             const select = document.getElementById('select-year');
             const currentYear = new Date().getFullYear();
             select.innerHTML = '';
 
-            for (let y = currentYear - 3; y <= currentYear + 5; y++) {
+            for (let y = 2000; y <= 2050; y++) {
                 const opt = document.createElement('option');
                 opt.value = y;
                 opt.innerText = y;
-                if (y === currentYear) opt.selected = true;
+                if (y === currentYear) {
+                    opt.selected = true;
+                }
                 select.appendChild(opt);
             }
         }
@@ -564,6 +568,7 @@
             };
         }
 
+        // Render Schedule automatically based on recorded Asset Register entries
         function renderAll() {
             const targetYear = parseInt(document.getElementById('select-year').value);
             document.getElementById('journal-year-label').innerText = `YEAR ${targetYear}`;
@@ -572,7 +577,6 @@
             const wrapper = document.getElementById('category-tables-wrapper');
             wrapper.innerHTML = '';
 
-            // If no recorded assets exist at all
             if (assets.length === 0) {
                 wrapper.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
@@ -584,7 +588,7 @@
                 return;
             }
 
-            // ONLY extract categories that actually exist in the recorded assets
+            // Extract recorded asset categories dynamically
             const recordedCategories = [...new Set(assets.map(a => a.category || 'Others'))];
             let categoryDepTotals = {};
 
@@ -695,10 +699,11 @@
                 wrapper.innerHTML += catHtml;
             });
 
+            // Automatically generate journal entries from calculated schedule totals
             renderJournalEntries(categoryDepTotals, targetYear);
         }
 
-        // Render Accounting Journal Entries for active categories
+        // Render Accounting Journal Entries automatically based on schedule calculations
         function renderJournalEntries(categoryDepTotals, targetYear) {
             const tbody = document.getElementById('journal-tbody');
             const tfoot = document.getElementById('journal-tfoot');
