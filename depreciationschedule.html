@@ -511,7 +511,7 @@
             }
         }
 
-        // Formula Calculation per asset based on Purchase Date (Pro-Rata) & Straight Line Rate
+        // Formula Calculation per asset
         function calculateAssetMetrics(asset, targetYear) {
             const cost = parseFloat(asset.cost || asset.price || 0);
             const ratePercent = parseFloat(asset.rate || (100 / (asset.lifespan || 5))) || 10;
@@ -534,28 +534,25 @@
             let costDisposal = 0;
             let costClosing = cost;
 
-            // Pro-Rata Monthly Straight-Line Depreciation Formula
+            // Calculate Accumulated Depreciation Opening from previous years
             const annualDepRate = ratePercent / 100;
-            const fullYearDep = cost * annualDepRate;
-            const year1Months = 13 - purchaseMonth;
-            const year1Dep = fullYearDep * (year1Months / 12);
-
             let accumPrior = 0;
-            let currentYearDep = 0;
 
-            for (let y = purchaseYear; y <= targetYear; y++) {
-                let depForY = (y === purchaseYear) ? year1Dep : fullYearDep;
-                
-                if (y < targetYear) {
-                    accumPrior = Math.min(cost, accumPrior + depForY);
-                } else if (y === targetYear) {
-                    const remainingCost = Math.max(0, cost - accumPrior);
-                    currentYearDep = Math.min(remainingCost, depForY);
-                }
+            for (let y = purchaseYear; y < targetYear; y++) {
+                let depForY = costClosing * annualDepRate;
+                accumPrior = Math.min(costClosing, accumPrior + depForY);
             }
 
             let depOpening = accumPrior;
-            let depAddition = currentYearDep;
+
+            // FORMULA ADDITION = CLOSING COST X DEP. RATE %
+            let depAddition = costClosing * annualDepRate;
+
+            // Cap depreciation addition if total closing depreciation exceeds total cost
+            if (depOpening + depAddition > costClosing) {
+                depAddition = Math.max(0, costClosing - depOpening);
+            }
+
             let depDisposal = 0;
             let depClosing = depOpening + depAddition - depDisposal;
             let nbv = Math.max(0, costClosing - depClosing);
