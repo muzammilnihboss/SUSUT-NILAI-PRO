@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Susut Nilai Pro - Dashboard</title>
+    <title>Dashboard - Susut Nilai Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,448 +13,209 @@
         }
 
         body {
-            background-color: #f3f4f6;
-            color: #1f2937;
+            background-color: #f8fafc;
+            color: #1e293b;
             min-height: 100vh;
             padding-bottom: 60px;
         }
 
-        /* HEADER / NAVBAR */
         header {
             background-color: #ffffff;
-            padding: 16px 40px;
+            padding: 16px 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
         }
 
         .header-brand h2 {
             font-size: 20px;
-            font-weight: 800;
-            color: #000000;
-            letter-spacing: -0.3px;
+            font-weight: 700;
+            color: #0f172a;
         }
 
         .nav-links {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: center;
         }
 
         .btn-nav {
-            padding: 9px 16px;
-            border-radius: 8px;
+            padding: 8px 14px;
+            border-radius: 6px;
             text-decoration: none;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 600;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            transition: all 0.2s ease;
         }
 
-        .btn-nav-grey {
-            background-color: #f3f4f6;
-            color: #4b5563;
+        .btn-secondary {
+            background-color: #f1f5f9;
+            color: #475569;
         }
 
-        .btn-nav-grey:hover {
-            background-color: #e5e7eb;
-            color: #111827;
+        .btn-secondary:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
         }
 
-        .btn-nav-purple {
-            background-color: #eef2ff;
-            color: #4f46e5;
-        }
-
-        .btn-nav-purple:hover {
-            background-color: #e0e7ff;
+        .btn-primary {
+            background-color: #2563eb;
+            color: #ffffff;
         }
 
         .container {
-            max-width: 95%;
-            margin: 32px auto 0 auto;
+            max-width: 98%;
+            margin: 0 auto;
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        /* BANNER NOTIFIKASI TERTUNGGAK */
-        .alert-banner-box {
-            background-color: #fff1f2;
-            border: 1px solid #fecdd3;
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-
-        .btn-alert-link {
-            background-color: #e11d48;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        /* 4 STATS CARDS TOP ROW */
-        .top-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-
-        .stat-card {
-            background: #ffffff;
-            border-radius: 20px;
             padding: 24px 28px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            border: 1px solid #f3f4f6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
-        .stat-info p {
-            font-size: 11px;
+        .card-stat-title {
+            font-size: 12px;
             font-weight: 800;
-            color: #9ca3af;
-            letter-spacing: 0.6px;
+            color: #64748b;
             text-transform: uppercase;
-            margin-bottom: 8px;
         }
 
-        .stat-info h3 {
-            font-size: 24px;
+        .card-stat-value {
+            font-size: 28px;
             font-weight: 800;
+            color: #0f172a;
+            margin-top: 8px;
         }
 
-        .stat-icon-badge {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .badge-green-light { background-color: #d1fae5; color: #10b981; }
-        .badge-green-emerald { background-color: #d1fae5; color: #059669; }
-        .badge-red-soft { background-color: #ffe4e6; color: #f43f5e; }
-        .badge-blue-soft { background-color: #e0e7ff; color: #4f46e5; }
-
-        /* 5 ACTION NAV CARDS BOTTOM ROW */
-        .action-cards-grid {
+        .menu-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 10px;
         }
 
-        .action-card {
+        .menu-card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 28px 24px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: #0f172a;
+            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            min-height: 260px;
-            border: 1px solid #f3f4f6;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            transition: transform 0.2s, box-shadow 0.2s;
+            gap: 8px;
         }
 
-        .action-card:hover {
+        .menu-card:hover {
+            border-color: #2563eb;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
         }
 
-        /* HIGHLIGHT FOR REGISTER NEW ASSET CARD */
-        .action-card.highlighted {
-            border: 1.5px solid #818cf8;
-            box-shadow: 0 0 0 1px #818cf8;
-        }
-
-        .action-card-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-
-        .action-card h4 {
-            font-size: 17px;
+        .menu-card h4 {
+            font-size: 16px;
             font-weight: 700;
-            color: #111827;
-            margin-bottom: 12px;
         }
 
-        .action-card p {
-            font-size: 13px;
-            color: #6b7280;
-            line-height: 1.5;
-            margin-bottom: 24px;
-        }
-
-        .action-card-link {
-            font-size: 13.5px;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: auto;
-        }
-
-        @media (max-width: 1280px) {
-            .action-cards-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 800px) {
-            .top-stats-grid, .action-cards-grid {
-                grid-template-columns: repeat(1, 1fr);
-            }
+        .menu-card p {
+            font-size: 12px;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR HEADER -->
     <header>
         <div class="header-brand">
             <h2>Susut Nilai Pro</h2>
         </div>
         <div class="nav-links">
-            <a href="assetregister.html" class="btn-nav btn-nav-grey">📋 Asset Register</a>
-            <a href="registernew.html" class="btn-nav btn-nav-grey">+ Register New Asset</a>
-            <a href="depreciationschedule.html" class="btn-nav btn-nav-purple">📊 Depreciation Schedule</a>
-            <a href="index.html" class="btn-nav btn-nav-grey">Log Out</a>
+            <a href="dashboard.html" class="btn-nav btn-primary">🏠 Dashboard</a>
+            <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
+            <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
+            <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
+            <a href="servicereport.html" class="btn-nav btn-secondary">🛠️ Service Report</a>
+            <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
         </div>
     </header>
 
     <div class="container">
-
-        <!-- DYNAMIC SERVICE ALERT BANNER (AUTO-HIDES WHEN 0 OVERDUE) -->
-        <div id="dashboard-alert-banner" class="alert-banner-box" style="display: none;">
-            <!-- Content injected dynamically via JS -->
+        <div class="grid-cards">
+            <div class="card">
+                <div class="card-stat-title">Jumlah Aset Berdaftar</div>
+                <div class="card-stat-value" id="stat-total-assets">0</div>
+            </div>
+            <div class="card">
+                <div class="card-stat-title">Jumlah Kos Aset (RM)</div>
+                <div class="card-stat-value" style="color: #2563eb;" id="stat-total-cost">RM 0.00</div>
+            </div>
+            <div class="card">
+                <div class="card-stat-title">Nisbah Formula Susut Nilai</div>
+                <div class="card-stat-value" style="color: #059669; font-size: 18px; font-weight: 700;">
+                    (1 ÷ Useful Life) × 100
+                </div>
+            </div>
         </div>
 
-        <!-- TOP STATS CARDS (4 CARDS) -->
-        <div class="top-stats-grid">
+        <div class="card">
+            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;">SISTEM MODUL PASALAN (HYPERLINKS)</h3>
             
-            <!-- CARD 1: TOTAL ASSET COST -->
-            <div class="stat-card">
-                <div class="stat-info">
-                    <p>TOTAL ASSET COST</p>
-                    <h3 id="stat-total-cost" style="color: #111827;">RM 0.00</h3>
-                </div>
-                <div class="stat-icon-badge badge-green-light">🎓</div>
-            </div>
+            <div class="menu-grid">
+                <a href="assetregister.html" class="menu-card">
+                    <h4>📋 Asset Register</h4>
+                    <p>Lihat senarai keseluruhan aset, unit price automatik, dan pengurusan rekod.</p>
+                </a>
 
-            <!-- CARD 2: CURRENT BOOK VALUE -->
-            <div class="stat-card">
-                <div class="stat-info">
-                    <p>CURRENT BOOK VALUE</p>
-                    <h3 id="stat-book-value" style="color: #059669;">RM 0.00</h3>
-                </div>
-                <div class="stat-icon-badge badge-green-emerald">👛</div>
-            </div>
+                <a href="registernew.html" class="menu-card">
+                    <h4>➕ Register New Asset</h4>
+                    <p>Daftar aset baharu secara automatik terus ke sistem jadual & jurnal.</p>
+                </a>
 
-            <!-- CARD 3: ACCUMULATED DEP. -->
-            <div class="stat-card">
-                <div class="stat-info">
-                    <p>ACCUMULATED DEP.</p>
-                    <h3 id="stat-accum-dep" style="color: #dc2626;">RM 0.00</h3>
-                </div>
-                <div class="stat-icon-badge badge-red-soft">📉</div>
-            </div>
+                <a href="depreciationschedule.html" class="menu-card">
+                    <h4>📊 Depreciation Schedule</h4>
+                    <p>Penjanaan jadual susut nilai bertarikh dan draf jurnal akaun secara automatik.</p>
+                </a>
 
-            <!-- CARD 4: REGISTERED ASSETS -->
-            <div class="stat-card">
-                <div class="stat-info">
-                    <p>REGISTERED ASSETS</p>
-                    <h3 id="stat-registered-assets" style="color: #111827;">0</h3>
-                </div>
-                <div class="stat-icon-badge badge-blue-soft">➕</div>
+                <a href="servicereport.html" class="menu-card">
+                    <h4>🛠️ Service Report</h4>
+                    <p>Rekod penyelenggaraan dan maklumat perkhidmatan bagi aset syarikat.</p>
+                </a>
             </div>
-
         </div>
-
-        <!-- MAIN ACTION/MODULE CARDS (5 CARDS) -->
-        <div class="action-cards-grid">
-
-            <!-- 1. INVOICE MANAGER -->
-            <div class="action-card">
-                <div>
-                    <div class="action-card-icon" style="background-color: #dcfce7; color: #16a34a;">📄</div>
-                    <h4>Invoice Manager</h4>
-                    <p>Upload purchase receipts or invoices. Our smart AI scanner automatically extracts values, dates, and suggests classifications!</p>
-                </div>
-                <a href="#" class="action-card-link" style="color: #16a34a;">Manage Invoices →</a>
-            </div>
-
-            <!-- 2. REGISTER NEW ASSET (HIGHLIGHTED BLUE) -->
-            <div class="action-card highlighted">
-                <div>
-                    <div class="action-card-icon" style="background-color: #e0e7ff; color: #4f46e5;">🧮</div>
-                    <h4 style="color: #4f46e5;">Register New Asset</h4>
-                    <p>No receipt? Safely log any business asset manually by entering purchase costs, dates, and useful lifespans in seconds.</p>
-                </div>
-                <a href="registernew.html" class="action-card-link" style="color: #4f46e5;">Register Asset →</a>
-            </div>
-
-            <!-- 3. ASSET REGISTER -->
-            <div class="action-card">
-                <div>
-                    <div class="action-card-icon" style="background-color: #dbeafe; color: #2563eb;">📖</div>
-                    <h4>Asset Register</h4>
-                    <p>Your central assets library. Browse, search, filter, edit, or delete any of your registered business equipment at any time.</p>
-                </div>
-                <a href="assetregister.html" class="action-card-link" style="color: #2563eb;">View Register →</a>
-            </div>
-
-            <!-- 4. SERVICE REPORT -->
-            <div class="action-card">
-                <div>
-                    <div class="action-card-icon" style="background-color: #ffe4e6; color: #e11d48;">💼</div>
-                    <h4>Service Report</h4>
-                    <p>Keep your assets in top shape! Monitor maintenance schedules, track equipment health status, and get alerts for overdue servicing.</p>
-                </div>
-                <a href="servicereport.html" class="action-card-link" style="color: #e11d48;">View Service Desk →</a>
-            </div>
-
-            <!-- 5. DEPRECIATION SCHEDULE -->
-            <div class="action-card">
-                <div>
-                    <div class="action-card-icon" style="background-color: #fef3c7; color: #d97706;">☰</div>
-                    <h4>Depreciation Schedule</h4>
-                    <p>View precise, GAAP-compliant valuation sheets year-by-year. Great for tax season, general ledger auditing, or exporting reports.</p>
-                </div>
-                <a href="depreciationschedule.html" class="action-card-link" style="color: #d97706;">Open Schedule →</a>
-            </div>
-
-        </div>
-
     </div>
 
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
-        const STORAGE_KEY_SERVICES = 'susut_nilai_services';
 
-        function getAssets() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
-        }
-
-        function getServices() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES)) || [];
-        }
-
-        function addMonths(dateStr, months = 1) {
-            if (!dateStr) return '';
-            const d = new Date(dateStr);
-            d.setMonth(d.getMonth() + months);
-            return d.toISOString().split('T')[0];
-        }
-
-        // SEMAK DAN PADAM NOTIFIKASI JIKA ASET TELAH DISELENGGARA
-        function updateDashboardNotification() {
-            const assets = getAssets();
-            const services = getServices();
-            const today = new Date().toISOString().split('T')[0];
-
-            let overdueCount = 0;
-            let upcomingCount = 0;
-
-            assets.forEach(asset => {
-                const assetLogs = services.filter(s => String(s.assetId) === String(asset.id));
-                let nextDueDate = '';
-
-                if (assetLogs.length > 0) {
-                    assetLogs.sort((a, b) => new Date(b.serviceDate) - new Date(a.serviceDate));
-                    const latestLog = assetLogs[0];
-                    nextDueDate = latestLog.nextDate || addMonths(latestLog.serviceDate, 1);
-                } else {
-                    const lastService = asset.lastServiceDate || asset.purchaseDate || today;
-                    nextDueDate = addMonths(lastService, 1);
-                }
-
-                if (nextDueDate) {
-                    if (nextDueDate <= today) {
-                        overdueCount++;
-                    } else {
-                        const due = new Date(nextDueDate);
-                        const now = new Date(today);
-                        const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
-                        if (diffDays > 0 && diffDays <= 7) {
-                            upcomingCount++;
-                        }
-                    }
-                }
-            });
-
-            const alertBanner = document.getElementById('dashboard-alert-banner');
-            if (!alertBanner) return;
-
-            // HILANGKAN BANNER JIKA TIADA SERVIS TERTUNGGAK (0 Overdue)
-            if (overdueCount === 0 && upcomingCount === 0) {
-                alertBanner.style.display = 'none';
-            } else {
-                alertBanner.style.display = 'flex';
-                alertBanner.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 14px;">
-                        <span style="font-size: 24px;">🚨</span>
-                        <div>
-                            <h4 style="color: #9f1239; font-size: 14px; font-weight: 700; margin-bottom: 2px;">
-                                Attention Required: ${overdueCount} Asset(s) Overdue for Service!
-                            </h4>
-                            <p style="color: #be123c; font-size: 12.5px;">
-                                You have ${overdueCount} asset(s) past their service due date and ${upcomingCount} approaching soon. Click to resolve.
-                            </p>
-                        </div>
-                    </div>
-                    <a href="servicereport.html" class="btn-alert-link">View Service Desk →</a>
-                `;
-            }
-        }
-
-        // KEMAS KINI 4 KAD STATISTIK ATAS
-        function renderMetrics() {
-            const assets = getAssets();
+        function loadDashboardStats() {
+            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
             let totalCost = 0;
-            let totalAccumDep = 0;
 
             assets.forEach(a => {
-                const cost = parseFloat(a.cost || a.price || 0);
-                const accumDep = parseFloat(a.accumulatedDepreciation || 0);
-                totalCost += cost;
-                totalAccumDep += accumDep;
+                const cost = parseFloat(a.cost || a.price || a.purchasePrice || 0);
+                totalCost += isNaN(cost) ? 0 : cost;
             });
 
-            const currentBookValue = totalCost - totalAccumDep;
-
-            document.getElementById('stat-total-cost').innerText = `RM ${totalCost.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('stat-book-value').innerText = `RM ${currentBookValue.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('stat-accum-dep').innerText = `RM ${totalAccumDep.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            document.getElementById('stat-registered-assets').innerText = assets.length;
+            document.getElementById('stat-total-assets').innerText = assets.length;
+            document.getElementById('stat-total-cost').innerText = 'RM ' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            renderMetrics();
-            updateDashboardNotification();
-        });
+        document.addEventListener('DOMContentLoaded', loadDashboardStats);
     </script>
 </body>
 </html>
