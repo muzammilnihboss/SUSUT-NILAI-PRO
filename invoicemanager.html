@@ -1,1 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Manager (OCR Scan) - Susut Nilai Pro</title>
+    <!-- Tesseract.js OCR Engine CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* HEADER NAVIGATION */
+        header {
+            background-color: #ffffff;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .top-nav {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 9px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            background-color: #f1f5f9;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        .nav-btn.active {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* UPLOAD & OCR SCAN BOX */
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background-color: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 280px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+            border: 1px solid #cbd5e1;
+        }
+
+        .progress-container {
+            margin-top: 16px;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #2563eb;
+            transition: width 0.3s ease;
+        }
+
+        /* FORM DESIGN */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            color: #15803d;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        @media (max-width: 850px) {
+            .grid-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HYPERLINK TOP NAVIGATION -->
+    <header>
+        <div class="brand-title">Susut Nilai Pro</div>
+        <div class="top-nav">
+            <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
+            <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
+            <a href="invoicemanager.html" class="nav-btn active">📄 Invoice Manager</a>
+            <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
+            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
+            <a href="index.html" class="nav-btn">Log Out</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="alert-msg" class="alert-success">
+            ✅ Aset berjaya direkodkan! Data telah dikemas kini pada Asset Register & Depreciation Schedule.
+        </div>
+
+        <div class="grid-layout">
+            <!-- COL 1: SCAN DOKUMEN / OCR ENGINE -->
+            <div class="card">
+                <div class="card-title">📷 Scan Invoice / Receipt Document</div>
+                
+                <div class="upload-zone" onclick="document.getElementById('invoice-file').click()">
+                    <div style="font-size: 32px; margin-bottom: 8px;">📑</div>
+                    <div style="font-size: 14px; font-weight: 700; color: #334155;">Muat Naik Invois / Scan Dokumen</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Format JPG, PNG atau PDF Image</div>
+                    <input type="file" id="invoice-file" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+                </div>
+
+                <img id="image-preview" class="preview-img" alt="Invoice Preview">
+
+                <div id="progress-container" class="progress-container">
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                        <span id="progress-status">Menganalisis Teks (OCR)...</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; font-size: 12px; color: #64748b; background-color: #f1f5f9; padding: 12px; border-radius: 8px;">
+                    💡 <strong>Tips OCR:</strong> Pastikan gambar invois jelas dan terang. Pengecam automatik akan mengekstrak Nama Aset, Tarikh, Nombor Invois, Harga dan Pembekal.
+                </div>
+            </div>
+
+            <!-- COL 2: AUTOMATIC EXTRACTED ASSET FORM -->
+            <div class="card">
+                <div class="card-title">📝 Extracted Asset Details</div>
+                
+                <form id="ocr-asset-form" onsubmit="saveAssetFromOCR(event)">
+                    <div class="form-group">
+                        <label>Asset Name</label>
+                        <input type="text" id="asset-name" class="form-control" placeholder="Cth: Executive Laptop Dell XPS" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="asset-category" class="form-control" required>
+                                <option value="Furniture & Fittings">Furniture & Fittings</option>
+                                <option value="Office Equipment">Office Equipment</option>
+                                <option value="Computers" selected>Computers</option>
+                                <option value="Vehicles">Vehicles</option>
+                                <option value="Machinery">Machinery</option>
+                                <option value="Electrical Installation">Electrical Installation</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ref / Invoice No.</label>
+                            <input type="text" id="asset-invoice" class="form-control" placeholder="Cth: INV-2026-889">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Purchase Date</label>
+                            <input type="date" id="asset-date" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location / Dept</label>
+                            <input type="text" id="asset-location" class="form-control" placeholder="Cth: IT Department" value="Main Office">
+                        </div>
+                    </div>
+
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label>Quantity / Unit</label>
+                            <input type="number" min="1" id="asset-qty" class="form-control" value="1" oninput="calculateTotals()" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Useful Life (Yrs)</label>
+                            <input type="number" min="1" id="asset-life" class="form-control" value="5" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit Price (RM)</label>
+                            <input type="number" step="0.01" id="asset-unit-price" class="form-control" placeholder="0.00" oninput="calculateTotals()" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Cost (RM)</label>
+                            <input type="number" step="0.01" id="asset-cost" class="form-control" placeholder="0.00" style="font-weight: 800; background-color: #f8fafc;" readonly required>
+                        </div>
+                        <div class="form-group">
+                            <label>Estimated Salvage (RM)</label>
+                            <input type="number" step="0.01" id="asset-salvage" class="form-control" value="0.00">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Supplier / Vendor</label>
+                        <input type="text" id="asset-supplier" class="form-control" placeholder="Cth: Dell Malaysia Sdn Bhd">
+                    </div>
+
+                    <button type="submit" class="btn-submit">💾 Save Asset to Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
+
+        // Auto Calculate Total Cost
+        function calculateTotals() {
+            const qty = parseFloat(document.getElementById('asset-qty').value) || 1;
+            const unitPrice = parseFloat(document.getElementById('asset-unit-price').value) || 0;
+            document.getElementById('asset-cost').value = (qty * unitPrice).toFixed(2);
+        }
+
+        // Handle File Upload and Run Tesseract OCR Scan
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const preview = document.getElementById('image-preview');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const progressStatus = document.getElementById('progress-status');
+            const progressPercent = document.getElementById('progress-percent');
+
+            progressContainer.style.display = 'block';
+
+            // Execute Tesseract OCR Engine
+            Tesseract.recognize(
+                file,
+                'eng',
+                {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.round(m.progress * 100);
+                            progressFill.style.width = pct + '%';
+                            progressPercent.innerText = pct + '%';
+                            progressStatus.innerText = 'Mengimbas Dokumen (OCR)...';
+                        }
+                    }
+                }
+            ).then(({ data: { text } }) => {
+                progressStatus.innerText = 'Pengecaman Selesai!';
+                parseOCRTextToForm(text);
+            }).catch(err => {
+                console.error('OCR Error:', err);
+                progressStatus.innerText = 'Pengecaman Gagal. Sila isi secara manual.';
+            });
+        }
+
+        // Regex Parser to Extract Asset Fields from Raw Scanned Text
+        function parseOCRTextToForm(text) {
+            console.log("Scanned OCR Raw Text:\n", text);
+
+            // 1. Extract Invoice Number
+            const invoiceMatch = text.match(/(?:INV|INVOICE|REF|RECEIPT|NO)[\s.:#-]*([A-Z0-9-]+)/i);
+            if (invoiceMatch) {
+                document.getElementById('asset-invoice').value = invoiceMatch[1];
+            }
+
+            // 2. Extract Purchase Date (Formats: YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY)
+            const dateMatch = text.match(/\b(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}|\d{4}[\/\.-]\d{1,2}[\/\.-]\d{1,2})\b/);
+            if (dateMatch) {
+                try {
+                    const rawDate = dateMatch[0].replace(/\./g, '-').replace(/\//g, '-');
+                    const parts = rawDate.split('-');
+                    let formattedDate = '';
+                    if (parts[0].length === 4) {
+                        formattedDate = `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+                    } else if (parts[2].length === 4) {
+                        formattedDate = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+                    }
+                    if (formattedDate) document.getElementById('asset-date').value = formattedDate;
+                } catch(e) {}
+            } else {
+                document.getElementById('asset-date').value = new Date().toISOString().split('T')[0];
+            }
+
+            // 3. Extract Total Price / Unit Price
+            const prices = text.match(/(?:RM|\$)\s*([\d,]+\.\d{2})|([\d,]+\.\d{2})/g);
+            if (prices && prices.length > 0) {
+                const numPrices = prices.map(p => parseFloat(p.replace(/[^0-9.]/g, ''))).filter(n => !isNaN(n));
+                if (numPrices.length > 0) {
+                    const maxPrice = Math.max(...numPrices);
+                    document.getElementById('asset-unit-price').value = maxPrice.toFixed(2);
+                    calculateTotals();
+                }
+            }
+
+            // 4. Extract Supplier / Vendor Name
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length > 0) {
+                document.getElementById('asset-supplier').value = lines[0].substring(0, 40);
+            }
+
+            // 5. Extract Asset Name (Fallback to line 2 or keywords)
+            if (lines.length > 1) {
+                document.getElementById('asset-name').value = lines[1].substring(0, 50);
+            }
+        }
+
+        // Save Extracted Asset to LocalStorage (Matching Register New Asset)
+        function saveAssetFromOCR(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('asset-name').value;
+            const category = document.getElementById('asset-category').value;
+            const invoiceNo = document.getElementById('asset-invoice').value;
+            const purchaseDate = document.getElementById('asset-date').value;
+            const location = document.getElementById('asset-location').value;
+            const quantity = parseInt(document.getElementById('asset-qty').value) || 1;
+            const usefulLife = parseInt(document.getElementById('asset-life').value) || 5;
+            const unitPrice = parseFloat(document.getElementById('asset-unit-price').value) || 0;
+            const cost = parseFloat(document.getElementById('asset-cost').value) || (quantity * unitPrice);
+            const salvage = parseFloat(document.getElementById('asset-salvage').value) || 0;
+            const supplier = document.getElementById('asset-supplier').value;
+
+            const newAsset = {
+                id: Date.now(),
+                name: name,
+                assetName: name,
+                category: category,
+                invoiceNo: invoiceNo,
+                invoice: invoiceNo,
+                purchaseDate: purchaseDate,
+                location: location,
+                deploymentDept: location,
+                quantity: quantity,
+                unit: quantity,
+                usefulLife: usefulLife,
+                lifespan: usefulLife,
+                unitPrice: unitPrice,
+                cost: cost,
+                totalPrice: cost,
+                salvage: salvage,
+                salvageValue: salvage,
+                supplier: supplier,
+                updatedBy: supplier || 'OCR Scanner',
+                updatedDate: new Date().toISOString().split('T')[0]
+            };
+
+            const existingAssets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+            existingAssets.push(newAsset);
+            localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(existingAssets));
+
+            // Show Success Notification
+            const alertMsg = document.getElementById('alert-msg');
+            alertMsg.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Reset Form
+            document.getElementById('ocr-asset-form').reset();
+            document.getElementById('image-preview').style.display = 'none';
+            document.getElementById('progress-container').style.display = 'none';
+            document.getElementById('asset-date').value = new Date().toISOString().split('T')[0];
+
+            setTimeout(() => { alertMsg.style.display = 'none'; }, 5000);
+        }
+
+        // Set Default Date on Load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('asset-date').value = new Date().toISOString().split('T')[0];
+        });
+    </script>
+</body>
+</html>
