@@ -101,11 +101,28 @@
             width: 280px;
         }
 
-        /* REGISTER TABLE DESIGN MATCHING SCREENSHOT */
+        /* CATEGORY TITLE BANNER */
+        .category-header-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+            text-transform: uppercase;
+            background-color: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin: 24px 0 12px 0;
+            border-left: 4px solid #2563eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* REGISTER TABLE DESIGN MATCHING ORIGINAL */
         table.register-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
+            margin-bottom: 8px;
         }
 
         table.register-table th, table.register-table td {
@@ -262,32 +279,9 @@
                 </div>
             </div>
 
-            <div style="overflow-x: auto;">
-                <table class="register-table">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" style="width: 40px;">No.</th>
-                            <th colspan="2">Date</th>
-                            <th rowspan="2">Particulars / Description</th>
-                            <th rowspan="2">Ref. No. / Invoice</th>
-                            <th rowspan="2">Location / Dept</th>
-                            <th rowspan="2">Useful Life</th>
-                            <th rowspan="2">Unit</th>
-                            <th rowspan="2">Unit Price (RM)</th>
-                            <th rowspan="2">Total Price (RM)</th>
-                            <th rowspan="2">Updated Date</th>
-                            <th rowspan="2">Updated By</th>
-                            <th rowspan="2" class="col-action no-print">Actions</th>
-                        </tr>
-                        <tr>
-                            <th style="width: 90px;">Purchase</th>
-                            <th style="width: 90px;">Disposal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="asset-register-tbody">
-                        <!-- Auto populated from LocalStorage -->
-                    </tbody>
-                </table>
+            <!-- CONTAINER DYNAMIC TABLES BY CATEGORY -->
+            <div id="categories-tables-container">
+                <!-- Dynamic Content Separated by Asset Category -->
             </div>
         </div>
     </div>
@@ -389,79 +383,133 @@
             localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
         }
 
-        // AUTOMATIC DATA FETCHING & RENDERING
+        // AUTOMATIC DATA FETCHING & RENDERING BY ASSET CATEGORY
         function renderTable() {
             const assets = getAssets();
             const searchVal = document.getElementById('search-input').value.toLowerCase();
-            const tbody = document.getElementById('asset-register-tbody');
+            const mainContainer = document.getElementById('categories-tables-container');
 
-            tbody.innerHTML = '';
+            mainContainer.innerHTML = '';
 
-            const filtered = assets.filter(a => {
-                const name = (a.name || a.assetName || '').toLowerCase();
-                const inv = (a.invoiceNo || a.invoice || '').toLowerCase();
-                const cat = (a.category || '').toLowerCase();
-                return name.includes(searchVal) || inv.includes(searchVal) || cat.includes(searchVal);
+            const categories = [
+                'Furniture & Fittings',
+                'Office Equipment',
+                'Computers',
+                'Vehicles',
+                'Machinery',
+                'Electrical Installation',
+                'Others'
+            ];
+
+            let totalRenderedAssets = 0;
+
+            categories.forEach(category => {
+                // Filter assets by category & search input
+                const categoryAssets = assets.filter(a => {
+                    const assetCat = (a.category || 'Others').toLowerCase();
+                    const isSameCat = assetCat === category.toLowerCase();
+
+                    const name = (a.name || a.assetName || '').toLowerCase();
+                    const inv = (a.invoiceNo || a.invoice || '').toLowerCase();
+                    const loc = (a.location || a.deploymentDept || '').toLowerCase();
+                    const matchesSearch = name.includes(searchVal) || inv.includes(searchVal) || loc.includes(searchVal);
+
+                    return isSameCat && matchesSearch;
+                });
+
+                if (categoryAssets.length === 0) return;
+
+                totalRenderedAssets += categoryAssets.length;
+
+                let rowsHtml = '';
+                categoryAssets.forEach((asset, idx) => {
+                    const purchaseDate = asset.purchaseDate || asset.date || asset.tarikh || '-';
+                    const disposalDate = asset.disposalDate || '-';
+                    const name = asset.name || asset.assetName || 'Asset';
+                    const invoice = asset.invoiceNo || asset.invoice || asset.refNo || '-';
+                    const location = asset.location || asset.deploymentDept || '-';
+                    const usefulLife = parseNumber(asset.usefulLife || asset.lifespan || 5);
+                    const unit = parseNumber(asset.quantity || asset.unit || 1) || 1;
+                    
+                    let unitPrice = parseNumber(asset.unitPrice);
+                    let totalPrice = parseNumber(asset.cost !== undefined ? asset.cost : asset.totalPrice);
+
+                    if (totalPrice === 0 && unitPrice > 0) {
+                        totalPrice = unitPrice * unit;
+                    } else if (unitPrice === 0 && totalPrice > 0) {
+                        unitPrice = totalPrice / unit;
+                    }
+
+                    const updatedDate = asset.updatedDate || asset.purchaseDate || new Date().toISOString().split('T')[0];
+                    const updatedBy = asset.supplier || asset.updatedBy || asset.supplierName || '-';
+
+                    rowsHtml += `
+                        <tr>
+                            <td class="text-center">${idx + 1}</td>
+                            <td class="text-center">${purchaseDate}</td>
+                            <td class="text-center">${disposalDate}</td>
+                            <td class="text-left">
+                                <strong>${name.toUpperCase()}</strong><br>
+                                <span style="font-size: 11px; color: #64748b;">${category}</span>
+                            </td>
+                            <td class="text-center">${invoice}</td>
+                            <td class="text-center">${location}</td>
+                            <td class="text-center">${usefulLife}</td>
+                            <td class="text-center">${unit}</td>
+                            <td class="text-right">RM ${unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                            <td class="text-right" style="font-weight: 700;">RM ${totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                            <td class="text-center">${updatedDate}</td>
+                            <td class="text-center">${updatedBy}</td>
+                            <td class="col-action no-print text-center">
+                                <button class="btn-action-edit" onclick="openEditModal(${asset.id})">✏️ Edit</button>
+                                <button class="btn-action-delete" onclick="deleteAsset(${asset.id})">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                mainContainer.innerHTML += `
+                    <div class="category-header-title">
+                        <span>JENIS ASET / CATEGORY: ${category.toUpperCase()}</span>
+                        <span style="font-size: 12px; font-weight: 600; color: #475569;">${categoryAssets.length} Item(s)</span>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="register-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 40px;">No.</th>
+                                    <th colspan="2">Date</th>
+                                    <th rowspan="2">Particulars / Description</th>
+                                    <th rowspan="2">Ref. No. / Invoice</th>
+                                    <th rowspan="2">Location / Dept</th>
+                                    <th rowspan="2">Useful Life</th>
+                                    <th rowspan="2">Unit</th>
+                                    <th rowspan="2">Unit Price (RM)</th>
+                                    <th rowspan="2">Total Price (RM)</th>
+                                    <th rowspan="2">Updated Date</th>
+                                    <th rowspan="2">Updated By</th>
+                                    <th rowspan="2" class="col-action no-print">Actions</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 90px;">Purchase</th>
+                                    <th style="width: 90px;">Disposal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
             });
 
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="13" class="text-center" style="padding: 30px; color: #64748b; font-weight: 600;">
-                            No registered assets found in system.
-                        </td>
-                    </tr>
+            if (totalRenderedAssets === 0) {
+                mainContainer.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #64748b; font-weight: 600;">
+                        Tiada aset dijumpai bagi pendaftaran ini.
+                    </div>
                 `;
-                return;
             }
-
-            filtered.forEach((asset, idx) => {
-                const purchaseDate = asset.purchaseDate || asset.date || asset.tarikh || '-';
-                const disposalDate = asset.disposalDate || '-';
-                const name = asset.name || asset.assetName || 'Asset';
-                const category = asset.category || 'Furniture & Fittings';
-                const invoice = asset.invoiceNo || asset.invoice || asset.refNo || '-';
-                const location = asset.location || asset.deploymentDept || '-';
-                const usefulLife = parseNumber(asset.usefulLife || asset.lifespan || 5);
-                const unit = parseNumber(asset.quantity || asset.unit || 1) || 1;
-                
-                // MULTI-KEY FALLBACK TO PREVENT RM 0.00 IN UNIT & TOTAL PRICE
-                let unitPrice = parseNumber(asset.unitPrice);
-                let totalPrice = parseNumber(asset.cost !== undefined ? asset.cost : asset.totalPrice);
-
-                if (totalPrice === 0 && unitPrice > 0) {
-                    totalPrice = unitPrice * unit;
-                } else if (unitPrice === 0 && totalPrice > 0) {
-                    unitPrice = totalPrice / unit;
-                }
-
-                const updatedDate = asset.updatedDate || asset.purchaseDate || new Date().toISOString().split('T')[0];
-                const updatedBy = asset.supplier || asset.updatedBy || asset.supplierName || '-';
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="text-center">${idx + 1}</td>
-                        <td class="text-center">${purchaseDate}</td>
-                        <td class="text-center">${disposalDate}</td>
-                        <td class="text-left">
-                            <strong>${name.toUpperCase()}</strong><br>
-                            <span style="font-size: 11px; color: #64748b;">${category}</span>
-                        </td>
-                        <td class="text-center">${invoice}</td>
-                        <td class="text-center">${location}</td>
-                        <td class="text-center">${usefulLife}</td>
-                        <td class="text-center">${unit}</td>
-                        <td class="text-right">RM ${unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td class="text-right" style="font-weight: 700;">RM ${totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td class="text-center">${updatedDate}</td>
-                        <td class="text-center">${updatedBy}</td>
-                        <td class="col-action no-print text-center">
-                            <button class="btn-action-edit" onclick="openEditModal(${asset.id})">✏️ Edit</button>
-                            <button class="btn-action-delete" onclick="deleteAsset(${asset.id})">🗑️ Delete</button>
-                        </td>
-                    </tr>
-                `;
-            });
         }
 
         function calculateEditTotals() {
@@ -543,6 +591,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', renderTable);
+        window.addEventListener('storage', renderTable);
     </script>
 </body>
 </html>
