@@ -14,208 +14,364 @@
 
         body {
             background-color: #f8fafc;
-            color: #1e293b;
+            color: #0f172a;
             min-height: 100vh;
-            padding-bottom: 60px;
         }
 
+        /* HEADER / NAV */
         header {
             background-color: #ffffff;
-            padding: 16px 32px;
+            padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        .header-brand h2 {
+        .brand-title {
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 800;
             color: #0f172a;
         }
 
-        .nav-links {
+        .top-nav {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
-        .btn-nav {
-            padding: 8px 14px;
-            border-radius: 6px;
+        .nav-btn {
+            padding: 9px 16px;
+            border-radius: 8px;
             text-decoration: none;
             font-size: 13px;
             font-weight: 600;
+            background-color: #f1f5f9;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
             transition: all 0.2s ease;
         }
 
-        .btn-secondary {
-            background-color: #f1f5f9;
-            color: #475569;
-        }
-
-        .btn-secondary:hover {
+        .nav-btn:hover {
             background-color: #e2e8f0;
             color: #0f172a;
         }
 
-        .btn-primary {
-            background-color: #2563eb;
-            color: #ffffff;
-        }
-
+        /* MAIN CONTAINER */
         .container {
-            max-width: 98%;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 32px 40px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 28px;
         }
 
-        .grid-cards {
+        /* TOP METRIC CARDS GRID */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 20px;
         }
 
-        .card {
+        .stat-card {
             background: #ffffff;
-            border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 24px 28px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
-        .card-stat-title {
-            font-size: 12px;
+        .stat-label {
+            font-size: 11px;
             font-weight: 800;
-            color: #64748b;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
-        .card-stat-value {
-            font-size: 28px;
+        .stat-value {
+            font-size: 24px;
             font-weight: 800;
-            color: #0f172a;
             margin-top: 8px;
         }
 
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
-            margin-top: 10px;
+        .stat-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .menu-card {
+        /* BOTTOM NAVIGATION CARDS GRID */
+        .nav-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        .action-card {
             background: #ffffff;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 20px;
-            text-decoration: none;
-            color: #0f172a;
-            transition: all 0.2s ease;
+            border-radius: 16px;
+            padding: 28px 24px;
+            border: 1px solid #e2e8f0;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
         }
 
-        .menu-card:hover {
-            border-color: #2563eb;
+        .action-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
         }
 
-        .menu-card h4 {
-            font-size: 16px;
-            font-weight: 700;
+        /* Highlight border for Register New Asset card */
+        .action-card.highlight {
+            border: 1.5px solid #6366f1;
+            box-shadow: 0 0 0 1px #6366f1;
         }
 
-        .menu-card p {
-            font-size: 12px;
+        .card-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            font-size: 13px;
             color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 32px;
+            flex-grow: 1;
+        }
+
+        .card-action-link {
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .nav-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- TOP HEADER -->
     <header>
-        <div class="header-brand">
-            <h2>Susut Nilai Pro</h2>
-        </div>
-        <div class="nav-links">
-            <a href="dashboard.html" class="btn-nav btn-primary">🏠 Dashboard</a>
-            <a href="assetregister.html" class="btn-nav btn-secondary">📋 Asset Register</a>
-            <a href="registernew.html" class="btn-nav btn-secondary">+ Register New Asset</a>
-            <a href="depreciationschedule.html" class="btn-nav btn-secondary">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="btn-nav btn-secondary">🛠️ Service Report</a>
-            <a href="index.html" class="btn-nav btn-secondary">Log Out</a>
+        <div class="brand-title">Susut Nilai Pro</div>
+        <div class="top-nav">
+            <a href="assetregister.html" class="nav-btn">
+                <span style="color:#d97706;">📋</span> Asset Register
+            </a>
+            <a href="registernew.html" class="nav-btn">
+                <span>+</span> Register New Asset
+            </a>
+            <a href="depreciationschedule.html" class="nav-btn">
+                <span style="color:#2563eb;">📊</span> Depreciation Schedule
+            </a>
+            <a href="index.html" class="nav-btn">
+                Log Out
+            </a>
         </div>
     </header>
 
     <div class="container">
-        <div class="grid-cards">
-            <div class="card">
-                <div class="card-stat-title">Jumlah Aset Berdaftar</div>
-                <div class="card-stat-value" id="stat-total-assets">0</div>
+        <!-- TOP METRICS ROW -->
+        <div class="stats-grid">
+            <!-- Total Asset Cost -->
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">TOTAL ASSET COST</div>
+                    <div class="stat-value" style="color: #0f172a;" id="stat-total-cost">RM 0.00</div>
+                </div>
+                <div class="stat-icon-box" style="background-color: #dcfce7;">
+                    <svg width="24" height="24" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
             </div>
-            <div class="card">
-                <div class="card-stat-title">Jumlah Kos Aset (RM)</div>
-                <div class="card-stat-value" style="color: #2563eb;" id="stat-total-cost">RM 0.00</div>
+
+            <!-- Current Book Value -->
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">CURRENT BOOK VALUE</div>
+                    <div class="stat-value" style="color: #059669;" id="stat-book-value">RM 0.00</div>
+                </div>
+                <div class="stat-icon-box" style="background-color: #d1fae5;">
+                    <svg width="24" height="24" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                </div>
             </div>
-            <div class="card">
-                <div class="card-stat-title">Nisbah Formula Susut Nilai</div>
-                <div class="card-stat-value" style="color: #059669; font-size: 18px; font-weight: 700;">
-                    (1 ÷ Useful Life) × 100
+
+            <!-- Accumulated Dep -->
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">ACCUMULATED DEP.</div>
+                    <div class="stat-value" style="color: #e11d48;" id="stat-accum-dep">RM 0.00</div>
+                </div>
+                <div class="stat-icon-box" style="background-color: #ffe4e6;">
+                    <svg width="24" height="24" fill="none" stroke="#e11d48" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+                </div>
+            </div>
+
+            <!-- Registered Assets -->
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">REGISTERED ASSETS</div>
+                    <div class="stat-value" style="color: #0f172a;" id="stat-asset-count">0</div>
+                </div>
+                <div class="stat-icon-box" style="background-color: #dbeafe;">
+                    <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 </div>
             </div>
         </div>
 
-        <div class="card">
-            <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 16px;">SISTEM MODUL PASALAN (HYPERLINKS)</h3>
+        <!-- MAIN ACTION CARDS ROW -->
+        <div class="nav-cards-grid">
             
-            <div class="menu-grid">
-                <a href="assetregister.html" class="menu-card">
-                    <h4>📋 Asset Register</h4>
-                    <p>Lihat senarai keseluruhan aset, unit price automatik, dan pengurusan rekod.</p>
-                </a>
+            <!-- 1. Invoice Manager -->
+            <a href="invoicemanager.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #dcfce7;">
+                    <svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                </div>
+                <div class="card-title">Invoice Manager</div>
+                <div class="card-description">
+                    Upload purchase receipts or invoices. Our smart AI scanner automatically extracts values, dates, and suggests classifications!
+                </div>
+                <div class="card-action-link" style="color: #16a34a;">
+                    Manage Invoices &rarr;
+                </div>
+            </a>
 
-                <a href="registernew.html" class="menu-card">
-                    <h4>➕ Register New Asset</h4>
-                    <p>Daftar aset baharu secara automatik terus ke sistem jadual & jurnal.</p>
-                </a>
+            <!-- 2. Register New Asset (Highlighted) -->
+            <a href="registernew.html" class="action-card highlight">
+                <div class="card-icon-box" style="background-color: #e0e7ff;">
+                    <svg width="22" height="22" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"></path></svg>
+                </div>
+                <div class="card-title" style="color: #4f46e5;">Register New Asset</div>
+                <div class="card-description">
+                    No receipt? Safely log any business asset manually by entering purchase costs, dates, and useful lifespans in seconds.
+                </div>
+                <div class="card-action-link" style="color: #4f46e5;">
+                    Register Asset &rarr;
+                </div>
+            </a>
 
-                <a href="depreciationschedule.html" class="menu-card">
-                    <h4>📊 Depreciation Schedule</h4>
-                    <p>Penjanaan jadual susut nilai bertarikh dan draf jurnal akaun secara automatik.</p>
-                </a>
+            <!-- 3. Asset Register -->
+            <a href="assetregister.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #dbeafe;">
+                    <svg width="22" height="22" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </div>
+                <div class="card-title">Asset Register</div>
+                <div class="card-description">
+                    Your central assets library. Browse, search, filter, edit, or delete any of your registered business equipment at any time.
+                </div>
+                <div class="card-action-link" style="color: #2563eb;">
+                    View Register &rarr;
+                </div>
+            </a>
 
-                <a href="servicereport.html" class="menu-card">
-                    <h4>🛠️ Service Report</h4>
-                    <p>Rekod penyelenggaraan dan maklumat perkhidmatan bagi aset syarikat.</p>
-                </a>
-            </div>
+            <!-- 4. Service Report -->
+            <a href="servicereport.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #ffe4e6;">
+                    <svg width="22" height="22" fill="none" stroke="#e11d48" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
+                <div class="card-title">Service Report</div>
+                <div class="card-description">
+                    Keep your assets in top shape! Monitor maintenance schedules, track equipment health status, and get alerts for overdue servicing.
+                </div>
+                <div class="card-action-link" style="color: #e11d48;">
+                    View Service Desk &rarr;
+                </div>
+            </a>
+
+            <!-- 5. Depreciation Schedule -->
+            <a href="depreciationschedule.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #fef3c7;">
+                    <svg width="22" height="22" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </div>
+                <div class="card-title">Depreciation Schedule</div>
+                <div class="card-description">
+                    View precise, GAAP-compliant valuation sheets year-by-year. Great for tax season, general ledger auditing, or exporting reports.
+                </div>
+                <div class="card-action-link" style="color: #d97706;">
+                    Open Schedule &rarr;
+                </div>
+            </a>
+
         </div>
     </div>
 
+    <!-- SCRIPT FOR AUTOMATIC STATS CALCULATION -->
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        function loadDashboardStats() {
-            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
-            let totalCost = 0;
-
-            assets.forEach(a => {
-                const cost = parseFloat(a.cost || a.price || a.purchasePrice || 0);
-                totalCost += isNaN(cost) ? 0 : cost;
-            });
-
-            document.getElementById('stat-total-assets').innerText = assets.length;
-            document.getElementById('stat-total-cost').innerText = 'RM ' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        function parseNumber(val) {
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'number') return val;
+            const cleaned = String(val).replace(/[^0-9.-]+/g, '');
+            const num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
         }
 
-        document.addEventListener('DOMContentLoaded', loadDashboardStats);
+        function calculateDashboardStats() {
+            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+            
+            let totalCost = 0;
+            let totalAccumDep = 0;
+            const currentYear = new Date().getFullYear();
+
+            assets.forEach(asset => {
+                const cost = parseNumber(asset.cost !== undefined ? asset.cost : (asset.price || asset.purchasePrice || 0));
+                const lifespan = parseNumber(asset.usefulLife || asset.lifespan || 5) || 5;
+                const purchaseDate = asset.purchaseDate || asset.date || asset.tarikh || `${currentYear}-01-01`;
+                
+                const purchaseYear = new Date(purchaseDate).getFullYear() || currentYear;
+                const yearsElapsed = Math.max(0, currentYear - purchaseYear + 1);
+
+                const annualDep = cost / lifespan;
+                const accumDep = Math.min(cost, annualDep * yearsElapsed);
+
+                totalCost += cost;
+                totalAccumDep += accumDep;
+            });
+
+            const currentBookValue = Math.max(0, totalCost - totalAccumDep);
+
+            // Format numbers to match design RM 0.00
+            document.getElementById('stat-total-cost').innerText = 'RM ' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-book-value').innerText = 'RM ' + currentBookValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-accum-dep').innerText = 'RM ' + totalAccumDep.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-asset-count').innerText = assets.length;
+        }
+
+        document.addEventListener('DOMContentLoaded', calculateDashboardStats);
     </script>
 </body>
 </html>
