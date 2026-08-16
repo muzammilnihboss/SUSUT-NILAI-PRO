@@ -187,8 +187,8 @@
             border: 1px solid #0f172a;
             border-radius: 12px;
             padding: 20px;
-            margin-top: 28px;
-            margin-bottom: 20px;
+            margin-top: 24px;
+            margin-bottom: 36px;
             background-color: #ffffff;
         }
 
@@ -267,7 +267,7 @@
                     <div class="year-select-group">
                         <label for="year-select">SELECT FINANCIAL YEAR:</label>
                         <select id="year-select" class="year-select" onchange="renderSchedule()">
-                            <!-- Dynamic years from 2000 to 2050 -->
+                            <!-- Generated dynamically -->
                         </select>
                     </div>
                     <button onclick="window.print()" class="btn-black">🖨️ Print Schedule</button>
@@ -276,92 +276,26 @@
 
             <!-- DYNAMIC SCHEDULE & JOURNAL CONTAINER -->
             <div id="schedule-container">
-                <!-- Grouped Depreciation Tables & Single Journal Entry generated dynamically -->
+                <!-- Grouped Depreciation Tables & Journal Entries generated dynamically -->
             </div>
         </div>
 
     </div>
 
     <script>
-        // IMMUNE LOCALSTORAGE SCANNER: MENGESAN REKOD ASET DARI MANA-MANA KEKUNCI
-        function getAllAssets() {
-            let foundAssets = [];
-            
-            // Semak dahulu kekunci utama yang biasa digunakan
-            const priorityKeys = ['susut_nilai_assets', 'assets', 'asset_register', 'registered_assets', 'ppe_assets', 'assetList'];
-            for (let key of priorityKeys) {
-                const data = localStorage.getItem(key);
-                if (data) {
-                    try {
-                        const parsed = JSON.parse(data);
-                        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-                    } catch(e) {}
-                }
-            }
+        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-            // Jika tidak dijumpai, pengimbas automatik mengimbas SEMUA storage
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                try {
-                    const parsed = JSON.parse(localStorage.getItem(key));
-                    if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'object') {
-                        return parsed;
-                    } else if (parsed && typeof parsed === 'object') {
-                        if (Array.isArray(parsed.assets)) return parsed.assets;
-                        if (Array.isArray(parsed.data)) return parsed.data;
-                    }
-                } catch(e) {}
-            }
-
-            return foundAssets;
+        function getAssets() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
 
-        // PENORMALAN DATA ASET DENGAN SOKONGAN PELBAGAI NAMA MEDAN
-        function normalizeAsset(item, defaultYear) {
-            const parseNum = (val) => {
-                if (typeof val === 'number') return val;
-                if (!val) return 0;
-                const cleaned = String(val).replace(/[^0-9.-]+/g, '');
-                return parseFloat(cleaned) || 0;
-            };
-
-            const cost = parseNum(item.cost || item.totalAmount || item.unitPrice || item.amount || item.harga);
-            const salvage = parseNum(item.salvage || item.salvageValue || item.estimatedSalvage || item.nilaiSisa);
-            const usefulLife = parseNum(item.usefulLife || item.usefulLifeYrs || item.life || item.umur) || 10;
-            const depRate = item.depRate ? parseNum(item.depRate) : (100 / usefulLife);
-
-            const rawCat = item.category || item.assetType || item.type || item.jenisAset || item.jenis || 'UNCATEGORIZED';
-            const category = String(rawCat).trim().toUpperCase();
-
-            const rawName = item.name || item.assetName || item.description || item.itemDescription || item.item || item.namaAset || 'ASET';
-            const name = String(rawName).trim().toUpperCase();
-
-            let rawDate = item.purchaseDate || item.datePurchased || item.purchasedDate || item.date || item.tarikh || item.purchased || `${defaultYear}-01-01`;
-            if (typeof rawDate === 'string' && rawDate.includes('T')) rawDate = rawDate.split('T')[0];
-
-            let purchaseYear = defaultYear;
-            let match = String(rawDate).match(/\b(20\d{2}|19\d{2})\b/);
-            if (match) purchaseYear = parseInt(match[1]);
-
-            return {
-                category,
-                name,
-                cost,
-                salvage,
-                usefulLife,
-                depRate,
-                purchaseDate: rawDate,
-                purchaseYear
-            };
-        }
-
-        // ISIKAN DROPDOWN TAHUN KEWANGAAN (2000 - 2050)
+        // POPULATE YEAR SELECTOR
         function populateYearSelect() {
             const select = document.getElementById('year-select');
             const currentYear = new Date().getFullYear();
             select.innerHTML = '';
             
-            for (let y = 2000; y <= 2050; y++) {
+            for (let y = currentYear - 3; y <= currentYear + 5; y++) {
                 const opt = document.createElement('option');
                 opt.value = y;
                 opt.textContent = y;
@@ -370,232 +304,200 @@
             }
         }
 
-        // RENDER DEPRECIATION SCHEDULE & CONSOLIDATED GENERAL JOURNAL
+        // RENDER DEPRECIATION SCHEDULE & GENERAL JOURNAL
         function renderSchedule() {
-            try {
-                const selectedYear = parseInt(document.getElementById('year-select').value) || new Date().getFullYear();
-                document.getElementById('subtitle-year').textContent = `FINANCIAL YEAR ENDED 31 DECEMBER ${selectedYear}`;
+            const selectedYear = parseInt(document.getElementById('year-select').value) || new Date().getFullYear();
+            document.getElementById('subtitle-year').textContent = `FINANCIAL YEAR ENDED 31 DECEMBER ${selectedYear}`;
 
-                const rawAssets = getAllAssets();
-                const container = document.getElementById('schedule-container');
-                container.innerHTML = '';
+            const assets = getAssets();
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = '';
 
-                if (!rawAssets || rawAssets.length === 0) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px;">
-                            Tiada rekod aset dijumpai. Sila mendaftar aset melalui "<strong>+ Register New Asset</strong>".
-                        </div>
-                    `;
-                    return;
-                }
-
-                // Normalisasikan semua rekod aset
-                const assets = rawAssets.map(item => normalizeAsset(item, selectedYear));
-
-                // Kumpulkan mengikut Kategori
-                const grouped = {};
-                assets.forEach(asset => {
-                    if (!grouped[asset.category]) grouped[asset.category] = [];
-                    grouped[asset.category].push(asset);
-                });
-
-                let journalCategories = [];
-                let totalOverallDepExpense = 0;
-
-                Object.keys(grouped).forEach(category => {
-                    const catAssets = grouped[category];
-
-                    let totOpeningCost = 0, totAdditionCost = 0, totDisposalCost = 0, totClosingCost = 0;
-                    let totOpeningDep = 0, totDepAddition = 0, totDisposalDep = 0, totClosingDep = 0;
-                    let totNetBookValue = 0;
-
-                    let tableRowsHtml = '';
-
-                    catAssets.forEach((asset, idx) => {
-                        const cost = asset.cost;
-                        const salvageValue = asset.salvage;
-                        const depRate = asset.depRate;
-                        const purchaseDate = asset.purchaseDate;
-                        const purchaseYear = asset.purchaseYear;
-
-                        let openingCost = 0, additionCost = 0, disposalCost = 0, closingCost = 0;
-
-                        if (purchaseYear === selectedYear) {
-                            openingCost = 0;
-                            additionCost = cost;
-                            disposalCost = 0;
-                            closingCost = cost;
-                        } else if (purchaseYear < selectedYear) {
-                            openingCost = cost;
-                            additionCost = 0;
-                            disposalCost = 0;
-                            closingCost = cost;
-                        } else {
-                            // Aset dibeli selepas tahun yang dipilih
-                            return;
-                        }
-
-                        // FORMULA DILAKSANA DENGAN TEPAT
-                        const maxAccumulatedDep = Math.max(0, closingCost - salvageValue);
-                        const yearlyStandardDep = closingCost * (depRate / 100);
-
-                        let openingDep = 0;
-                        if (purchaseYear < selectedYear) {
-                            const yearsPassed = selectedYear - purchaseYear;
-                            openingDep = Math.min(maxAccumulatedDep, yearlyStandardDep * yearsPassed);
-                        }
-
-                        // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate %
-                        const remainingDepreciable = Math.max(0, maxAccumulatedDep - openingDep);
-                        const depAddition = Math.min(yearlyStandardDep, remainingDepreciable);
-
-                        // FORMULA 2: Closing Depreciation = Opening Depreciation + Depreciation Addition
-                        const closingDep = openingDep + depAddition;
-
-                        // FORMULA 3: Net Book Value (RM) = Closing Cost - Closing Depreciation (Mengekalkan Salvage Value)
-                        const netBookValue = closingCost - closingDep;
-
-                        // Baki Kategori
-                        totOpeningCost += openingCost;
-                        totAdditionCost += additionCost;
-                        totDisposalCost += disposalCost;
-                        totClosingCost += closingCost;
-
-                        totOpeningDep += openingDep;
-                        totDepAddition += depAddition;
-                        totDisposalDep += disposalDep;
-                        totClosingDep += closingDep;
-
-                        totNetBookValue += netBookValue;
-
-                        tableRowsHtml += `
-                            <tr>
-                                <td class="text-center">${idx + 1}</td>
-                                <td class="text-center">${purchaseDate}</td>
-                                <td class="text-left"><strong>${asset.name}</strong></td>
-                                <td class="text-right">${openingCost.toFixed(2)}</td>
-                                <td class="text-right">${additionCost.toFixed(2)}</td>
-                                <td class="text-right">${disposalCost.toFixed(2)}</td>
-                                <td class="text-right" style="font-weight: 700;">${closingCost.toFixed(2)}</td>
-                                <td class="text-center">${depRate.toFixed(2)}%</td>
-                                <td class="text-right">${openingDep.toFixed(2)}</td>
-                                <td class="text-right text-red">${depAddition.toFixed(2)}</td>
-                                <td class="text-right">${disposalDep.toFixed(2)}</td>
-                                <td class="text-right text-red">${closingDep.toFixed(2)}</td>
-                                <td class="text-right text-green">${netBookValue.toFixed(2)}</td>
-                            </tr>
-                        `;
-                    });
-
-                    if (tableRowsHtml === '') return;
-
-                    journalCategories.push({
-                        category: category,
-                        amount: totDepAddition
-                    });
-                    totalOverallDepExpense += totDepAddition;
-
-                    container.innerHTML += `
-                        <div class="category-header-title">ASSET CATEGORY: ${category}</div>
-                        <div style="overflow-x: auto;">
-                            <table class="schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th rowspan="2" style="width: 35px;">No.</th>
-                                        <th rowspan="2" style="width: 90px;">Purchase Date</th>
-                                        <th rowspan="2">Asset Description</th>
-                                        <th colspan="4">Asset Cost (RM)</th>
-                                        <th rowspan="2" style="width: 80px;">Dep. Rate (%)</th>
-                                        <th colspan="4">Accumulated Depreciation (RM)</th>
-                                        <th rowspan="2" style="width: 110px;">Net Book Value (RM)</th>
-                                    </tr>
-                                    <tr>
-                                        <th style="width: 80px;">Opening Cost</th>
-                                        <th style="width: 80px;">Addition Cost</th>
-                                        <th style="width: 80px;">Disposal Cost</th>
-                                        <th style="width: 80px;">Closing Cost</th>
-                                        <th style="width: 80px;">Opening Dep.</th>
-                                        <th style="width: 80px;">Dep. Addition</th>
-                                        <th style="width: 80px;">Disposal Dep.</th>
-                                        <th style="width: 80px;">Closing Dep.</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${tableRowsHtml}
-                                    <tr class="row-total">
-                                        <td colspan="3" class="text-left">TOTAL ${category}</td>
-                                        <td class="text-right">${totOpeningCost.toFixed(2)}</td>
-                                        <td class="text-right">${totAdditionCost.toFixed(2)}</td>
-                                        <td class="text-right">${totDisposalCost.toFixed(2)}</td>
-                                        <td class="text-right">${totClosingCost.toFixed(2)}</td>
-                                        <td class="text-center">-</td>
-                                        <td class="text-right">${totOpeningDep.toFixed(2)}</td>
-                                        <td class="text-right text-red">${totDepAddition.toFixed(2)}</td>
-                                        <td class="text-right">${totDisposalDep.toFixed(2)}</td>
-                                        <td class="text-right text-red">${totClosingDep.toFixed(2)}</td>
-                                        <td class="text-right text-green">${totNetBookValue.toFixed(2)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    `;
-                });
-
-                if (container.innerHTML.trim() === '') {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px;">
-                            Rekod aset wujud tetapi tiada transaksi bagi tahun kewangan <strong>${selectedYear}</strong>.<br>
-                            Sila tukar pilihan <strong>SELECT FINANCIAL YEAR</strong>.
-                        </div>
-                    `;
-                    return;
-                }
-
-                // JURNAL AM DISATUKAN
-                if (journalCategories.length > 0) {
-                    let creditRowsHtml = '';
-                    journalCategories.forEach(item => {
-                        creditRowsHtml += `
-                            <tr>
-                                <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${item.category}</td>
-                                <td class="text-right">-</td>
-                                <td class="text-right" style="font-weight: 700;">${item.amount.toFixed(2)}</td>
-                            </tr>
-                        `;
-                    });
-
-                    container.innerHTML += `
-                        <div class="journal-box">
-                            <div class="journal-title">GENERAL JOURNAL - DEPRECIATION ENTRIES</div>
-                            <table class="journal-table">
-                                <thead>
-                                    <tr>
-                                        <th class="text-left">PARTICULARS</th>
-                                        <th class="text-right" style="width: 140px;">DEBIT (RM)</th>
-                                        <th class="text-right" style="width: 140px;">CREDIT (RM)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="text-left"><strong>DT DEPRECIATION EXPENSE</strong></td>
-                                        <td class="text-right" style="font-weight: 700;">${totalOverallDepExpense.toFixed(2)}</td>
-                                        <td class="text-right">-</td>
-                                    </tr>
-                                    ${creditRowsHtml}
-                                </tbody>
-                            </table>
-                            <div class="journal-narrative">(Being annual depreciation provision charged for the financial year ended 31 December ${selectedYear})</div>
-                        </div>
-                    `;
-                }
-            } catch (err) {
-                console.error("Depreciation Schedule Error:", err);
-                document.getElementById('schedule-container').innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #dc2626; font-size: 14px;">
-                        Ralat semasa menjana Depreciation Schedule: ${err.message}
+            if (assets.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px;">
+                        No assets registered yet. Add assets via "<strong>+ Register New Asset</strong>" to view depreciation calculations.
                     </div>
                 `;
+                return;
             }
+
+            // Group assets by Category
+            const grouped = {};
+            assets.forEach(asset => {
+                const cat = (asset.category && asset.category.trim() !== '') ? asset.category.trim().toUpperCase() : 'UNCATEGORIZED';
+                if (!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push(asset);
+            });
+
+            Object.keys(grouped).forEach(category => {
+                const catAssets = grouped[category];
+
+                let totOpeningCost = 0, totAdditionCost = 0, totDisposalCost = 0, totClosingCost = 0;
+                let totOpeningDep = 0, totDepAddition = 0, totDisposalDep = 0, totClosingDep = 0;
+                let totNetBookValue = 0;
+
+                let tableRowsHtml = '';
+
+                catAssets.forEach((asset, idx) => {
+                    const cost = parseFloat(asset.cost || asset.totalAmount || asset.unitPrice) || 0;
+                    const salvageValue = parseFloat(asset.salvage || asset.salvageValue || asset.estimatedSalvage) || 0;
+                    const usefulLife = parseFloat(asset.usefulLife) || 10;
+                    const depRate = asset.depRate ? parseFloat(asset.depRate) : (100 / usefulLife);
+
+                    const purchaseDate = asset.purchaseDate || asset.datePurchased || `${selectedYear}-01-01`;
+                    const purchaseYear = new Date(purchaseDate).getFullYear();
+
+                    let openingCost = 0, additionCost = 0, disposalCost = 0, closingCost = 0;
+                    let openingDep = 0, depAddition = 0, disposalDep = 0, closingDep = 0;
+
+                    if (purchaseYear === selectedYear) {
+                        openingCost = 0;
+                        additionCost = cost;
+                        disposalCost = 0;
+                        closingCost = cost;
+                    } else if (purchaseYear < selectedYear) {
+                        openingCost = cost;
+                        additionCost = 0;
+                        disposalCost = 0;
+                        closingCost = cost;
+                    } else {
+                        // Purchased in a future year relative to selectedYear
+                        return;
+                    }
+
+                    // HAD MAKSIMUM SUSUT NILAI BAGI MEMELIHARA SALVAGE VALUE
+                    const maxDepreciableAmount = Math.max(0, closingCost - salvageValue);
+                    const standardDepAddition = closingCost * (depRate / 100);
+
+                    if (purchaseYear === selectedYear) {
+                        openingDep = 0;
+                        // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate %
+                        depAddition = Math.min(standardDepAddition, maxDepreciableAmount);
+                    } else {
+                        const yearsPassed = selectedYear - purchaseYear;
+                        openingDep = Math.min(maxDepreciableAmount, standardDepAddition * yearsPassed);
+                        const remainingDepreciable = Math.max(0, maxDepreciableAmount - openingDep);
+                        
+                        // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate %
+                        depAddition = Math.min(standardDepAddition, remainingDepreciable);
+                    }
+
+                    // FORMULA 2: Closing Depreciation = Opening Depreciation + Depreciation Addition
+                    closingDep = openingDep + depAddition;
+
+                    // FORMULA 3: Net Book Value (RM) = Closing Cost - Closing Depreciation
+                    const netBookValue = closingCost - closingDep;
+
+                    // Accumulate Totals
+                    totOpeningCost += openingCost;
+                    totAdditionCost += additionCost;
+                    totDisposalCost += disposalCost;
+                    totClosingCost += closingCost;
+
+                    totOpeningDep += openingDep;
+                    totDepAddition += depAddition;
+                    totDisposalDep += disposalDep;
+                    totClosingDep += closingDep;
+
+                    totNetBookValue += netBookValue;
+
+                    tableRowsHtml += `
+                        <tr>
+                            <td class="text-center">${idx + 1}</td>
+                            <td class="text-center">${purchaseDate}</td>
+                            <td class="text-left"><strong>${(asset.name || asset.assetName || '').toUpperCase()}</strong></td>
+                            <td class="text-right">${openingCost.toFixed(2)}</td>
+                            <td class="text-right">${additionCost.toFixed(2)}</td>
+                            <td class="text-right">${disposalCost.toFixed(2)}</td>
+                            <td class="text-right" style="font-weight: 700;">${closingCost.toFixed(2)}</td>
+                            <td class="text-center">${depRate.toFixed(2)}%</td>
+                            <td class="text-right">${openingDep.toFixed(2)}</td>
+                            <td class="text-right text-red">${depAddition.toFixed(2)}</td>
+                            <td class="text-right">${disposalDep.toFixed(2)}</td>
+                            <td class="text-right text-red">${closingDep.toFixed(2)}</td>
+                            <td class="text-right text-green">${netBookValue.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                if (tableRowsHtml === '') return; // Skip category if no assets apply to selected year
+
+                let categoryBlockHtml = `
+                    <div class="category-header-title">ASSET CATEGORY: ${category}</div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" style="width: 35px;">No.</th>
+                                    <th rowspan="2" style="width: 90px;">Purchase Date</th>
+                                    <th rowspan="2">Asset Description</th>
+                                    <th colspan="4">Asset Cost (RM)</th>
+                                    <th rowspan="2" style="width: 80px;">Dep. Rate (%)</th>
+                                    <th colspan="4">Accumulated Depreciation (RM)</th>
+                                    <th rowspan="2" style="width: 110px;">Net Book Value (RM)</th>
+                                </tr>
+                                <tr>
+                                    <th style="width: 80px;">Opening Cost</th>
+                                    <th style="width: 80px;">Addition Cost</th>
+                                    <th style="width: 80px;">Disposal Cost</th>
+                                    <th style="width: 80px;">Closing Cost</th>
+                                    <th style="width: 80px;">Opening Dep.</th>
+                                    <th style="width: 80px;">Dep. Addition</th>
+                                    <th style="width: 80px;">Disposal Dep.</th>
+                                    <th style="width: 80px;">Closing Dep.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRowsHtml}
+                                <tr class="row-total">
+                                    <td colspan="3" class="text-left">TOTAL ${category}</td>
+                                    <td class="text-right">${totOpeningCost.toFixed(2)}</td>
+                                    <td class="text-right">${totAdditionCost.toFixed(2)}</td>
+                                    <td class="text-right">${totDisposalCost.toFixed(2)}</td>
+                                    <td class="text-right">${totClosingCost.toFixed(2)}</td>
+                                    <td class="text-center">-</td>
+                                    <td class="text-right">${totOpeningDep.toFixed(2)}</td>
+                                    <td class="text-right text-red">${totDepAddition.toFixed(2)}</td>
+                                    <td class="text-right">${totDisposalDep.toFixed(2)}</td>
+                                    <td class="text-right text-red">${totClosingDep.toFixed(2)}</td>
+                                    <td class="text-right text-green">${totNetBookValue.toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- GENERAL JOURNAL BOX FOR THIS CATEGORY -->
+                    <div class="journal-box">
+                        <div class="journal-title">GENERAL JOURNAL - DEPRECIATION ENTRIES</div>
+                        <table class="journal-table">
+                            <thead>
+                                <tr>
+                                    <th class="text-left">PARTICULARS</th>
+                                    <th class="text-right" style="width: 140px;">DEBIT (RM)</th>
+                                    <th class="text-right" style="width: 140px;">CREDIT (RM)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-left"><strong>DT DEPRECIATION EXPENSE</strong></td>
+                                    <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
+                                    <td class="text-right">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${category}</td>
+                                    <td class="text-right">-</td>
+                                    <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="journal-narrative">(Being annual depreciation provision charged for the financial year ended 31 December ${selectedYear})</div>
+                    </div>
+                `;
+
+                container.innerHTML += categoryBlockHtml;
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
