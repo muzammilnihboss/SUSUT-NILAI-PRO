@@ -347,8 +347,8 @@
                     const salvageValue = parseFloat(asset.salvage || asset.salvageValue || asset.estimatedSalvage) || 0;
                     const usefulLife = parseFloat(asset.usefulLife) || 10;
                     
-                    // Depreciation Rate %
-                    const depRate = 100 / usefulLife;
+                    // Depreciation Rate (%)
+                    const depRate = asset.depRate ? parseFloat(asset.depRate) : (100 / usefulLife);
 
                     const purchaseDate = asset.purchaseDate || `${selectedYear}-01-01`;
                     const purchaseYear = new Date(purchaseDate).getFullYear();
@@ -370,29 +370,28 @@
                         return;
                     }
 
-                    // Maximum allowable accumulated depreciation (Cost - Salvage Value)
-                    const maxDepreciableAmount = Math.max(0, closingCost - salvageValue);
+                    // Maximum allowable accumulated depreciation (Closing Cost - Estimated Salvage Value)
+                    const maxAccumulatedDep = Math.max(0, closingCost - salvageValue);
 
-                    // Standard Depreciation Addition = Closing Cost * Depreciation Rate %
-                    const standardDepAddition = closingCost * (depRate / 100);
+                    // Standard yearly depreciation amount
+                    const yearlyStandardDep = closingCost * (depRate / 100);
 
-                    // Opening Depreciation calculation for prior years
+                    // Calculate Opening Depreciation for prior years
                     let openingDep = 0;
                     if (purchaseYear < selectedYear) {
                         const yearsPassed = selectedYear - purchaseYear;
-                        openingDep = Math.min(maxDepreciableAmount, standardDepAddition * yearsPassed);
+                        openingDep = Math.min(maxAccumulatedDep, yearlyStandardDep * yearsPassed);
                     }
 
-                    // Remaining depreciable amount left for the current year
-                    const remainingDepreciable = Math.max(0, maxDepreciableAmount - openingDep);
-
-                    // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate % (Capped by Salvage Value)
-                    const depAddition = Math.min(standardDepAddition, remainingDepreciable);
+                    // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate %
+                    // (Diselaraskan dengan baki boleh susut nilai supaya NBV mengekalkan ESTIMATED SALVAGE VALUE)
+                    const remainingDepreciable = Math.max(0, maxAccumulatedDep - openingDep);
+                    const depAddition = Math.min(yearlyStandardDep, remainingDepreciable);
 
                     // FORMULA 2: Closing Depreciation = Opening Depreciation + Depreciation Addition
                     const closingDep = openingDep + depAddition;
 
-                    // FORMULA 3: Net Book Value (RM) = Closing Cost - Closing Depreciation (Respects Salvage Value)
+                    // FORMULA 3: Net Book Value (RM) = Closing Cost - Closing Depreciation
                     const netBookValue = closingCost - closingDep;
 
                     // Accumulate Category Totals
