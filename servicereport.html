@@ -286,6 +286,24 @@
             background-color: #1d4ed8;
         }
 
+        .btn-delete-action {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete-action:hover {
+            background-color: #dc2626;
+        }
+
         /* TABLE DESIGN */
         table.custom-table {
             width: 100%;
@@ -344,7 +362,7 @@
         }
 
         @media print {
-            header, .no-print, .btn-update-action, .inline-date-input { display: none !important; }
+            header, .no-print, .btn-update-action, .btn-delete-action, .inline-date-input { display: none !important; }
             body { background: #fff; padding: 0; }
             .card { border: none; box-shadow: none; padding: 0; }
         }
@@ -500,7 +518,7 @@
             </div>
         </div>
 
-        <!-- CARD 4: MAINTENANCE SERVICE LEDGER -->
+        <!-- CARD 4: MAINTENANCE SERVICE LEDGER WITH EDIT & DELETE -->
         <div class="card">
             <div class="card-header-flex">
                 <div class="header-title-group">
@@ -523,6 +541,7 @@
                             <th>Contractor / Vendor</th>
                             <th>Service Cost (RM)</th>
                             <th>Next Service Date (+1 Year)</th>
+                            <th class="no-print">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="ledger-tbody">
@@ -539,6 +558,27 @@
         const STORAGE_KEY_SERVICES = 'susut_nilai_services';
         const STORAGE_KEY_LEDGER = 'susut_nilai_maintenance_ledger';
 
+        // SAMPLE DATA INITIALIZER (Matches User Screenshot)
+        function initSampleData() {
+            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS));
+            if (!assets || assets.length === 0) {
+                assets = [
+                    { id: 1, name: 'MESIN DAFTAR TUNAI', category: 'Office Equipment', location: 'Main Office', supplier: 'kedai peralatan elektronik mariam', invoiceNo: 'INV-001' },
+                    { id: 2, name: 'MEJA', category: 'Furniture & Fittings', location: 'hq office', supplier: 'JJ CHAIR SDN BHD', invoiceNo: 'INV-002' }
+                ];
+                localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
+            }
+
+            let logs = JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES));
+            if (!logs || Object.keys(logs).length === 0) {
+                logs = {
+                    "1": { lastServiceDate: '2024-01-05', nextServiceDate: '2025-01-05', vendor: 'kedai peralatan elektronik mariam', cost: 0.00 },
+                    "2": { lastServiceDate: '2026-01-11', nextServiceDate: '2027-01-11', vendor: 'JJ CHAIR SDN BHD', cost: 0.00 }
+                };
+                localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
+            }
+        }
+
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
@@ -551,7 +591,7 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_LEDGER)) || [];
         }
 
-        // COMPUTE NEXT SERVICE DATE: (+1 Year, Same Day & Month)
+        // COMPUTE NEXT SERVICE DATE (+1 Year)
         function computeNextYearDate(dateStr) {
             if (!dateStr) return '-';
             const dateObj = new Date(dateStr);
@@ -611,7 +651,7 @@
             document.getElementById('log-form-card').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // DIRECTLY UPDATE NEXT SERVICE DATE IN REPORT TABLE
+        // DIRECTLY UPDATE NEXT SERVICE DATE IN REPORT TABLE & SYNC ALERTS
         function updateNextServiceDateDirect(assetId, newDate) {
             if (!newDate) return;
             const logs = getServiceLogs();
@@ -625,7 +665,15 @@
             renderAllSections();
         }
 
-        // SAVE MAINTENANCE RECORD FORM LOG -> AUTO ADVANCES NEXT DATE & CLEARS ALERT
+        // PROMPT UPDATE FOR TABLE BUTTON
+        function promptDateUpdate(assetId, currentDate) {
+            const newDate = prompt("Enter new Next Service Date (YYYY-MM-DD):", currentDate);
+            if (newDate && newDate.trim() !== "") {
+                updateNextServiceDateDirect(assetId, newDate.trim());
+            }
+        }
+
+        // SAVE MAINTENANCE RECORD FROM FORM LOG -> AUTO ADVANCES NEXT DATE & ADDS TO LEDGER
         function handleSaveServiceRecord(e) {
             e.preventDefault();
             const assetId = document.getElementById('select-asset').value;
@@ -638,7 +686,7 @@
             const invoiceNo = document.getElementById('prefill-invoice').value;
             const nextDate = computeNextYearDate(serviceDate);
 
-            // 1. Update Service Log (Next Service Date advances to +1 year)
+            // 1. Update Service Log
             const logs = getServiceLogs();
             logs[assetId] = {
                 lastServiceDate: serviceDate,
@@ -663,11 +711,64 @@
             });
             localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
 
-            alert('✅ Maintenance service record saved successfully & recorded in Ledger!');
+            alert('✅ Maintenance service record saved successfully & added to Ledger!');
             
-            // Reset Form & Re-render
             document.getElementById('log-maintenance-form').reset();
             autoPrefillAssetDetails();
+            renderAllSections();
+        }
+
+        // EDIT LEDGER ENTRY
+        function editLedgerEntry(ledgerId) {
+            const ledger = getLedgerLogs();
+            const entryIndex = ledger.findIndex(item => item.id === ledgerId);
+            if (entryIndex === -1) return;
+
+            const entry = ledger[entryIndex];
+            
+            const newDate = prompt("Edit Service Log Date (YYYY-MM-DD):", entry.serviceDate);
+            if (!newDate) return;
+
+            const newVendor = prompt("Edit Contractor / Vendor:", entry.vendor);
+            if (newVendor === null) return;
+
+            const newCostStr = prompt("Edit Service Cost (RM):", entry.cost);
+            if (newCostStr === null) return;
+
+            const newCost = parseFloat(newCostStr) || 0;
+            const newNextDate = computeNextYearDate(newDate);
+
+            // Update entry in Ledger array
+            ledger[entryIndex].serviceDate = newDate;
+            ledger[entryIndex].nextServiceDate = newNextDate;
+            ledger[entryIndex].vendor = newVendor;
+            ledger[entryIndex].cost = newCost;
+
+            localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
+
+            // Sync latest log if this ledger entry is the most recent
+            const logs = getServiceLogs();
+            if (logs[entry.assetId]) {
+                logs[entry.assetId].lastServiceDate = newDate;
+                logs[entry.assetId].nextServiceDate = newNextDate;
+                logs[entry.assetId].vendor = newVendor;
+                logs[entry.assetId].cost = newCost;
+                localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
+            }
+
+            alert('✅ Ledger record updated successfully!');
+            renderAllSections();
+        }
+
+        // DELETE LEDGER ENTRY
+        function deleteLedgerEntry(ledgerId) {
+            if (!confirm("Are you sure you want to delete this maintenance record from the ledger?")) return;
+
+            let ledger = getLedgerLogs();
+            ledger = ledger.filter(item => item.id !== ledgerId);
+            localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
+
+            alert('🗑️ Ledger record deleted.');
             renderAllSections();
         }
 
@@ -698,13 +799,11 @@
                 assets.forEach((asset, idx) => {
                     const log = logs[asset.id] || {};
                     const lastDate = log.lastServiceDate || asset.purchaseDate || asset.date || '2026-01-01';
-                    
-                    // If next service date was manually set/updated, use it; otherwise compute +1 year
                     const nextDate = log.nextServiceDate || computeNextYearDate(lastDate);
                     const vendor = log.vendor || asset.supplier || '-';
                     const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
 
-                    // Overdue Condition: nextServiceDate is earlier than today's date
+                    // Overdue Condition: nextServiceDate is strictly earlier than today's date
                     const isOverdue = nextDate !== '-' && nextDate < today;
 
                     if (isOverdue) {
@@ -743,7 +842,7 @@
                     `;
                 });
 
-                // UPDATE ACTIVE MAINTENANCE & SERVICING ALERTS DYNAMICALLY
+                // UPDATE ACTIVE MAINTENANCE ALERTS
                 document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
                 if (overdueCount > 0) {
                     document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
@@ -757,12 +856,12 @@
                 }
             }
 
-            // RENDER MAINTENANCE SERVICE LEDGER
+            // RENDER MAINTENANCE SERVICE LEDGER WITH EDIT & DELETE BUTTONS
             const ledgerTbody = document.getElementById('ledger-tbody');
             ledgerTbody.innerHTML = '';
 
             if (ledger.length === 0) {
-                ledgerTbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 20px; color: #64748b;">No maintenance ledger records found.</td></tr>`;
+                ledgerTbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding: 20px; color: #64748b;">No maintenance ledger records found.</td></tr>`;
             } else {
                 ledger.forEach((item, index) => {
                     ledgerTbody.innerHTML += `
@@ -774,22 +873,19 @@
                             <td class="text-center">${item.vendor || '-'}</td>
                             <td class="text-right">RM ${parseFloat(item.cost).toFixed(2)}</td>
                             <td class="next-date-cell">${item.nextServiceDate}</td>
+                            <td class="no-print text-center">
+                                <button onclick="editLedgerEntry(${item.id})" class="btn-update-action" style="margin-right: 4px;">✏️ Edit</button>
+                                <button onclick="deleteLedgerEntry(${item.id})" class="btn-delete-action">🗑️ Delete</button>
+                            </td>
                         </tr>
                     `;
                 });
             }
         }
 
-        // POPUP PROMPT TO UPDATE NEXT SERVICE DATE
-        function promptDateUpdate(assetId, currentDate) {
-            const newDate = prompt("Enter new Next Service Date (YYYY-MM-DD):", currentDate);
-            if (newDate && newDate.trim() !== "") {
-                updateNextServiceDateDirect(assetId, newDate.trim());
-            }
-        }
-
         // INITIALIZE ON LOAD
         document.addEventListener('DOMContentLoaded', () => {
+            initSampleData();
             document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
             loadAssetDropdown();
             renderAllSections();
