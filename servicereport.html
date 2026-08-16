@@ -490,7 +490,7 @@
             <div class="card-header-flex">
                 <div>
                     <div class="card-title">Asset Service & Maintenance Report</div>
-                    <div class="card-subtitle">Preventative maintenance schedules projected with 1-year interval updates (+1 Year).</div>
+                    <div class="card-subtitle">Preventative maintenance schedules projected from Last Service Date, Interval, and Useful Life.</div>
                 </div>
                 <div class="no-print" style="display: flex; gap: 10px;">
                     <button onclick="scrollToLogForm()" class="btn-blue">+ Log New Service</button>
@@ -507,7 +507,7 @@
                             <th>Category</th>
                             <th>Location / Dept</th>
                             <th>Last Service Date</th>
-                            <th style="background-color: #eff6ff; color: #1d4ed8;">Next Service Date (+1 Year)</th>
+                            <th style="background-color: #eff6ff; color: #1d4ed8;">Next Service Date</th>
                             <th>Contractor / Vendor</th>
                             <th>Service Cost (RM)</th>
                             <th>Status</th>
@@ -515,7 +515,7 @@
                         </tr>
                     </thead>
                     <tbody id="service-history-tbody">
-                        <!-- Empty by Default; Populates only when service is logged -->
+                        <!-- Dynamic Schedules projected based on Interval & Useful Life -->
                     </tbody>
                 </table>
             </div>
@@ -543,7 +543,7 @@
                             <th>Invoice No.</th>
                             <th>Contractor / Vendor</th>
                             <th>Service Cost (RM)</th>
-                            <th>Next Service Date (+1 Year)</th>
+                            <th>Next Service Date</th>
                             <th class="no-print">Actions</th>
                         </tr>
                     </thead>
@@ -573,13 +573,13 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_LEDGER)) || [];
         }
 
-        // COMPUTE NEXT SERVICE DATE (+1 Year)
-        function computeNextYearDate(dateStr) {
+        // ADD MONTHS TO A DATE ACCURATELY
+        function addMonthsToDate(dateStr, months) {
             if (!dateStr || dateStr === '-') return '-';
             const dateObj = new Date(dateStr);
             if (isNaN(dateObj.getTime())) return '-';
 
-            dateObj.setFullYear(dateObj.getFullYear() + 1);
+            dateObj.setMonth(dateObj.getMonth() + parseInt(months));
 
             const year = dateObj.getFullYear();
             const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -616,7 +616,7 @@
                 document.getElementById('prefill-qty').value = asset.quantity || asset.unit || 1;
 
                 const log = logs[assetId] || {};
-                document.getElementById('input-service-date').value = log.lastServiceDate || new Date().toISOString().split('T')[0];
+                document.getElementById('input-service-date').value = log.lastServiceDate || asset.lastServiceDate || new Date().toISOString().split('T')[0];
                 document.getElementById('input-cost').value = log.cost !== undefined ? log.cost : '0.00';
             } else {
                 document.getElementById('prefill-name').value = '';
@@ -634,13 +634,16 @@
         }
 
         // DIRECTLY UPDATE NEXT SERVICE DATE IN REPORT TABLE
-        function updateNextServiceDateDirect(assetId, newDate) {
+        function updateNextServiceDateDirect(assetId, cycleIndex, newDate) {
             if (!newDate) return;
             const logs = getServiceLogs();
             if (!logs[assetId]) {
                 logs[assetId] = {};
             }
-            logs[assetId].nextServiceDate = newDate;
+            if (!logs[assetId].customNextDates) {
+                logs[assetId].customNextDates = {};
+            }
+            logs[assetId].customNextDates[cycleIndex] = newDate;
             logs[assetId].updatedAt = new Date().toISOString();
             
             localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
@@ -648,10 +651,10 @@
         }
 
         // PROMPT UPDATE FOR TABLE BUTTON
-        function promptDateUpdate(assetId, currentDate) {
+        function promptDateUpdate(assetId, cycleIndex, currentDate) {
             const newDate = prompt("Enter new Next Service Date (YYYY-MM-DD):", currentDate);
             if (newDate && newDate.trim() !== "") {
-                updateNextServiceDateDirect(assetId, newDate.trim());
+                updateNextServiceDateDirect(assetId, cycleIndex, newDate.trim());
             }
         }
 
@@ -661,16 +664,21 @@
             const assetId = document.getElementById('select-asset').value;
             if (!assetId) return;
 
+            const assets = getAssets();
+            const asset = assets.find(a => String(a.id) === String(assetId));
+            const interval = asset && asset.serviceIntervalMonths ? parseInt(asset.serviceIntervalMonths) : 6;
+
             const serviceDate = document.getElementById('input-service-date').value;
             const cost = parseFloat(document.getElementById('input-cost').value) || 0;
             const supplier = document.getElementById('prefill-supplier').value || 'Maintenance Vendor';
             const assetName = document.getElementById('prefill-name').value;
             const invoiceNo = document.getElementById('prefill-invoice').value;
-            const nextDate = computeNextYearDate(serviceDate);
+            const nextDate = addMonthsToDate(serviceDate, interval);
 
             // 1. Update Service Log
             const logs = getServiceLogs();
             logs[assetId] = {
+                ...(logs[assetId] || {}),
                 lastServiceDate: serviceDate,
                 nextServiceDate: nextDate,
                 vendor: supplier,
@@ -707,6 +715,9 @@
             if (entryIndex === -1) return;
 
             const entry = ledger[entryIndex];
+            const assets = getAssets();
+            const asset = assets.find(a => String(a.id) === String(entry.assetId));
+            const interval = asset && asset.serviceIntervalMonths ? parseInt(asset.serviceIntervalMonths) : 6;
             
             const newDate = prompt("Edit Service Log Date (YYYY-MM-DD):", entry.serviceDate);
             if (!newDate) return;
@@ -718,7 +729,7 @@
             if (newCostStr === null) return;
 
             const newCost = parseFloat(newCostStr) || 0;
-            const newNextDate = computeNextYearDate(newDate);
+            const newNextDate = addMonthsToDate(newDate, interval);
 
             ledger[entryIndex].serviceDate = newDate;
             ledger[entryIndex].nextServiceDate = newNextDate;
@@ -752,7 +763,7 @@
             renderAllSections();
         }
 
-        // RENDER REPORT & LEDGER (ONLY SHOWS RECORDED LOGS)
+        // RENDER REPORT & LEDGER (PROJECTS SCHEDULE BASED ON USEFUL LIFE & INTERVAL)
         function renderAllSections() {
             const assets = getAssets();
             const logs = getServiceLogs();
@@ -765,11 +776,76 @@
             const tbody = document.getElementById('service-history-tbody');
             tbody.innerHTML = '';
 
-            // Filter assets that have an actual recorded service log
-            const servicedAssets = assets.filter(asset => logs[asset.id] && logs[asset.id].lastServiceDate);
+            let rowCounter = 1;
+            let totalProjectedRows = 0;
 
-            if (servicedAssets.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: #64748b;">No maintenance service report records found. Log a service using the form above to populate this table.</td></tr>`;
+            assets.forEach((asset) => {
+                const initialLastDate = asset.lastServiceDate;
+                const intervalMonths = parseInt(asset.serviceIntervalMonths);
+                const usefulLifeYrs = parseInt(asset.usefulLife);
+
+                // If asset has valid service parameters, calculate cycles
+                if (initialLastDate && intervalMonths > 0 && usefulLifeYrs > 0) {
+                    const totalCycles = Math.floor((usefulLifeYrs * 12) / intervalMonths);
+                    const customDates = (logs[asset.id] && logs[asset.id].customNextDates) || {};
+
+                    for (let cycle = 1; cycle <= totalCycles; cycle++) {
+                        totalProjectedRows++;
+                        
+                        // Calculate dates for cycle
+                        const prevDate = addMonthsToDate(initialLastDate, (cycle - 1) * intervalMonths);
+                        const calculatedNextDate = addMonthsToDate(initialLastDate, cycle * intervalMonths);
+                        
+                        // Check if user set a custom date for this cycle
+                        const nextDate = customDates[cycle] || calculatedNextDate;
+
+                        const vendor = (logs[asset.id] && logs[asset.id].vendor) || asset.supplier || '-';
+                        const cost = (logs[asset.id] && logs[asset.id].cost !== undefined) ? parseFloat(logs[asset.id].cost) : 0;
+                        const isOverdue = nextDate !== '-' && nextDate < today;
+
+                        if (isOverdue) {
+                            overdueCount++;
+                            overdueItemsHtml += `
+                                <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                                    <span>⚠️ Asset <strong>${(asset.name || asset.assetName).toUpperCase()}</strong> (Cycle #${cycle}) requires servicing! (Due Date: <strong>${nextDate}</strong>)</span>
+                                    <div style="display:flex; gap: 8px; align-items: center;">
+                                        <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, ${cycle}, this.value)">
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="text-center">${rowCounter++}</td>
+                                <td class="text-left">
+                                    <strong>${(asset.name || asset.assetName || 'Asset').toUpperCase()}</strong>
+                                    <div style="font-size: 11px; color: #64748b;">(Service #${cycle} of ${totalCycles})</div>
+                                </td>
+                                <td class="text-center">${asset.category || '-'}</td>
+                                <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
+                                <td class="text-center">${prevDate}</td>
+                                <td class="next-date-cell">
+                                    <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, ${cycle}, this.value)">
+                                </td>
+                                <td class="text-center">${vendor}</td>
+                                <td class="text-right">RM ${cost.toFixed(2)}</td>
+                                <td class="text-center">
+                                    <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-scheduled'}">
+                                        ${isOverdue ? '⚠️ OVERDUE' : '📅 SCHEDULED'}
+                                    </span>
+                                </td>
+                                <td class="no-print text-center">
+                                    <button onclick="promptDateUpdate(${asset.id}, ${cycle}, '${nextDate}')" class="btn-update-action">✏️ Update Date</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                }
+            });
+
+            if (totalProjectedRows === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: #64748b;">No maintenance service projections found. Ensure registered assets include Last Service Date, Service Interval, and Useful Life.</td></tr>`;
                 document.getElementById('overdue-badge-pill').innerText = '0 Overdue Services';
                 document.getElementById('alerts-container').innerHTML = `
                     <div class="empty-alert-state">
@@ -778,51 +854,6 @@
                     </div>
                 `;
             } else {
-                servicedAssets.forEach((asset, idx) => {
-                    const log = logs[asset.id];
-                    const lastDate = log.lastServiceDate;
-                    const nextDate = log.nextServiceDate || computeNextYearDate(lastDate);
-                    const vendor = log.vendor || asset.supplier || '-';
-                    const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
-
-                    const isOverdue = nextDate !== '-' && nextDate < today;
-
-                    if (isOverdue) {
-                        overdueCount++;
-                        overdueItemsHtml += `
-                            <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
-                                <span>⚠️ Asset <strong>${(asset.name || asset.assetName).toUpperCase()}</strong> requires servicing! (Due Date: <strong>${nextDate}</strong>)</span>
-                                <div style="display:flex; gap: 8px; align-items: center;">
-                                    <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)">
-                                </div>
-                            </div>
-                        `;
-                    }
-
-                    tbody.innerHTML += `
-                        <tr>
-                            <td class="text-center">${idx + 1}</td>
-                            <td class="text-left"><strong>${(asset.name || asset.assetName || 'Asset').toUpperCase()}</strong></td>
-                            <td class="text-center">${asset.category || '-'}</td>
-                            <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
-                            <td class="text-center">${lastDate}</td>
-                            <td class="next-date-cell">
-                                <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)">
-                            </td>
-                            <td class="text-center">${vendor}</td>
-                            <td class="text-right">RM ${cost.toFixed(2)}</td>
-                            <td class="text-center">
-                                <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-scheduled'}">
-                                    ${isOverdue ? '⚠️ OVERDUE' : '📅 SCHEDULED'}
-                                </span>
-                            </td>
-                            <td class="no-print text-center">
-                                <button onclick="promptDateUpdate(${asset.id}, '${nextDate}')" class="btn-update-action">✏️ Update Date</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
                 document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
                 if (overdueCount > 0) {
                     document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
