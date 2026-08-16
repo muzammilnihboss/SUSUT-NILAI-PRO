@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asset Register - Susut Nilai Pro</title>
+    <title>Property, Plant & Equipment Register - Susut Nilai Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -67,7 +67,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 16px;
         }
@@ -146,6 +146,8 @@
             font-size: 20px;
             font-weight: 800;
             color: #0f172a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .card-subtitle {
@@ -205,32 +207,34 @@
             background-color: #dc2626;
         }
 
-        /* TABLE DESIGN */
+        /* TABLE DESIGN ACCORDING TO PDF FORM */
         table.custom-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 12px;
         }
 
         table.custom-table th, table.custom-table td {
-            padding: 12px 14px;
-            border: 1px solid #e2e8f0;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
             vertical-align: middle;
         }
 
         table.custom-table th {
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             color: #0f172a;
             font-weight: 800;
             text-align: center;
+            text-transform: uppercase;
+            font-size: 11px;
         }
 
         .category-badge {
-            background-color: #f1f5f9;
-            color: #334155;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
+            background-color: #e2e8f0;
+            color: #1e293b;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: 700;
         }
 
@@ -246,6 +250,7 @@
             header, .no-print, .btn-delete-action { display: none !important; }
             body { background: #fff; padding: 0; }
             .card { border: none; box-shadow: none; padding: 0; }
+            table.custom-table th, table.custom-table td { border: 1px solid #000; }
         }
     </style>
 </head>
@@ -291,29 +296,38 @@
                 <div class="header-title-group">
                     <div class="icon-badge">📋</div>
                     <div>
-                        <div class="card-title">Fixed Asset Master Register</div>
-                        <div class="card-subtitle">Comprehensive ledger of all capitalized assets and equipment entries.</div>
+                        <div class="card-title">PROPERTY, PLANT AND EQUIPMENT REGISTER</div>
+                        <div class="card-subtitle">Official register derived from registered asset logs.</div>
                     </div>
                 </div>
                 <div class="no-print" style="display: flex; gap: 10px;">
                     <a href="registernew.html" class="btn-blue">+ Register New Asset</a>
-                    <button onclick="window.print()" class="btn-black">🖨️ Print Ledger</button>
+                    <button onclick="window.print()" class="btn-black">🖨️ Print Register</button>
                 </div>
             </div>
 
             <div style="overflow-x: auto;">
                 <table class="custom-table">
                     <thead>
+                        <!-- MULTI-LEVEL HEADER TO MATCH BORANG DAFTAR ASET -->
                         <tr>
-                            <th style="width: 50px;">No.</th>
-                            <th>Purchase Date</th>
-                            <th>Asset Name / Description</th>
-                            <th>Category</th>
-                            <th>Location / Dept</th>
-                            <th>Qty</th>
-                            <th>Unit Price (RM)</th>
-                            <th>Total Cost (RM)</th>
-                            <th class="no-print" style="width: 90px;">Action</th>
+                            <th rowspan="2" style="width: 40px;">No.</th>
+                            <th colspan="2">Date</th>
+                            <th rowspan="2">Item / Description</th>
+                            <th rowspan="2">Ref. No.</th>
+                            <th rowspan="2">Model</th>
+                            <th rowspan="2">Useful Life (Yrs)</th>
+                            <th rowspan="2">Unit</th>
+                            <th rowspan="2">Unit Price (RM)</th>
+                            <th rowspan="2">Total Amount (RM)</th>
+                            <th rowspan="2">Location</th>
+                            <th rowspan="2">Date Updated</th>
+                            <th rowspan="2">Updated By</th>
+                            <th rowspan="2" class="no-print" style="width: 70px;">Action</th>
+                        </tr>
+                        <tr>
+                            <th style="width: 90px;">Purchased</th>
+                            <th style="width: 90px;">Disposed</th>
                         </tr>
                     </thead>
                     <tbody id="asset-tbody">
@@ -349,7 +363,7 @@
             let totalCostSum = 0;
 
             if (assets.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="padding: 24px; color: #64748b;">No registered assets found. Click "+ Register New Asset" to record entries into the master ledger.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="14" class="text-center" style="padding: 24px; color: #64748b;">No registered assets found. Click "+ Register New Asset" to record entries.</td></tr>`;
                 document.getElementById('stat-total-assets').innerText = '0';
                 document.getElementById('stat-total-value').innerText = 'RM 0.00';
                 return;
@@ -357,24 +371,37 @@
 
             assets.forEach((asset, index) => {
                 const cost = parseFloat(asset.cost) || 0;
-                const qty = parseInt(asset.quantity) || 1;
-                const price = parseFloat(asset.unitPrice) || 0;
+                const qty = parseInt(asset.quantity) || parseInt(asset.unit) || 1;
+                const price = parseFloat(asset.unitPrice) || (cost / qty) || 0;
+                const purchaseDate = asset.purchaseDate || '-';
+                const disposalDate = asset.disposalDate || '-';
+                const refNo = asset.invoiceNo || asset.refNo || '-';
+                const model = asset.model || '-';
+                const usefulLife = asset.usefulLife || '-';
+                const location = asset.location || asset.deploymentDept || '-';
+                const updatedDate = asset.updatedDate || asset.purchaseDate || new Date().toISOString().split('T')[0];
+                const updatedBy = asset.updatedBy || 'System';
 
                 totalCostSum += cost;
 
                 tbody.innerHTML += `
                     <tr>
                         <td class="text-center">${index + 1}</td>
-                        <td class="text-center">${asset.purchaseDate || '-'}</td>
+                        <td class="text-center">${purchaseDate}</td>
+                        <td class="text-center">${disposalDate}</td>
                         <td class="text-left">
                             <strong>${(asset.name || asset.assetName || 'Unnamed Asset').toUpperCase()}</strong>
-                            <div style="font-size: 11px; color: #64748b;">Supplier: ${asset.supplier || '-'} | Inv: ${asset.invoiceNo || '-'}</div>
+                            <div style="font-size: 10px; color: #64748b;">Category: ${asset.category || '-'}</div>
                         </td>
-                        <td class="text-center"><span class="category-badge">${asset.category || '-'}</span></td>
-                        <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
+                        <td class="text-center">${refNo}</td>
+                        <td class="text-center">${model}</td>
+                        <td class="text-center">${usefulLife}</td>
                         <td class="text-center">${qty}</td>
                         <td class="text-right">RM ${price.toFixed(2)}</td>
                         <td class="text-right" style="font-weight: 800; color: #059669;">RM ${cost.toFixed(2)}</td>
+                        <td class="text-center">${location}</td>
+                        <td class="text-center">${updatedDate}</td>
+                        <td class="text-center">${updatedBy}</td>
                         <td class="no-print text-center">
                             <button onclick="deleteAsset(${asset.id})" class="btn-delete-action">🗑️ Delete</button>
                         </td>
