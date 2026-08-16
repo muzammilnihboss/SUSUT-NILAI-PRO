@@ -67,7 +67,7 @@
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 16px;
         }
@@ -112,8 +112,13 @@
             color: #db2777;
         }
 
+        .icon-badge.blue {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
         .card-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
             color: #0f172a;
         }
@@ -157,7 +162,7 @@
             color: #64748b;
         }
 
-        /* FORM STYLING MATCHING GAMBAR 2 */
+        /* FORM STYLING */
         .form-group {
             margin-bottom: 16px;
         }
@@ -191,7 +196,7 @@
             border-color: #2563eb;
         }
 
-        .form-control[readonly], .form-control:disabled {
+        .form-control[readonly] {
             background-color: #f8fafc;
             color: #64748b;
         }
@@ -230,24 +235,81 @@
             background-color: #a10b2e;
         }
 
+        .btn-blue {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-blue:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-black {
+            background-color: #0f172a;
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-edit-action {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-edit-action:hover {
+            background-color: #1d4ed8;
+        }
+
         /* TABLE DESIGN */
-        table.service-table {
+        table.custom-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            margin-top: 10px;
         }
 
-        table.service-table th, table.service-table td {
+        table.custom-table th, table.custom-table td {
             padding: 12px 14px;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
 
-        table.service-table th {
-            background-color: #f8fafc;
+        table.custom-table th {
+            background-color: #ffffff;
             color: #0f172a;
-            font-weight: 700;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .next-date-cell {
+            background-color: #f0fdf4 !important;
+            color: #166534 !important;
+            font-weight: 800;
             text-align: center;
         }
 
@@ -260,16 +322,19 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
-        .status-scheduled { background-color: #eff6ff; color: #2563eb; }
-        .status-overdue { background-color: #fef2f2; color: #dc2626; }
+        .status-scheduled { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .status-overdue { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
 
         @media (max-width: 768px) {
             .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
         }
 
         @media print {
-            header, .no-print { display: none !important; }
+            header, .no-print, .btn-edit-action { display: none !important; }
             body { background: #fff; padding: 0; }
             .card { border: none; box-shadow: none; padding: 0; }
         }
@@ -293,7 +358,7 @@
 
     <div class="container">
 
-        <!-- CARD 1: ACTIVE MAINTENANCE & SERVICING ALERTS (GAMBAR 1) -->
+        <!-- CARD 1: ACTIVE MAINTENANCE & SERVICING ALERTS -->
         <div class="card">
             <div class="card-header-flex">
                 <div class="header-title-group">
@@ -314,8 +379,8 @@
             </div>
         </div>
 
-        <!-- CARD 2: LOG MAINTENANCE & SERVICE (GAMBAR 2) -->
-        <div class="card">
+        <!-- CARD 2: LOG MAINTENANCE & SERVICE FORM -->
+        <div class="card" id="log-form-card">
             <div class="card-header-flex">
                 <div class="header-title-group">
                     <div class="icon-badge red">🧾</div>
@@ -346,7 +411,7 @@
                 <div class="form-row-2">
                     <div class="form-group">
                         <label class="form-label">Supplier / Contractor</label>
-                        <input type="text" id="prefill-supplier" class="form-control" placeholder="Supplier will pre-fill" readonly>
+                        <input type="text" id="prefill-supplier" class="form-control" placeholder="Supplier will pre-fill">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Invoice Number</label>
@@ -389,18 +454,24 @@
             </form>
         </div>
 
-        <!-- CARD 3: REKOD JADUAL SERVIS ASET -->
+        <!-- CARD 3: ASSET SERVICE & MAINTENANCE REPORT (MENGIKUT REKAAN GAMBAR TEPAKT) -->
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <div class="card-title">📋 Asset Service History & Schedule (+1 Year Interval)</div>
-                <button onclick="window.print()" class="no-print form-control" style="width: auto; background: #0f172a; color: #fff; cursor: pointer; font-weight: 700;">🖨️ Cetak Report</button>
+            <div class="card-header-flex">
+                <div>
+                    <div class="card-title">Asset Service & Maintenance Report</div>
+                    <div class="card-subtitle">Jadual penyelenggaraan berasingan mengikut kitaran tahunan (+1 Tahun).</div>
+                </div>
+                <div class="no-print" style="display: flex; gap: 10px;">
+                    <button onclick="scrollToLogForm()" class="btn-blue">+ Rekod Servis Baharu</button>
+                    <button onclick="window.print()" class="btn-black">🖨️ Cetak Report</button>
+                </div>
             </div>
             
             <div style="overflow-x: auto;">
-                <table class="service-table">
+                <table class="custom-table">
                     <thead>
                         <tr>
-                            <th style="width: 40px;">No.</th>
+                            <th style="width: 50px;">No.</th>
                             <th>Nama Aset</th>
                             <th>Kategori</th>
                             <th>Lokasi / Dept</th>
@@ -409,10 +480,43 @@
                             <th>Penyelenggara / Vendor</th>
                             <th>Kos Servis (RM)</th>
                             <th>Status</th>
+                            <th class="no-print">Tindakan</th>
                         </tr>
                     </thead>
                     <tbody id="service-history-tbody">
-                        <!-- Content auto-filled -->
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CARD 4: JADUAL LEDGER MAINTENANCE (HISTORICAL RECORDS) -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge blue">📒</div>
+                    <div>
+                        <div class="card-title">Maintenance Service Ledger</div>
+                        <div class="card-subtitle">Jadual rekod sejarah transaksi penyelenggaraan aset yang telah direkodkan.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No.</th>
+                            <th>Tarikh Rekod Servis</th>
+                            <th>Nama Aset</th>
+                            <th>No. Invois</th>
+                            <th>Penyelenggara / Vendor</th>
+                            <th>Kos Servis (RM)</th>
+                            <th>Tarikh Servis Seterusnya (+1 Thn)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-tbody">
+                        <!-- Auto populates when logged -->
                     </tbody>
                 </table>
             </div>
@@ -423,6 +527,7 @@
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
         const STORAGE_KEY_SERVICES = 'susut_nilai_services';
+        const STORAGE_KEY_LEDGER = 'susut_nilai_maintenance_ledger';
 
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
@@ -432,7 +537,11 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES)) || {};
         }
 
-        // LOGIK UTAMA: Pengiraan Next Service Date (Tarikh & bulan sama, +1 Tahun)
+        function getLedgerLogs() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_LEDGER)) || [];
+        }
+
+        // KIRA AUTOMATIK: Next Service Date (+1 Tahun, Tarikh & Bulan Sama)
         function computeNextYearDate(dateStr) {
             if (!dateStr) return '-';
             const dateObj = new Date(dateStr);
@@ -447,7 +556,7 @@
             return `${year}-${month}-${day}`;
         }
 
-        // POPULATE DROPDOWN ASET
+        // LOAD SENARAI ASET PADA DROPDOWN
         function loadAssetDropdown() {
             const assets = getAssets();
             const select = document.getElementById('select-asset');
@@ -468,15 +577,15 @@
 
             if (asset) {
                 document.getElementById('prefill-name').value = asset.name || asset.assetName || '';
-                document.getElementById('prefill-supplier').value = asset.supplier || '-';
+                document.getElementById('prefill-supplier').value = asset.supplier || '';
                 document.getElementById('prefill-invoice').value = asset.invoiceNo || asset.invoice || '-';
                 document.getElementById('prefill-category').value = asset.category || '-';
                 document.getElementById('prefill-dept').value = asset.location || asset.deploymentDept || '-';
                 document.getElementById('prefill-qty').value = asset.quantity || asset.unit || 1;
 
-                // Set Service Date default
                 const log = logs[assetId] || {};
                 document.getElementById('input-service-date').value = log.lastServiceDate || new Date().toISOString().split('T')[0];
+                document.getElementById('input-cost').value = log.cost !== undefined ? log.cost : '0.00';
             } else {
                 document.getElementById('prefill-name').value = '';
                 document.getElementById('prefill-supplier').value = '';
@@ -484,10 +593,22 @@
                 document.getElementById('prefill-category').value = '';
                 document.getElementById('prefill-dept').value = '';
                 document.getElementById('prefill-qty').value = '1';
+                document.getElementById('input-cost').value = '0.00';
             }
         }
 
-        // SIMPAN REKOD SERVIS
+        // FUNCTION KEMASKINI DARIPADA JADUAL
+        function editAssetService(assetId) {
+            document.getElementById('select-asset').value = assetId;
+            autoPrefillAssetDetails();
+            scrollToLogForm();
+        }
+
+        function scrollToLogForm() {
+            document.getElementById('log-form-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // SIMPAN REKOD SERVIS PADA FORM -> KEMASKINI SERVIS & LEDGER AUTOMATIK
         function handleSaveServiceRecord(e) {
             e.preventDefault();
             const assetId = document.getElementById('select-asset').value;
@@ -495,31 +616,54 @@
 
             const serviceDate = document.getElementById('input-service-date').value;
             const cost = parseFloat(document.getElementById('input-cost').value) || 0;
-            const supplier = document.getElementById('prefill-supplier').value;
+            const supplier = document.getElementById('prefill-supplier').value || 'Vendor Maintenance';
+            const assetName = document.getElementById('prefill-name').value;
+            const invoiceNo = document.getElementById('prefill-invoice').value;
+            const nextDate = computeNextYearDate(serviceDate);
 
+            // 1. Kemaskini Rekod Servis Terkini (Mengubah Status Overdue kepada Scheduled)
             const logs = getServiceLogs();
             logs[assetId] = {
                 lastServiceDate: serviceDate,
-                nextServiceDate: computeNextYearDate(serviceDate),
-                vendor: supplier !== '-' ? supplier : 'Vendor Maintained',
+                nextServiceDate: nextDate,
+                vendor: supplier,
                 cost: cost,
                 updatedAt: new Date().toISOString()
             };
-
             localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
 
-            alert('✅ Rekod penyelenggaraan berjaya disimpan!');
+            // 2. Automatik Tambah Transaksi ke dalam Ledger Maintenance
+            const ledger = getLedgerLogs();
+            ledger.unshift({
+                id: Date.now(),
+                assetId: assetId,
+                assetName: assetName,
+                invoiceNo: invoiceNo,
+                serviceDate: serviceDate,
+                nextServiceDate: nextDate,
+                vendor: supplier,
+                cost: cost
+            });
+            localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
+
+            alert('✅ Rekod penyelenggaraan berjaya disimpan & dimasukkan ke dalam Ledger!');
+            
+            // Reset Form & Re-render
+            document.getElementById('log-maintenance-form').reset();
+            autoPrefillAssetDetails();
             renderAllSections();
         }
 
-        // KEMASKINI SKRIN (ALERTS + JADUAL)
+        // RENDER SEMUA SEKSYEN (ALERTS, JADUAL REPORT, LEDGER)
         function renderAllSections() {
             const assets = getAssets();
             const logs = getServiceLogs();
+            const ledger = getLedgerLogs();
             const today = new Date().toISOString().split('T')[0];
 
             let overdueCount = 0;
             let overdueItemsHtml = '';
+            
             const tbody = document.getElementById('service-history-tbody');
             tbody.innerHTML = '';
 
@@ -531,62 +675,90 @@
                         <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
                     </div>
                 `;
-                tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="padding: 20px; color: #64748b;">Tiada aset direkodkan.</td></tr>`;
-                return;
-            }
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 20px; color: #64748b;">Tiada aset direkodkan.</td></tr>`;
+            } else {
 
-            assets.forEach((asset, idx) => {
-                const log = logs[asset.id] || {};
-                const lastDate = log.lastServiceDate || asset.purchaseDate || asset.date || '2026-01-01';
-                const nextDate = computeNextYearDate(lastDate);
-                const vendor = log.vendor || asset.supplier || '-';
-                const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
+                assets.forEach((asset, idx) => {
+                    const log = logs[asset.id] || {};
+                    // Jika belum pernah diservis, guna tarikh belian aset
+                    const lastDate = log.lastServiceDate || asset.purchaseDate || asset.date || '2026-01-01';
+                    const nextDate = log.nextServiceDate || computeNextYearDate(lastDate);
+                    const vendor = log.vendor || asset.supplier || '-';
+                    const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
 
-                const isOverdue = nextDate !== '-' && nextDate < today;
-                if (isOverdue) {
-                    overdueCount++;
-                    overdueItemsHtml += `
-                        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 13px;">
-                            <span>⚠️ <strong>${asset.name || asset.assetName}</strong> perlu diservis (Tamat: ${nextDate})</span>
-                            <span style="color: #dc2626; font-weight: 700;">OVERDUE</span>
+                    // Mengira status Overdue: Sekiranya tarikh nextServiceDate kurang dari hari ini
+                    const isOverdue = nextDate !== '-' && nextDate < today;
+
+                    if (isOverdue) {
+                        overdueCount++;
+                        overdueItemsHtml += `
+                            <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                                <span>⚠️ Aset <strong>${(asset.name || asset.assetName).toUpperCase()}</strong> memerlukan penyelenggaraan! (Tamat Tempoh: <strong>${nextDate}</strong>)</span>
+                                <button onclick="editAssetService(${asset.id})" class="btn-edit-action">✏️ Servis Sekarang</button>
+                            </div>
+                        `;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="text-center">${idx + 1}</td>
+                            <td class="text-left"><strong>${(asset.name || asset.assetName || 'Aset').toUpperCase()}</strong></td>
+                            <td class="text-center">${asset.category || '-'}</td>
+                            <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
+                            <td class="text-center">${lastDate}</td>
+                            <td class="next-date-cell">${nextDate}</td>
+                            <td class="text-center">${vendor}</td>
+                            <td class="text-right">RM ${cost.toFixed(2)}</td>
+                            <td class="text-center">
+                                <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-scheduled'}">
+                                    ${isOverdue ? '⚠️ OVERDUE' : '📅 SCHEDULED'}
+                                </span>
+                            </td>
+                            <td class="no-print text-center">
+                                <button onclick="editAssetService(${asset.id})" class="btn-edit-action">✏️ Kemaskini</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                // UPDATE AMARAN (ACTIVE MAINTENANCE & SERVICING ALERTS)
+                document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
+                if (overdueCount > 0) {
+                    document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
+                } else {
+                    document.getElementById('alerts-container').innerHTML = `
+                        <div class="empty-alert-state">
+                            <div class="checkmark-circle">✓</div>
+                            <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
                         </div>
                     `;
                 }
+            }
 
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="text-center">${idx + 1}</td>
-                        <td class="text-left"><strong>${(asset.name || asset.assetName || 'Aset').toUpperCase()}</strong></td>
-                        <td class="text-center">${asset.category || '-'}</td>
-                        <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
-                        <td class="text-center">${lastDate}</td>
-                        <td class="text-center" style="background-color: #f0fdf4; color: #166534; font-weight: 800;">${nextDate}</td>
-                        <td class="text-center">${vendor}</td>
-                        <td class="text-right">RM ${cost.toFixed(2)}</td>
-                        <td class="text-center">
-                            <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-scheduled'}">
-                                ${isOverdue ? '⚠️ OVERDUE' : '📅 SCHEDULED'}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
+            // RENDER JADUAL LEDGER MAINTENANCE
+            const ledgerTbody = document.getElementById('ledger-tbody');
+            ledgerTbody.innerHTML = '';
 
-            // UPDATE BADGE ALERTS (GAMBAR 1)
-            document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
-            if (overdueCount > 0) {
-                document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
+            if (ledger.length === 0) {
+                ledgerTbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 20px; color: #64748b;">Tiada sejarah rekod transaksi diselenggara.</td></tr>`;
             } else {
-                document.getElementById('alerts-container').innerHTML = `
-                    <div class="empty-alert-state">
-                        <div class="checkmark-circle">✓</div>
-                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
-                    </div>
-                `;
+                ledger.forEach((item, index) => {
+                    ledgerTbody.innerHTML += `
+                        <tr>
+                            <td class="text-center">${index + 1}</td>
+                            <td class="text-center">${item.serviceDate}</td>
+                            <td class="text-left"><strong>${(item.assetName || '-').toUpperCase()}</strong></td>
+                            <td class="text-center">${item.invoiceNo || '-'}</td>
+                            <td class="text-center">${item.vendor || '-'}</td>
+                            <td class="text-right">RM ${parseFloat(item.cost).toFixed(2)}</td>
+                            <td class="next-date-cell">${item.nextServiceDate}</td>
+                        </tr>
+                    `;
+                });
             }
         }
 
-        // INITIALIZE ON LOAD
+        // INITIALIZE
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
             loadAssetDropdown();
