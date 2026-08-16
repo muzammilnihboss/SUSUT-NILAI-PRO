@@ -187,8 +187,8 @@
             border: 1px solid #0f172a;
             border-radius: 12px;
             padding: 20px;
-            margin-top: 24px;
-            margin-bottom: 36px;
+            margin-top: 28px;
+            margin-bottom: 20px;
             background-color: #ffffff;
         }
 
@@ -267,7 +267,7 @@
                     <div class="year-select-group">
                         <label for="year-select">SELECT FINANCIAL YEAR:</label>
                         <select id="year-select" class="year-select" onchange="renderSchedule()">
-                            <!-- Generated dynamically -->
+                            <!-- Dynamic years from 2000 to 2050 -->
                         </select>
                     </div>
                     <button onclick="window.print()" class="btn-black">🖨️ Print Schedule</button>
@@ -276,7 +276,7 @@
 
             <!-- DYNAMIC SCHEDULE & JOURNAL CONTAINER -->
             <div id="schedule-container">
-                <!-- Grouped Depreciation Tables & Journal Entries generated dynamically -->
+                <!-- Grouped Depreciation Tables & Single Journal Entry generated dynamically -->
             </div>
         </div>
 
@@ -289,13 +289,13 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
 
-        // POPULATE YEAR SELECTOR
+        // POPULATE YEAR SELECTOR FROM YEAR 2000 TO 2050
         function populateYearSelect() {
             const select = document.getElementById('year-select');
             const currentYear = new Date().getFullYear();
             select.innerHTML = '';
             
-            for (let y = currentYear - 3; y <= currentYear + 5; y++) {
+            for (let y = 2000; y <= 2050; y++) {
                 const opt = document.createElement('option');
                 opt.value = y;
                 opt.textContent = y;
@@ -304,7 +304,7 @@
             }
         }
 
-        // RENDER DEPRECIATION SCHEDULE & GENERAL JOURNAL
+        // RENDER DEPRECIATION SCHEDULE & CONSOLIDATED GENERAL JOURNAL
         function renderSchedule() {
             const selectedYear = parseInt(document.getElementById('year-select').value) || new Date().getFullYear();
             document.getElementById('subtitle-year').textContent = `FINANCIAL YEAR ENDED 31 DECEMBER ${selectedYear}`;
@@ -329,6 +329,9 @@
                 if (!grouped[cat]) grouped[cat] = [];
                 grouped[cat].push(asset);
             });
+
+            let journalCategories = [];
+            let totalOverallDepExpense = 0;
 
             Object.keys(grouped).forEach(category => {
                 const catAssets = grouped[category];
@@ -379,7 +382,7 @@
 
                     const netBookValue = closingCost - closingDep;
 
-                    // Accumulate Totals
+                    // Accumulate Category Totals
                     totOpeningCost += openingCost;
                     totAdditionCost += additionCost;
                     totDisposalCost += disposalCost;
@@ -412,6 +415,13 @@
                 });
 
                 if (tableRowsHtml === '') return; // Skip category if no assets apply to selected year
+
+                // Track category depreciation for the single journal entry
+                journalCategories.push({
+                    category: category,
+                    amount: totDepAddition
+                });
+                totalOverallDepExpense += totDepAddition;
 
                 let categoryBlockHtml = `
                     <div class="category-header-title">ASSET CATEGORY: ${category}</div>
@@ -457,8 +467,26 @@
                             </tbody>
                         </table>
                     </div>
+                `;
 
-                    <!-- GENERAL JOURNAL BOX FOR THIS CATEGORY -->
+                container.innerHTML += categoryBlockHtml;
+            });
+
+            // RENDER CONSOLIDATED GENERAL JOURNAL FOR ALL ASSET CATEGORIES AT THE BOTTOM
+            if (journalCategories.length > 0) {
+                let creditRowsHtml = '';
+
+                journalCategories.forEach(item => {
+                    creditRowsHtml += `
+                        <tr>
+                            <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${item.category}</td>
+                            <td class="text-right">-</td>
+                            <td class="text-right" style="font-weight: 700;">${item.amount.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+
+                let singleJournalHtml = `
                     <div class="journal-box">
                         <div class="journal-title">GENERAL JOURNAL - DEPRECIATION ENTRIES</div>
                         <table class="journal-table">
@@ -472,22 +500,18 @@
                             <tbody>
                                 <tr>
                                     <td class="text-left"><strong>DT DEPRECIATION EXPENSE</strong></td>
-                                    <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
+                                    <td class="text-right" style="font-weight: 700;">${totalOverallDepExpense.toFixed(2)}</td>
                                     <td class="text-right">-</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${category}</td>
-                                    <td class="text-right">-</td>
-                                    <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
-                                </tr>
+                                ${creditRowsHtml}
                             </tbody>
                         </table>
                         <div class="journal-narrative">(Being annual depreciation provision charged for the financial year ended 31 December ${selectedYear})</div>
                     </div>
                 `;
 
-                container.innerHTML += categoryBlockHtml;
-            });
+                container.innerHTML += singleJournalHtml;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
