@@ -358,7 +358,7 @@
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label">SERVICE INTERVAL (MONTHS)</label>
-                            <input type="number" id="service-interval" class="form-control" value="6" min="1">
+                            <input type="number" id="service-interval" class="form-control" placeholder="e.g. 6" min="1">
                         </div>
                     </div>
                 </div>
@@ -416,6 +416,8 @@
                 ? customCategoryValue
                 : categorySelectValue;
 
+            const serviceIntervalVal = document.getElementById('service-interval').value;
+
             const newAsset = {
                 id: Date.now(),
                 name: document.getElementById('asset-name').value.trim(),
@@ -430,8 +432,8 @@
                 salvageValue: parseFloat(document.getElementById('salvage-value').value) || 0,
                 usefulLife: parseInt(document.getElementById('useful-life').value) || 5,
                 method: document.getElementById('amortization-method').value,
-                lastServiceDate: document.getElementById('last-service-date').value,
-                serviceIntervalMonths: parseInt(document.getElementById('service-interval').value) || 6,
+                lastServiceDate: document.getElementById('last-service-date').value || '',
+                serviceIntervalMonths: serviceIntervalVal ? parseInt(serviceIntervalVal) : '',
                 createdAt: new Date().toISOString()
             };
 
@@ -451,7 +453,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('purchase-date').value = today;
-            document.getElementById('last-service-date').value = today;
+            // Last Service Date and Interval left blank intentionally
         });
     </script>
 </body>
