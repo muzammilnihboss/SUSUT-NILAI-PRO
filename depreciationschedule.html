@@ -289,13 +289,13 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
 
-        // POPULATE YEAR SELECTOR
+        // POPULATE YEAR SELECTOR (2000 - 2050)
         function populateYearSelect() {
             const select = document.getElementById('year-select');
             const currentYear = new Date().getFullYear();
             select.innerHTML = '';
             
-            for (let y = currentYear - 3; y <= currentYear + 5; y++) {
+            for (let y = 2000; y <= 2050; y++) {
                 const opt = document.createElement('option');
                 opt.value = y;
                 opt.textContent = y;
@@ -329,6 +329,9 @@
                 if (!grouped[cat]) grouped[cat] = [];
                 grouped[cat].push(asset);
             });
+
+            let grandTotalDepAddition = 0;
+            let journalCreditRowsHtml = '';
 
             Object.keys(grouped).forEach(category => {
                 const catAssets = grouped[category];
@@ -372,21 +375,21 @@
 
                     if (purchaseYear === selectedYear) {
                         openingDep = 0;
-                        // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate %
+                        // Depreciation Addition = Closing Cost x Depreciation Rate %
                         depAddition = Math.min(standardDepAddition, maxDepreciableAmount);
                     } else {
                         const yearsPassed = selectedYear - purchaseYear;
                         openingDep = Math.min(maxDepreciableAmount, standardDepAddition * yearsPassed);
                         const remainingDepreciable = Math.max(0, maxDepreciableAmount - openingDep);
                         
-                        // FORMULA 1: Depreciation Addition = Closing Cost x Depreciation Rate %
+                        // Depreciation Addition = Closing Cost x Depreciation Rate %
                         depAddition = Math.min(standardDepAddition, remainingDepreciable);
                     }
 
-                    // FORMULA 2: Closing Depreciation = Opening Depreciation + Depreciation Addition
+                    // Closing Depreciation = Opening Depreciation + Depreciation Addition
                     closingDep = openingDep + depAddition;
 
-                    // FORMULA 3: Net Book Value (RM) = Closing Cost - Closing Depreciation
+                    // Net Book Value (RM) = Closing Cost - Closing Depreciation
                     const netBookValue = closingCost - closingDep;
 
                     // Accumulate Totals
@@ -422,6 +425,16 @@
                 });
 
                 if (tableRowsHtml === '') return; // Skip category if no assets apply to selected year
+
+                // Kumpul susut nilai untuk Jurnal Am Gabungan
+                grandTotalDepAddition += totDepAddition;
+                journalCreditRowsHtml += `
+                    <tr>
+                        <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${category}</td>
+                        <td class="text-right">-</td>
+                        <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
+                    </tr>
+                `;
 
                 let categoryBlockHtml = `
                     <div class="category-header-title">ASSET CATEGORY: ${category}</div>
@@ -467,8 +480,14 @@
                             </tbody>
                         </table>
                     </div>
+                `;
 
-                    <!-- GENERAL JOURNAL BOX FOR THIS CATEGORY -->
+                container.innerHTML += categoryBlockHtml;
+            });
+
+            // SIKAP SATU JURNAL AM GABUNGAN UNTUK SEMUA KATEGORI ASET
+            if (journalCreditRowsHtml !== '') {
+                let combinedJournalHtml = `
                     <div class="journal-box">
                         <div class="journal-title">GENERAL JOURNAL - DEPRECIATION ENTRIES</div>
                         <table class="journal-table">
@@ -482,22 +501,17 @@
                             <tbody>
                                 <tr>
                                     <td class="text-left"><strong>DT DEPRECIATION EXPENSE</strong></td>
-                                    <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
+                                    <td class="text-right" style="font-weight: 700;">${grandTotalDepAddition.toFixed(2)}</td>
                                     <td class="text-right">-</td>
                                 </tr>
-                                <tr>
-                                    <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${category}</td>
-                                    <td class="text-right">-</td>
-                                    <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
-                                </tr>
+                                ${journalCreditRowsHtml}
                             </tbody>
                         </table>
                         <div class="journal-narrative">(Being annual depreciation provision charged for the financial year ended 31 December ${selectedYear})</div>
                     </div>
                 `;
-
-                container.innerHTML += categoryBlockHtml;
-            });
+                container.innerHTML += combinedJournalHtml;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
