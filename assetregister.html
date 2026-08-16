@@ -72,39 +72,6 @@
             padding: 0 16px;
         }
 
-        /* SUMMARY CARDS */
-        .summary-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            font-weight: 800;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-top: 4px;
-        }
-
         /* CARD STYLING */
         .card {
             background: #ffffff;
@@ -207,7 +174,7 @@
             background-color: #dc2626;
         }
 
-        /* TABLE DESIGN ACCORDING TO PDF FORM */
+        /* TABLE DESIGN ACCORDING TO BORANG DAFTAR ASET */
         table.custom-table {
             width: 100%;
             border-collapse: collapse;
@@ -229,22 +196,9 @@
             font-size: 11px;
         }
 
-        .category-badge {
-            background-color: #e2e8f0;
-            color: #1e293b;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
         .text-right { text-align: right !important; }
         .text-left { text-align: left !important; }
         .text-center { text-align: center !important; }
-
-        @media (max-width: 768px) {
-            .summary-grid { grid-template-columns: 1fr; }
-        }
 
         @media print {
             header, .no-print, .btn-delete-action { display: none !important; }
@@ -272,24 +226,6 @@
 
     <div class="container">
 
-        <!-- STATS SUMMARY -->
-        <div class="summary-grid no-print">
-            <div class="stat-card">
-                <div>
-                    <div class="stat-label">Total Registered Assets</div>
-                    <div class="stat-value" id="stat-total-assets">0</div>
-                </div>
-                <div style="font-size: 30px;">📦</div>
-            </div>
-            <div class="stat-card">
-                <div>
-                    <div class="stat-label">Total Asset Value (Cost)</div>
-                    <div class="stat-value" style="color: #059669;" id="stat-total-value">RM 0.00</div>
-                </div>
-                <div style="font-size: 30px;">💰</div>
-            </div>
-        </div>
-
         <!-- MAIN TABLE CARD -->
         <div class="card">
             <div class="card-header-flex">
@@ -309,7 +245,7 @@
             <div style="overflow-x: auto;">
                 <table class="custom-table">
                     <thead>
-                        <!-- MULTI-LEVEL HEADER TO MATCH BORANG DAFTAR ASET -->
+                        <!-- MULTI-LEVEL HEADER MATCHING OFFICIAL BORANG DAFTAR ASET -->
                         <tr>
                             <th rowspan="2" style="width: 40px;">No.</th>
                             <th colspan="2">Date</th>
@@ -360,12 +296,8 @@
             const tbody = document.getElementById('asset-tbody');
             tbody.innerHTML = '';
 
-            let totalCostSum = 0;
-
             if (assets.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="14" class="text-center" style="padding: 24px; color: #64748b;">No registered assets found. Click "+ Register New Asset" to record entries.</td></tr>`;
-                document.getElementById('stat-total-assets').innerText = '0';
-                document.getElementById('stat-total-value').innerText = 'RM 0.00';
                 return;
             }
 
@@ -381,8 +313,6 @@
                 const location = asset.location || asset.deploymentDept || '-';
                 const updatedDate = asset.updatedDate || asset.purchaseDate || new Date().toISOString().split('T')[0];
                 const updatedBy = asset.updatedBy || 'System';
-
-                totalCostSum += cost;
 
                 tbody.innerHTML += `
                     <tr>
@@ -408,9 +338,6 @@
                     </tr>
                 `;
             });
-
-            document.getElementById('stat-total-assets').innerText = assets.length;
-            document.getElementById('stat-total-value').innerText = `RM ${totalCostSum.toFixed(2)}`;
         }
 
         document.addEventListener('DOMContentLoaded', renderAssetTable);
