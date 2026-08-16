@@ -490,7 +490,7 @@
             <div class="card-header-flex">
                 <div>
                     <div class="card-title">Asset Service & Maintenance Report</div>
-                    <div class="card-subtitle">Preventative maintenance schedules projected from Last Service Date, Interval, and Useful Life.</div>
+                    <div class="card-subtitle">Preventative maintenance schedules projected from Last Service Date, Interval, and Useful Life up to today.</div>
                 </div>
                 <div class="no-print" style="display: flex; gap: 10px;">
                     <button onclick="scrollToLogForm()" class="btn-blue">+ Log New Service</button>
@@ -515,7 +515,7 @@
                         </tr>
                     </thead>
                     <tbody id="service-history-tbody">
-                        <!-- Dynamic Schedules projected based on Interval & Useful Life -->
+                        <!-- Dynamic Schedules projected based on Interval & Useful Life (Up to Today) -->
                     </tbody>
                 </table>
             </div>
@@ -763,7 +763,7 @@
             renderAllSections();
         }
 
-        // RENDER REPORT & LEDGER (PROJECTS SCHEDULE BASED ON USEFUL LIFE & INTERVAL)
+        // RENDER REPORT & LEDGER (LIMITED UP TO TODAY'S DATE)
         function renderAllSections() {
             const assets = getAssets();
             const logs = getServiceLogs();
@@ -784,20 +784,24 @@
                 const intervalMonths = parseInt(asset.serviceIntervalMonths);
                 const usefulLifeYrs = parseInt(asset.usefulLife);
 
-                // If asset has valid service parameters, calculate cycles
+                // If asset has valid service parameters, calculate cycles up to today
                 if (initialLastDate && intervalMonths > 0 && usefulLifeYrs > 0) {
                     const totalCycles = Math.floor((usefulLifeYrs * 12) / intervalMonths);
                     const customDates = (logs[asset.id] && logs[asset.id].customNextDates) || {};
 
                     for (let cycle = 1; cycle <= totalCycles; cycle++) {
-                        totalProjectedRows++;
-                        
-                        // Calculate dates for cycle
                         const prevDate = addMonthsToDate(initialLastDate, (cycle - 1) * intervalMonths);
                         const calculatedNextDate = addMonthsToDate(initialLastDate, cycle * intervalMonths);
                         
                         // Check if user set a custom date for this cycle
                         const nextDate = customDates[cycle] || calculatedNextDate;
+
+                        // JANA HINGGA TARIKH HARI INI SAHAJA
+                        if (nextDate > today) {
+                            break;
+                        }
+
+                        totalProjectedRows++;
 
                         const vendor = (logs[asset.id] && logs[asset.id].vendor) || asset.supplier || '-';
                         const cost = (logs[asset.id] && logs[asset.id].cost !== undefined) ? parseFloat(logs[asset.id].cost) : 0;
@@ -845,7 +849,7 @@
             });
 
             if (totalProjectedRows === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: #64748b;">No maintenance service projections found. Ensure registered assets include Last Service Date, Service Interval, and Useful Life.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: #64748b;">No maintenance service projections found up to today's date. Ensure registered assets include Last Service Date, Service Interval, and Useful Life.</td></tr>`;
                 document.getElementById('overdue-badge-pill').innerText = '0 Overdue Services';
                 document.getElementById('alerts-container').innerHTML = `
                     <div class="empty-alert-state">
