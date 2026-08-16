@@ -14,12 +14,12 @@
 
         body {
             background-color: #f8fafc;
-            color: #1e293b;
+            color: #0f172a;
             min-height: 100vh;
             padding-bottom: 60px;
         }
 
-        /* NAVIGATION HEADER */
+        /* HEADER NAVIGATION */
         header {
             background-color: #ffffff;
             padding: 16px 40px;
@@ -67,190 +67,184 @@
         }
 
         .container {
-            max-width: 98%;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 0 16px;
         }
 
+        /* SUMMARY CARDS */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 4px;
+        }
+
+        /* CARD STYLING */
         .card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            margin-bottom: 24px;
         }
 
-        .card-header {
+        .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 16px;
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background-color: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
 
         .card-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 800;
             color: #0f172a;
         }
 
-        .search-input {
+        .card-subtitle {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .btn-blue {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
             padding: 9px 16px;
             border-radius: 8px;
-            border: 1.5px solid #cbd5e1;
             font-size: 13px;
-            outline: none;
-            width: 280px;
-        }
-
-        /* CATEGORY TITLE BANNER */
-        .category-header-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #0f172a;
-            text-transform: uppercase;
-            background-color: #f1f5f9;
-            padding: 10px 16px;
-            border-radius: 8px;
-            margin: 24px 0 12px 0;
-            border-left: 4px solid #2563eb;
-            display: flex;
-            justify-content: space-between;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
+            gap: 6px;
         }
 
-        /* REGISTER TABLE DESIGN MATCHING ORIGINAL */
-        table.register-table {
+        .btn-blue:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-black {
+            background-color: #0f172a;
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-delete-action {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete-action:hover {
+            background-color: #dc2626;
+        }
+
+        /* TABLE DESIGN */
+        table.custom-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            margin-bottom: 8px;
         }
 
-        table.register-table th, table.register-table td {
+        table.custom-table th, table.custom-table td {
             padding: 12px 14px;
             border: 1px solid #e2e8f0;
             vertical-align: middle;
         }
 
-        table.register-table th {
+        table.custom-table th {
             background-color: #f8fafc;
             color: #0f172a;
-            font-weight: 700;
+            font-weight: 800;
             text-align: center;
+        }
+
+        .category-badge {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
         .text-right { text-align: right !important; }
         .text-left { text-align: left !important; }
         .text-center { text-align: center !important; }
 
-        /* ACTION BUTTONS */
-        .btn-action-edit {
-            background-color: #0284c7;
-            color: #ffffff;
-            border: none;
-            padding: 7px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .btn-action-delete {
-            background-color: #ef4444;
-            color: #ffffff;
-            border: none;
-            padding: 7px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: 4px;
-        }
-
-        /* MODAL STYLES */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 560px;
-            padding: 24px 28px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 800;
-            color: #64748b;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 9px 12px;
-            border-radius: 8px;
-            border: 1.5px solid #cbd5e1;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 18px;
-        }
-
-        .btn-cancel {
-            background-color: #f1f5f9;
-            color: #475569;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-save {
-            background-color: #2563eb;
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
+        @media (max-width: 768px) {
+            .summary-grid { grid-template-columns: 1fr; }
         }
 
         @media print {
-            header, .no-print { display: none !important; }
-            body { background: #fff; }
+            header, .no-print, .btn-delete-action { display: none !important; }
+            body { background: #fff; padding: 0; }
             .card { border: none; box-shadow: none; padding: 0; }
         }
     </style>
@@ -264,6 +258,7 @@
             <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
             <a href="assetregister.html" class="nav-btn active">📋 Asset Register</a>
             <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
+            <a href="invoicemanager.html" class="nav-btn">📄 Invoice Manager</a>
             <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
             <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
             <a href="index.html" class="nav-btn">Log Out</a>
@@ -271,327 +266,128 @@
     </header>
 
     <div class="container">
+
+        <!-- STATS SUMMARY -->
+        <div class="summary-grid no-print">
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Total Registered Assets</div>
+                    <div class="stat-value" id="stat-total-assets">0</div>
+                </div>
+                <div style="font-size: 30px;">📦</div>
+            </div>
+            <div class="stat-card">
+                <div>
+                    <div class="stat-label">Total Asset Value (Cost)</div>
+                    <div class="stat-value" style="color: #059669;" id="stat-total-value">RM 0.00</div>
+                </div>
+                <div style="font-size: 30px;">💰</div>
+            </div>
+        </div>
+
+        <!-- MAIN TABLE CARD -->
         <div class="card">
-            <div class="card-header">
-                <div class="card-title">Asset Register</div>
-                <div class="no-print">
-                    <input type="text" id="search-input" class="search-input" placeholder="Search asset name or invoice..." onkeyup="renderTable()">
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge">📋</div>
+                    <div>
+                        <div class="card-title">Fixed Asset Master Register</div>
+                        <div class="card-subtitle">Comprehensive ledger of all capitalized assets and equipment entries.</div>
+                    </div>
+                </div>
+                <div class="no-print" style="display: flex; gap: 10px;">
+                    <a href="registernew.html" class="btn-blue">+ Register New Asset</a>
+                    <button onclick="window.print()" class="btn-black">🖨️ Print Ledger</button>
                 </div>
             </div>
 
-            <!-- CONTAINER DYNAMIC TABLES BY CATEGORY -->
-            <div id="categories-tables-container">
-                <!-- Dynamic Content Separated by Asset Category -->
+            <div style="overflow-x: auto;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No.</th>
+                            <th>Purchase Date</th>
+                            <th>Asset Name / Description</th>
+                            <th>Category</th>
+                            <th>Location / Dept</th>
+                            <th>Qty</th>
+                            <th>Unit Price (RM)</th>
+                            <th>Total Cost (RM)</th>
+                            <th class="no-print" style="width: 90px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="asset-tbody">
+                        <!-- Dynamic Assets Generated From Register New Asset -->
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
 
-    <!-- EDIT MODAL -->
-    <div id="edit-modal" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3 style="font-size: 16px; font-weight: 800; color: #0f172a;">Edit Asset Record</h3>
-                <button onclick="closeModal()" style="border:none; background:none; font-size: 20px; cursor:pointer;">&times;</button>
-            </div>
-            <form id="edit-form" onsubmit="saveAssetEdit(event)">
-                <input type="hidden" id="edit-asset-id">
-                
-                <div class="form-group">
-                    <label>Asset Name</label>
-                    <input type="text" id="edit-name" class="form-control" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Category</label>
-                    <select id="edit-category" class="form-control" required>
-                        <option value="Furniture & Fittings">Furniture & Fittings</option>
-                        <option value="Office Equipment">Office Equipment</option>
-                        <option value="Computers">Computers</option>
-                        <option value="Vehicles">Vehicles</option>
-                        <option value="Machinery">Machinery</option>
-                        <option value="Electrical Installation">Electrical Installation</option>
-                        <option value="Others">Others</option>
-                    </select>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Ref No. / Invoice</label>
-                        <input type="text" id="edit-invoice" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Location / Dept</label>
-                        <input type="text" id="edit-location" class="form-control">
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Purchase Date</label>
-                        <input type="date" id="edit-date" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Unit (Qty)</label>
-                        <input type="number" min="1" id="edit-qty" class="form-control" oninput="calculateEditTotals()" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Useful Life (Yrs)</label>
-                        <input type="number" id="edit-lifespan" class="form-control" required>
-                    </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                    <div class="form-group">
-                        <label>Unit Price (RM)</label>
-                        <input type="number" step="0.01" id="edit-unit-price" class="form-control" oninput="calculateEditTotals()" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Total Price (RM)</label>
-                        <input type="number" step="0.01" id="edit-total-price" class="form-control" readonly style="background-color: #f8fafc; font-weight:700;">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Updated By / Supplier</label>
-                    <input type="text" id="edit-supplier" class="form-control">
-                </div>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn-save">Save Changes</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        function parseNumber(val) {
-            if (val === undefined || val === null) return 0;
-            if (typeof val === 'number') return val;
-            const cleaned = String(val).replace(/[^0-9.-]+/g, '');
-            const num = parseFloat(cleaned);
-            return isNaN(num) ? 0 : num;
-        }
-
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
 
-        function saveAssets(assets) {
-            localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
+        function deleteAsset(assetId) {
+            if (confirm("Are you sure you want to delete this asset entry from the register?")) {
+                let assets = getAssets();
+                assets = assets.filter(a => String(a.id) !== String(assetId));
+                localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
+                renderAssetTable();
+            }
         }
 
-        // AUTOMATIC DATA FETCHING & RENDERING BY ASSET CATEGORY
-        function renderTable() {
+        function renderAssetTable() {
             const assets = getAssets();
-            const searchVal = document.getElementById('search-input').value.toLowerCase();
-            const mainContainer = document.getElementById('categories-tables-container');
+            const tbody = document.getElementById('asset-tbody');
+            tbody.innerHTML = '';
 
-            mainContainer.innerHTML = '';
+            let totalCostSum = 0;
 
-            const categories = [
-                'Furniture & Fittings',
-                'Office Equipment',
-                'Computers',
-                'Vehicles',
-                'Machinery',
-                'Electrical Installation',
-                'Others'
-            ];
+            if (assets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="padding: 24px; color: #64748b;">No registered assets found. Click "+ Register New Asset" to record entries into the master ledger.</td></tr>`;
+                document.getElementById('stat-total-assets').innerText = '0';
+                document.getElementById('stat-total-value').innerText = 'RM 0.00';
+                return;
+            }
 
-            let totalRenderedAssets = 0;
+            assets.forEach((asset, index) => {
+                const cost = parseFloat(asset.cost) || 0;
+                const qty = parseInt(asset.quantity) || 1;
+                const price = parseFloat(asset.unitPrice) || 0;
 
-            categories.forEach(category => {
-                // Filter assets by category & search input
-                const categoryAssets = assets.filter(a => {
-                    const assetCat = (a.category || 'Others').toLowerCase();
-                    const isSameCat = assetCat === category.toLowerCase();
+                totalCostSum += cost;
 
-                    const name = (a.name || a.assetName || '').toLowerCase();
-                    const inv = (a.invoiceNo || a.invoice || '').toLowerCase();
-                    const loc = (a.location || a.deploymentDept || '').toLowerCase();
-                    const matchesSearch = name.includes(searchVal) || inv.includes(searchVal) || loc.includes(searchVal);
-
-                    return isSameCat && matchesSearch;
-                });
-
-                if (categoryAssets.length === 0) return;
-
-                totalRenderedAssets += categoryAssets.length;
-
-                let rowsHtml = '';
-                categoryAssets.forEach((asset, idx) => {
-                    const purchaseDate = asset.purchaseDate || asset.date || asset.tarikh || '-';
-                    const disposalDate = asset.disposalDate || '-';
-                    const name = asset.name || asset.assetName || 'Asset';
-                    const invoice = asset.invoiceNo || asset.invoice || asset.refNo || '-';
-                    const location = asset.location || asset.deploymentDept || '-';
-                    const usefulLife = parseNumber(asset.usefulLife || asset.lifespan || 5);
-                    const unit = parseNumber(asset.quantity || asset.unit || 1) || 1;
-                    
-                    let unitPrice = parseNumber(asset.unitPrice);
-                    let totalPrice = parseNumber(asset.cost !== undefined ? asset.cost : asset.totalPrice);
-
-                    if (totalPrice === 0 && unitPrice > 0) {
-                        totalPrice = unitPrice * unit;
-                    } else if (unitPrice === 0 && totalPrice > 0) {
-                        unitPrice = totalPrice / unit;
-                    }
-
-                    const updatedDate = asset.updatedDate || asset.purchaseDate || new Date().toISOString().split('T')[0];
-                    const updatedBy = asset.supplier || asset.updatedBy || asset.supplierName || '-';
-
-                    rowsHtml += `
-                        <tr>
-                            <td class="text-center">${idx + 1}</td>
-                            <td class="text-center">${purchaseDate}</td>
-                            <td class="text-center">${disposalDate}</td>
-                            <td class="text-left">
-                                <strong>${name.toUpperCase()}</strong><br>
-                                <span style="font-size: 11px; color: #64748b;">${category}</span>
-                            </td>
-                            <td class="text-center">${invoice}</td>
-                            <td class="text-center">${location}</td>
-                            <td class="text-center">${usefulLife}</td>
-                            <td class="text-center">${unit}</td>
-                            <td class="text-right">RM ${unitPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                            <td class="text-right" style="font-weight: 700;">RM ${totalPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                            <td class="text-center">${updatedDate}</td>
-                            <td class="text-center">${updatedBy}</td>
-                            <td class="col-action no-print text-center">
-                                <button class="btn-action-edit" onclick="openEditModal(${asset.id})">✏️ Edit</button>
-                                <button class="btn-action-delete" onclick="deleteAsset(${asset.id})">🗑️ Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                mainContainer.innerHTML += `
-                    <div class="category-header-title">
-                        <span>JENIS ASET / CATEGORY: ${category.toUpperCase()}</span>
-                        <span style="font-size: 12px; font-weight: 600; color: #475569;">${categoryAssets.length} Item(s)</span>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="register-table">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" style="width: 40px;">No.</th>
-                                    <th colspan="2">Date</th>
-                                    <th rowspan="2">Particulars / Description</th>
-                                    <th rowspan="2">Ref. No. / Invoice</th>
-                                    <th rowspan="2">Location / Dept</th>
-                                    <th rowspan="2">Useful Life</th>
-                                    <th rowspan="2">Unit</th>
-                                    <th rowspan="2">Unit Price (RM)</th>
-                                    <th rowspan="2">Total Price (RM)</th>
-                                    <th rowspan="2">Updated Date</th>
-                                    <th rowspan="2">Updated By</th>
-                                    <th rowspan="2" class="col-action no-print">Actions</th>
-                                </tr>
-                                <tr>
-                                    <th style="width: 90px;">Purchase</th>
-                                    <th style="width: 90px;">Disposal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${rowsHtml}
-                            </tbody>
-                        </table>
-                    </div>
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center">${index + 1}</td>
+                        <td class="text-center">${asset.purchaseDate || '-'}</td>
+                        <td class="text-left">
+                            <strong>${(asset.name || asset.assetName || 'Unnamed Asset').toUpperCase()}</strong>
+                            <div style="font-size: 11px; color: #64748b;">Supplier: ${asset.supplier || '-'} | Inv: ${asset.invoiceNo || '-'}</div>
+                        </td>
+                        <td class="text-center"><span class="category-badge">${asset.category || '-'}</span></td>
+                        <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
+                        <td class="text-center">${qty}</td>
+                        <td class="text-right">RM ${price.toFixed(2)}</td>
+                        <td class="text-right" style="font-weight: 800; color: #059669;">RM ${cost.toFixed(2)}</td>
+                        <td class="no-print text-center">
+                            <button onclick="deleteAsset(${asset.id})" class="btn-delete-action">🗑️ Delete</button>
+                        </td>
+                    </tr>
                 `;
             });
 
-            if (totalRenderedAssets === 0) {
-                mainContainer.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #64748b; font-weight: 600;">
-                        Tiada aset dijumpai bagi pendaftaran ini.
-                    </div>
-                `;
-            }
+            document.getElementById('stat-total-assets').innerText = assets.length;
+            document.getElementById('stat-total-value').innerText = `RM ${totalCostSum.toFixed(2)}`;
         }
 
-        function calculateEditTotals() {
-            const qty = parseNumber(document.getElementById('edit-qty').value) || 1;
-            const unitPrice = parseNumber(document.getElementById('edit-unit-price').value) || 0;
-            document.getElementById('edit-total-price').value = (qty * unitPrice).toFixed(2);
-        }
-
-        function openEditModal(id) {
-            const assets = getAssets();
-            const asset = assets.find(a => a.id === id);
-            if (!asset) return;
-
-            const unit = parseNumber(asset.quantity || asset.unit) || 1;
-            let totalPrice = parseNumber(asset.cost !== undefined ? asset.cost : asset.totalPrice);
-            let unitPrice = parseNumber(asset.unitPrice);
-
-            if (unitPrice === 0 && totalPrice > 0) unitPrice = totalPrice / unit;
-
-            document.getElementById('edit-asset-id').value = asset.id;
-            document.getElementById('edit-name').value = asset.name || '';
-            document.getElementById('edit-category').value = asset.category || 'Furniture & Fittings';
-            document.getElementById('edit-invoice').value = asset.invoiceNo || asset.invoice || '';
-            document.getElementById('edit-location').value = asset.location || '';
-            document.getElementById('edit-date').value = asset.purchaseDate || '';
-            document.getElementById('edit-qty').value = unit;
-            document.getElementById('edit-lifespan').value = parseNumber(asset.usefulLife || asset.lifespan) || 5;
-            document.getElementById('edit-unit-price').value = unitPrice;
-            document.getElementById('edit-total-price').value = (unit * unitPrice).toFixed(2);
-            document.getElementById('edit-supplier').value = asset.supplier || asset.updatedBy || '';
-
-            document.getElementById('edit-modal').style.display = 'flex';
-        }
-
-        function closeModal() {
-            document.getElementById('edit-modal').style.display = 'none';
-        }
-
-        function saveAssetEdit(e) {
-            e.preventDefault();
-            const id = parseInt(document.getElementById('edit-asset-id').value);
-            let assets = getAssets();
-
-            const idx = assets.findIndex(a => a.id === id);
-            if (idx !== -1) {
-                const qty = parseInt(document.getElementById('edit-qty').value) || 1;
-                const unitPrice = parseFloat(document.getElementById('edit-unit-price').value) || 0;
-                const totalPrice = qty * unitPrice;
-                const life = parseInt(document.getElementById('edit-lifespan').value) || 5;
-
-                assets[idx].name = document.getElementById('edit-name').value;
-                assets[idx].category = document.getElementById('edit-category').value;
-                assets[idx].invoiceNo = document.getElementById('edit-invoice').value;
-                assets[idx].location = document.getElementById('edit-location').value;
-                assets[idx].purchaseDate = document.getElementById('edit-date').value;
-                assets[idx].quantity = qty;
-                assets[idx].usefulLife = life;
-                assets[idx].lifespan = life;
-                assets[idx].unitPrice = unitPrice;
-                assets[idx].cost = totalPrice;
-                assets[idx].totalPrice = totalPrice;
-                assets[idx].supplier = document.getElementById('edit-supplier').value;
-                assets[idx].updatedBy = document.getElementById('edit-supplier').value;
-                assets[idx].updatedDate = new Date().toISOString().split('T')[0];
-
-                saveAssets(assets);
-                closeModal();
-                renderTable();
-            }
-        }
-
-        function deleteAsset(id) {
-            if (confirm("Adakah anda pasti mahu memadamkan rekod aset ini?")) {
-                let assets = getAssets();
-                assets = assets.filter(a => a.id !== id);
-                saveAssets(assets);
-                renderTable();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', renderTable);
-        window.addEventListener('storage', renderTable);
+        document.addEventListener('DOMContentLoaded', renderAssetTable);
+        window.addEventListener('storage', renderAssetTable);
     </script>
 </body>
 </html>
