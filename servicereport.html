@@ -304,7 +304,7 @@
             background-color: #dc2626;
         }
 
-        /* TABLE DESIGN */
+        /* TABLE DESIGN MATCHING SCREENSHOT EXACTLY */
         table.custom-table {
             width: 100%;
             border-collapse: collapse;
@@ -349,12 +349,15 @@
 
         /* INLINE DATE INPUT */
         .inline-date-input {
-            padding: 5px 8px;
-            border: 1px solid #cbd5e1;
+            padding: 6px 10px;
+            border: 1px solid #a7f3d0;
+            background-color: #ecfdf5;
+            color: #166534;
             border-radius: 6px;
             font-size: 12px;
             font-weight: 700;
             outline: none;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
@@ -512,7 +515,7 @@
                         </tr>
                     </thead>
                     <tbody id="service-history-tbody">
-                        <!-- Dynamic Rows -->
+                        <!-- Dynamic Rows from Asset Register ONLY -->
                     </tbody>
                 </table>
             </div>
@@ -558,27 +561,7 @@
         const STORAGE_KEY_SERVICES = 'susut_nilai_services';
         const STORAGE_KEY_LEDGER = 'susut_nilai_maintenance_ledger';
 
-        // SAMPLE DATA INITIALIZER (Matches User Screenshot)
-        function initSampleData() {
-            let assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS));
-            if (!assets || assets.length === 0) {
-                assets = [
-                    { id: 1, name: 'MESIN DAFTAR TUNAI', category: 'Office Equipment', location: 'Main Office', supplier: 'kedai peralatan elektronik mariam', invoiceNo: 'INV-001' },
-                    { id: 2, name: 'MEJA', category: 'Furniture & Fittings', location: 'hq office', supplier: 'JJ CHAIR SDN BHD', invoiceNo: 'INV-002' }
-                ];
-                localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
-            }
-
-            let logs = JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES));
-            if (!logs || Object.keys(logs).length === 0) {
-                logs = {
-                    "1": { lastServiceDate: '2024-01-05', nextServiceDate: '2025-01-05', vendor: 'kedai peralatan elektronik mariam', cost: 0.00 },
-                    "2": { lastServiceDate: '2026-01-11', nextServiceDate: '2027-01-11', vendor: 'JJ CHAIR SDN BHD', cost: 0.00 }
-                };
-                localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
-            }
-        }
-
+        // STRICTLY READ FROM ASSET REGISTER ONLY
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
@@ -593,7 +576,7 @@
 
         // COMPUTE NEXT SERVICE DATE (+1 Year)
         function computeNextYearDate(dateStr) {
-            if (!dateStr) return '-';
+            if (!dateStr || dateStr === '-') return '-';
             const dateObj = new Date(dateStr);
             if (isNaN(dateObj.getTime())) return '-';
 
@@ -606,7 +589,7 @@
             return `${year}-${month}-${day}`;
         }
 
-        // POPULATE DROPDOWN
+        // POPULATE DROPDOWN STRICTLY FROM ASSET REGISTER
         function loadAssetDropdown() {
             const assets = getAssets();
             const select = document.getElementById('select-asset');
@@ -772,7 +755,7 @@
             renderAllSections();
         }
 
-        // RENDER ALERTS, REPORT TABLE, AND LEDGER
+        // RENDER ALERTS, REPORT TABLE, AND LEDGER (STRICTLY FROM ASSET REGISTER DATA)
         function renderAllSections() {
             const assets = getAssets();
             const logs = getServiceLogs();
@@ -790,10 +773,10 @@
                 document.getElementById('alerts-container').innerHTML = `
                     <div class="empty-alert-state">
                         <div class="checkmark-circle">✓</div>
-                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
+                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets in Asset Register to initiate tracking.</div>
                     </div>
                 `;
-                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 20px; color: #64748b;">No assets registered yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 20px; color: #64748b;">No assets registered yet. Please add assets via Asset Register.</td></tr>`;
             } else {
 
                 assets.forEach((asset, idx) => {
@@ -826,7 +809,7 @@
                             <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
                             <td class="text-center">${lastDate}</td>
                             <td class="next-date-cell">
-                                <input type="date" value="${nextDate}" class="inline-date-input" style="border: 1px solid #a7f3d0; background: #ecfdf5; color: #166534;" onchange="updateNextServiceDateDirect(${asset.id}, this.value)" title="Click to edit Next Service Date directly">
+                                <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)" title="Click to edit Next Service Date directly">
                             </td>
                             <td class="text-center">${vendor}</td>
                             <td class="text-right">RM ${cost.toFixed(2)}</td>
@@ -885,7 +868,6 @@
 
         // INITIALIZE ON LOAD
         document.addEventListener('DOMContentLoaded', () => {
-            initSampleData();
             document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
             loadAssetDropdown();
             renderAllSections();
