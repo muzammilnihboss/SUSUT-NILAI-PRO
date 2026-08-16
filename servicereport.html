@@ -67,10 +67,12 @@
         }
 
         .container {
-            max-width: 98%;
+            max-width: 1100px;
             margin: 0 auto;
+            padding: 0 16px;
         }
 
+        /* CARD STYLING */
         .card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -80,35 +82,160 @@
             margin-bottom: 24px;
         }
 
-        .card-header {
+        .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 16px;
+        }
+
+        .header-title-group {
+            display: flex;
+            align-items: center;
             gap: 12px;
         }
 
+        .icon-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .icon-badge.red {
+            background-color: #fce7f3;
+            color: #db2777;
+        }
+
         .card-title {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 800;
             color: #0f172a;
         }
 
-        .form-control {
-            padding: 9px 14px;
-            border-radius: 8px;
-            border: 1.5px solid #cbd5e1;
+        .card-subtitle {
             font-size: 13px;
-            outline: none;
-            background-color: #ffffff;
+            color: #64748b;
+            margin-top: 2px;
         }
 
-        /* SERVICE TABLE DESIGN */
+        .pill-badge {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* ACTIVE ALERTS EMPTY STATE */
+        .empty-alert-state {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        .checkmark-circle {
+            width: 44px;
+            height: 44px;
+            background-color: #10b981;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin: 0 auto 12px auto;
+        }
+
+        .empty-alert-text {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        /* FORM STYLING MATCHING GAMBAR 2 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-label span.req {
+            color: #ef4444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 13.5px;
+            outline: none;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        .form-control[readonly], .form-control:disabled {
+            background-color: #f8fafc;
+            color: #64748b;
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 1fr;
+            gap: 16px;
+        }
+
+        .btn-register-red {
+            width: 100%;
+            background-color: #c20e38;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .btn-register-red:hover {
+            background-color: #a10b2e;
+        }
+
+        /* TABLE DESIGN */
         table.service-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
+            margin-top: 10px;
         }
 
         table.service-table th, table.service-table td {
@@ -128,68 +255,17 @@
         .text-left { text-align: left !important; }
         .text-center { text-align: center !important; }
 
-        .badge-status {
+        .status-badge {
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 800;
-            text-transform: uppercase;
         }
+        .status-scheduled { background-color: #eff6ff; color: #2563eb; }
+        .status-overdue { background-color: #fef2f2; color: #dc2626; }
 
-        .status-upcoming {
-            background-color: #eff6ff;
-            color: #2563eb;
-            border: 1px solid #bfdbfe;
-        }
-
-        .status-overdue {
-            background-color: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        /* MODAL STYLES */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 520px;
-            padding: 24px 28px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 11px;
-            font-weight: 800;
-            color: #64748b;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .btn-primary {
-            background-color: #2563eb;
-            color: #ffffff;
-            border: none;
-            padding: 9px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
+        @media (max-width: 768px) {
+            .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
         }
 
         @media print {
@@ -216,25 +292,115 @@
     </header>
 
     <div class="container">
+
+        <!-- CARD 1: ACTIVE MAINTENANCE & SERVICING ALERTS (GAMBAR 1) -->
         <div class="card">
-            <div class="card-header">
-                <div>
-                    <div class="card-title">Asset Service & Maintenance Report</div>
-                    <div style="font-size: 13px; color: #64748b; margin-top: 4px;">
-                        Jadual penyelenggaraan berasingan mengikut kitaran tahunan (+1 Tahun).
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge red">🧰</div>
+                    <div>
+                        <div class="card-title">Active Maintenance & Servicing Alerts</div>
+                        <div class="card-subtitle">Real-time schedule monitoring projected from customized maintenance intervals.</div>
                     </div>
                 </div>
-                <div class="no-print" style="display: flex; gap: 10px;">
-                    <button onclick="openLogModal()" class="btn-primary">+ Rekod Servis Baharu</button>
-                    <button onclick="window.print()" class="form-control" style="cursor: pointer; background: #0f172a; color: #fff; font-weight: 700;">🖨️ Cetak Report</button>
+                <div id="overdue-badge-pill" class="pill-badge">0 Overdue Services</div>
+            </div>
+
+            <div id="alerts-container">
+                <div class="empty-alert-state">
+                    <div class="checkmark-circle">✓</div>
+                    <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: LOG MAINTENANCE & SERVICE (GAMBAR 2) -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge red">🧾</div>
+                    <div>
+                        <div class="card-title">Log Maintenance & Service</div>
+                        <div class="card-subtitle">Record asset historical servicing events & costs.</div>
+                    </div>
                 </div>
             </div>
 
+            <form id="log-maintenance-form" onsubmit="handleSaveServiceRecord(event)">
+                
+                <!-- SELECT REGISTERED ASSET -->
+                <div class="form-group">
+                    <label class="form-label">Select Registered Asset <span class="req">*</span></label>
+                    <select id="select-asset" class="form-control" onchange="autoPrefillAssetDetails()" required>
+                        <option value="">-- Select Registered Asset --</option>
+                    </select>
+                </div>
+
+                <!-- ASSET NAME / DESCRIPTION -->
+                <div class="form-group">
+                    <label class="form-label">Asset Name / Description (Auto-Prefilled)</label>
+                    <input type="text" id="prefill-name" class="form-control" placeholder="Asset name will pre-fill" readonly>
+                </div>
+
+                <!-- SUPPLIER & INVOICE -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Supplier / Contractor</label>
+                        <input type="text" id="prefill-supplier" class="form-control" placeholder="Supplier will pre-fill" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Invoice Number</label>
+                        <input type="text" id="prefill-invoice" class="form-control" placeholder="Invoice will pre-fill" readonly>
+                    </div>
+                </div>
+
+                <!-- CATEGORY & DEPARTMENT -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Classification Category</label>
+                        <input type="text" id="prefill-category" class="form-control" placeholder="Category will pre-fill" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deployment Department</label>
+                        <input type="text" id="prefill-dept" class="form-control" placeholder="Department will pre-fill" readonly>
+                    </div>
+                </div>
+
+                <!-- COST, QTY, DATE -->
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label class="form-label">Service Cost (RM) <span class="req">*</span></label>
+                        <input type="number" step="0.01" id="input-cost" class="form-control" value="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Unit (Qty)</label>
+                        <input type="number" id="prefill-qty" class="form-control" value="1" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service Date <span class="req">*</span></label>
+                        <input type="date" id="input-service-date" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="btn-register-red">
+                    📝 Register Maintenance Service Record
+                </button>
+            </form>
+        </div>
+
+        <!-- CARD 3: REKOD JADUAL SERVIS ASET -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div class="card-title">📋 Asset Service History & Schedule (+1 Year Interval)</div>
+                <button onclick="window.print()" class="no-print form-control" style="width: auto; background: #0f172a; color: #fff; cursor: pointer; font-weight: 700;">🖨️ Cetak Report</button>
+            </div>
+            
             <div style="overflow-x: auto;">
                 <table class="service-table">
                     <thead>
                         <tr>
-                            <th style="width: 50px;">No.</th>
+                            <th style="width: 40px;">No.</th>
                             <th>Nama Aset</th>
                             <th>Kategori</th>
                             <th>Lokasi / Dept</th>
@@ -243,58 +409,15 @@
                             <th>Penyelenggara / Vendor</th>
                             <th>Kos Servis (RM)</th>
                             <th>Status</th>
-                            <th class="no-print">Tindakan</th>
                         </tr>
                     </thead>
-                    <tbody id="service-tbody">
-                        <!-- Dynamic Content Generated Here -->
+                    <tbody id="service-history-tbody">
+                        <!-- Content auto-filled -->
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
-    <!-- MODAL REKOD SERVIS BAHARU -->
-    <div id="service-modal" class="modal-overlay">
-        <div class="modal-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="font-size: 16px; font-weight: 800;">Kemaskini Rekod Servis Aset</h3>
-                <button onclick="closeLogModal()" style="border:none; background:none; font-size: 20px; cursor:pointer;">&times;</button>
-            </div>
-            <form id="service-form" onsubmit="saveServiceRecord(event)">
-                <div class="form-group">
-                    <label>Pilih Aset</label>
-                    <select id="modal-asset-id" class="form-control" onchange="autoFillLastDate()" required>
-                        <!-- Auto populated -->
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Last Service Date (Tarikh Servis Terakhir)</label>
-                    <input type="date" id="modal-last-date" class="form-control" onchange="calculateNextDatePreview()" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Next Service Date (Tahun Hadapan - Tarikh Sama)</label>
-                    <input type="text" id="modal-next-date-preview" class="form-control" readonly style="background-color: #f8fafc; font-weight: 700; color: #2563eb;">
-                </div>
-
-                <div class="form-group">
-                    <label>Penyelenggara / Vendor / Technician</label>
-                    <input type="text" id="modal-vendor" class="form-control" placeholder="Cth: HighTech Service Sdn Bhd" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Kos Servis (RM)</label>
-                    <input type="number" step="0.01" id="modal-cost" class="form-control" placeholder="0.00" value="0.00">
-                </div>
-
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button type="button" class="form-control" onclick="closeLogModal()" style="cursor: pointer;">Batal</button>
-                    <button type="submit" class="btn-primary">💾 Simpan Rekod Servis</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script>
@@ -309,13 +432,12 @@
             return JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES)) || {};
         }
 
-        // LOGIK UTAMA: Mengira Next Service Date pada tarikh sama, bulan sama, +1 Tahun
-        function computeNextServiceDate(lastDateStr) {
-            if (!lastDateStr) return '-';
-            const dateObj = new Date(lastDateStr);
+        // LOGIK UTAMA: Pengiraan Next Service Date (Tarikh & bulan sama, +1 Tahun)
+        function computeNextYearDate(dateStr) {
+            if (!dateStr) return '-';
+            const dateObj = new Date(dateStr);
             if (isNaN(dateObj.getTime())) return '-';
 
-            // Tambah tepat 1 tahun dari Last Service Date
             dateObj.setFullYear(dateObj.getFullYear() + 1);
 
             const year = dateObj.getFullYear();
@@ -325,137 +447,152 @@
             return `${year}-${month}-${day}`;
         }
 
-        function renderServiceReport() {
+        // POPULATE DROPDOWN ASET
+        function loadAssetDropdown() {
             const assets = getAssets();
-            const serviceLogs = getServiceLogs();
-            const tbody = document.getElementById('service-tbody');
-            tbody.innerHTML = '';
-
-            if (assets.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="text-center" style="padding: 30px; color: #64748b;">
-                            Tiada aset dijumpai. Sila daftarkan aset terlebih dahulu.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            const today = new Date().toISOString().split('T')[0];
-
-            assets.forEach((asset, idx) => {
-                const log = serviceLogs[asset.id] || {};
-                
-                // Gunakan Tarikh Servis Terakhir dari log atau Tarikh Belian Aset sebagai laluan asal
-                const lastServiceDate = log.lastServiceDate || asset.purchaseDate || asset.date || '2026-01-01';
-                
-                // KIRA AUTOMATIK: Next Service Date (+1 Tahun)
-                const nextServiceDate = computeNextServiceDate(lastServiceDate);
-                
-                const vendor = log.vendor || asset.supplier || '-';
-                const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
-
-                const isOverdue = nextServiceDate !== '-' && nextServiceDate < today;
-                const statusBadge = isOverdue 
-                    ? `<span class="badge-status status-overdue">⚠️ OVERDUE</span>` 
-                    : `<span class="badge-status status-upcoming">📅 SCHEDULED</span>`;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="text-center">${idx + 1}</td>
-                        <td class="text-left"><strong>${(asset.name || asset.assetName || 'Aset').toUpperCase()}</strong></td>
-                        <td class="text-center">${asset.category || 'General'}</td>
-                        <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
-                        <td class="text-center" style="font-weight: 600;">${lastServiceDate}</td>
-                        <td class="text-center" style="background-color: #f0fdf4; color: #166534; font-weight: 800;">
-                            ${nextServiceDate}
-                        </td>
-                        <td class="text-center">${vendor}</td>
-                        <td class="text-right">RM ${cost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                        <td class="text-center">${statusBadge}</td>
-                        <td class="no-print text-center">
-                            <button onclick="openLogModal(${asset.id})" class="btn-primary" style="padding: 5px 10px; font-size: 11px;">
-                                ✏️ Kemaskini
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        function populateAssetDropdown() {
-            const assets = getAssets();
-            const select = document.getElementById('modal-asset-id');
-            select.innerHTML = '';
+            const select = document.getElementById('select-asset');
+            select.innerHTML = '<option value="">-- Select Registered Asset --</option>';
 
             assets.forEach(a => {
-                select.innerHTML += `<option value="${a.id}">${a.name || a.assetName}</option>`;
+                const name = a.name || a.assetName || 'Aset Tanpa Nama';
+                select.innerHTML += `<option value="${a.id}">${name}</option>`;
             });
         }
 
-        function openLogModal(selectedAssetId = null) {
-            populateAssetDropdown();
-            const select = document.getElementById('modal-asset-id');
-            
-            if (selectedAssetId) {
-                select.value = selectedAssetId;
-            }
-
-            autoFillLastDate();
-            document.getElementById('service-modal').style.display = 'flex';
-        }
-
-        function closeLogModal() {
-            document.getElementById('service-modal').style.display = 'none';
-        }
-
-        function autoFillLastDate() {
-            const assetId = document.getElementById('modal-asset-id').value;
+        // AUTO PRE-FILL BORANG GAMBAR 2
+        function autoPrefillAssetDetails() {
+            const assetId = document.getElementById('select-asset').value;
             const assets = getAssets();
             const logs = getServiceLogs();
-            
             const asset = assets.find(a => String(a.id) === String(assetId));
-            const log = logs[assetId] || {};
 
-            const lastDate = log.lastServiceDate || (asset ? (asset.purchaseDate || asset.date) : new Date().toISOString().split('T')[0]);
-            
-            document.getElementById('modal-last-date').value = lastDate;
-            document.getElementById('modal-vendor').value = log.vendor || (asset ? asset.supplier : '') || '';
-            document.getElementById('modal-cost').value = log.cost || '0.00';
+            if (asset) {
+                document.getElementById('prefill-name').value = asset.name || asset.assetName || '';
+                document.getElementById('prefill-supplier').value = asset.supplier || '-';
+                document.getElementById('prefill-invoice').value = asset.invoiceNo || asset.invoice || '-';
+                document.getElementById('prefill-category').value = asset.category || '-';
+                document.getElementById('prefill-dept').value = asset.location || asset.deploymentDept || '-';
+                document.getElementById('prefill-qty').value = asset.quantity || asset.unit || 1;
 
-            calculateNextDatePreview();
+                // Set Service Date default
+                const log = logs[assetId] || {};
+                document.getElementById('input-service-date').value = log.lastServiceDate || new Date().toISOString().split('T')[0];
+            } else {
+                document.getElementById('prefill-name').value = '';
+                document.getElementById('prefill-supplier').value = '';
+                document.getElementById('prefill-invoice').value = '';
+                document.getElementById('prefill-category').value = '';
+                document.getElementById('prefill-dept').value = '';
+                document.getElementById('prefill-qty').value = '1';
+            }
         }
 
-        function calculateNextDatePreview() {
-            const lastDate = document.getElementById('modal-last-date').value;
-            const nextDate = computeNextServiceDate(lastDate);
-            document.getElementById('modal-next-date-preview').value = nextDate;
-        }
-
-        function saveServiceRecord(e) {
+        // SIMPAN REKOD SERVIS
+        function handleSaveServiceRecord(e) {
             e.preventDefault();
-            const assetId = document.getElementById('modal-asset-id').value;
-            const lastDate = document.getElementById('modal-last-date').value;
-            const vendor = document.getElementById('modal-vendor').value;
-            const cost = parseFloat(document.getElementById('modal-cost').value) || 0;
+            const assetId = document.getElementById('select-asset').value;
+            if (!assetId) return;
+
+            const serviceDate = document.getElementById('input-service-date').value;
+            const cost = parseFloat(document.getElementById('input-cost').value) || 0;
+            const supplier = document.getElementById('prefill-supplier').value;
 
             const logs = getServiceLogs();
             logs[assetId] = {
-                lastServiceDate: lastDate,
-                nextServiceDate: computeNextServiceDate(lastDate),
-                vendor: vendor,
+                lastServiceDate: serviceDate,
+                nextServiceDate: computeNextYearDate(serviceDate),
+                vendor: supplier !== '-' ? supplier : 'Vendor Maintained',
                 cost: cost,
                 updatedAt: new Date().toISOString()
             };
 
             localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
-            closeLogModal();
-            renderServiceReport();
+
+            alert('✅ Rekod penyelenggaraan berjaya disimpan!');
+            renderAllSections();
         }
 
-        document.addEventListener('DOMContentLoaded', renderServiceReport);
-        window.addEventListener('storage', renderServiceReport);
+        // KEMASKINI SKRIN (ALERTS + JADUAL)
+        function renderAllSections() {
+            const assets = getAssets();
+            const logs = getServiceLogs();
+            const today = new Date().toISOString().split('T')[0];
+
+            let overdueCount = 0;
+            let overdueItemsHtml = '';
+            const tbody = document.getElementById('service-history-tbody');
+            tbody.innerHTML = '';
+
+            if (assets.length === 0) {
+                document.getElementById('overdue-badge-pill').innerText = '0 Overdue Services';
+                document.getElementById('alerts-container').innerHTML = `
+                    <div class="empty-alert-state">
+                        <div class="checkmark-circle">✓</div>
+                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
+                    </div>
+                `;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="padding: 20px; color: #64748b;">Tiada aset direkodkan.</td></tr>`;
+                return;
+            }
+
+            assets.forEach((asset, idx) => {
+                const log = logs[asset.id] || {};
+                const lastDate = log.lastServiceDate || asset.purchaseDate || asset.date || '2026-01-01';
+                const nextDate = computeNextYearDate(lastDate);
+                const vendor = log.vendor || asset.supplier || '-';
+                const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
+
+                const isOverdue = nextDate !== '-' && nextDate < today;
+                if (isOverdue) {
+                    overdueCount++;
+                    overdueItemsHtml += `
+                        <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; font-size: 13px;">
+                            <span>⚠️ <strong>${asset.name || asset.assetName}</strong> perlu diservis (Tamat: ${nextDate})</span>
+                            <span style="color: #dc2626; font-weight: 700;">OVERDUE</span>
+                        </div>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-center">${idx + 1}</td>
+                        <td class="text-left"><strong>${(asset.name || asset.assetName || 'Aset').toUpperCase()}</strong></td>
+                        <td class="text-center">${asset.category || '-'}</td>
+                        <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
+                        <td class="text-center">${lastDate}</td>
+                        <td class="text-center" style="background-color: #f0fdf4; color: #166534; font-weight: 800;">${nextDate}</td>
+                        <td class="text-center">${vendor}</td>
+                        <td class="text-right">RM ${cost.toFixed(2)}</td>
+                        <td class="text-center">
+                            <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-scheduled'}">
+                                ${isOverdue ? '⚠️ OVERDUE' : '📅 SCHEDULED'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // UPDATE BADGE ALERTS (GAMBAR 1)
+            document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
+            if (overdueCount > 0) {
+                document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
+            } else {
+                document.getElementById('alerts-container').innerHTML = `
+                    <div class="empty-alert-state">
+                        <div class="checkmark-circle">✓</div>
+                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // INITIALIZE ON LOAD
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
+            loadAssetDropdown();
+            renderAllSections();
+        });
+        window.addEventListener('storage', renderAllSections);
     </script>
 </body>
 </html>
