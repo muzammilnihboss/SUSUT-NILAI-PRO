@@ -304,7 +304,7 @@
             background-color: #dc2626;
         }
 
-        /* TABLE DESIGN MATCHING SCREENSHOT EXACTLY */
+        /* TABLE DESIGN */
         table.custom-table {
             width: 100%;
             border-collapse: collapse;
@@ -515,7 +515,7 @@
                         </tr>
                     </thead>
                     <tbody id="service-history-tbody">
-                        <!-- Dynamic Rows from Asset Register ONLY -->
+                        <!-- Empty by Default; Populates only when service is logged -->
                     </tbody>
                 </table>
             </div>
@@ -561,7 +561,6 @@
         const STORAGE_KEY_SERVICES = 'susut_nilai_services';
         const STORAGE_KEY_LEDGER = 'susut_nilai_maintenance_ledger';
 
-        // STRICTLY READ FROM ASSET REGISTER ONLY
         function getAssets() {
             return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
@@ -589,7 +588,7 @@
             return `${year}-${month}-${day}`;
         }
 
-        // POPULATE DROPDOWN STRICTLY FROM ASSET REGISTER
+        // POPULATE DROPDOWN FROM ASSET REGISTER
         function loadAssetDropdown() {
             const assets = getAssets();
             const select = document.getElementById('select-asset');
@@ -634,7 +633,7 @@
             document.getElementById('log-form-card').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // DIRECTLY UPDATE NEXT SERVICE DATE IN REPORT TABLE & SYNC ALERTS
+        // DIRECTLY UPDATE NEXT SERVICE DATE IN REPORT TABLE
         function updateNextServiceDateDirect(assetId, newDate) {
             if (!newDate) return;
             const logs = getServiceLogs();
@@ -656,7 +655,7 @@
             }
         }
 
-        // SAVE MAINTENANCE RECORD FROM FORM LOG -> AUTO ADVANCES NEXT DATE & ADDS TO LEDGER
+        // SAVE MAINTENANCE RECORD
         function handleSaveServiceRecord(e) {
             e.preventDefault();
             const assetId = document.getElementById('select-asset').value;
@@ -694,7 +693,7 @@
             });
             localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
 
-            alert('✅ Maintenance service record saved successfully & added to Ledger!');
+            alert('✅ Maintenance service record saved successfully!');
             
             document.getElementById('log-maintenance-form').reset();
             autoPrefillAssetDetails();
@@ -721,7 +720,6 @@
             const newCost = parseFloat(newCostStr) || 0;
             const newNextDate = computeNextYearDate(newDate);
 
-            // Update entry in Ledger array
             ledger[entryIndex].serviceDate = newDate;
             ledger[entryIndex].nextServiceDate = newNextDate;
             ledger[entryIndex].vendor = newVendor;
@@ -729,7 +727,6 @@
 
             localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
 
-            // Sync latest log if this ledger entry is the most recent
             const logs = getServiceLogs();
             if (logs[entry.assetId]) {
                 logs[entry.assetId].lastServiceDate = newDate;
@@ -755,7 +752,7 @@
             renderAllSections();
         }
 
-        // RENDER ALERTS, REPORT TABLE, AND LEDGER (STRICTLY FROM ASSET REGISTER DATA)
+        // RENDER REPORT & LEDGER (ONLY SHOWS RECORDED LOGS)
         function renderAllSections() {
             const assets = getAssets();
             const logs = getServiceLogs();
@@ -768,25 +765,26 @@
             const tbody = document.getElementById('service-history-tbody');
             tbody.innerHTML = '';
 
-            if (assets.length === 0) {
+            // Filter assets that have an actual recorded service log
+            const servicedAssets = assets.filter(asset => logs[asset.id] && logs[asset.id].lastServiceDate);
+
+            if (servicedAssets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: #64748b;">No maintenance service report records found. Log a service using the form above to populate this table.</td></tr>`;
                 document.getElementById('overdue-badge-pill').innerText = '0 Overdue Services';
                 document.getElementById('alerts-container').innerHTML = `
                     <div class="empty-alert-state">
                         <div class="checkmark-circle">✓</div>
-                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets in Asset Register to initiate tracking.</div>
+                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded.</div>
                     </div>
                 `;
-                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 20px; color: #64748b;">No assets registered yet. Please add assets via Asset Register.</td></tr>`;
             } else {
-
-                assets.forEach((asset, idx) => {
-                    const log = logs[asset.id] || {};
-                    const lastDate = log.lastServiceDate || asset.purchaseDate || asset.date || '2026-01-01';
+                servicedAssets.forEach((asset, idx) => {
+                    const log = logs[asset.id];
+                    const lastDate = log.lastServiceDate;
                     const nextDate = log.nextServiceDate || computeNextYearDate(lastDate);
                     const vendor = log.vendor || asset.supplier || '-';
                     const cost = log.cost !== undefined ? parseFloat(log.cost) : 0;
 
-                    // Overdue Condition: nextServiceDate is strictly earlier than today's date
                     const isOverdue = nextDate !== '-' && nextDate < today;
 
                     if (isOverdue) {
@@ -795,7 +793,7 @@
                             <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
                                 <span>⚠️ Asset <strong>${(asset.name || asset.assetName).toUpperCase()}</strong> requires servicing! (Due Date: <strong>${nextDate}</strong>)</span>
                                 <div style="display:flex; gap: 8px; align-items: center;">
-                                    <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)" title="Change Next Service Date directly">
+                                    <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)">
                                 </div>
                             </div>
                         `;
@@ -809,7 +807,7 @@
                             <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
                             <td class="text-center">${lastDate}</td>
                             <td class="next-date-cell">
-                                <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)" title="Click to edit Next Service Date directly">
+                                <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, this.value)">
                             </td>
                             <td class="text-center">${vendor}</td>
                             <td class="text-right">RM ${cost.toFixed(2)}</td>
@@ -825,7 +823,6 @@
                     `;
                 });
 
-                // UPDATE ACTIVE MAINTENANCE ALERTS
                 document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
                 if (overdueCount > 0) {
                     document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
@@ -833,13 +830,13 @@
                     document.getElementById('alerts-container').innerHTML = `
                         <div class="empty-alert-state">
                             <div class="checkmark-circle">✓</div>
-                            <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
+                            <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded.</div>
                         </div>
                     `;
                 }
             }
 
-            // RENDER MAINTENANCE SERVICE LEDGER WITH EDIT & DELETE BUTTONS
+            // RENDER LEDGER
             const ledgerTbody = document.getElementById('ledger-tbody');
             ledgerTbody.innerHTML = '';
 
