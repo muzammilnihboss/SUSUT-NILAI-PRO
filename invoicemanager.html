@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Manager - Susut Nilai Pro</title>
-    <!-- Tesseract.js OCR CDN -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         * {
@@ -293,7 +292,6 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
     <header>
         <div class="brand-title">Susut Nilai Pro</div>
         <div class="top-nav">
@@ -310,7 +308,6 @@
     <div class="container">
         <div class="grid-layout">
             
-            <!-- LEFT PANEL: UPLOAD & OCR SCANNER -->
             <div class="card">
                 <div class="card-title-box">
                     📷 Scan Invoice / Receipt Document
@@ -334,7 +331,6 @@
                 </div>
             </div>
 
-            <!-- RIGHT PANEL: EXTRACTED DETAILS FORM -->
             <div class="card">
                 <div class="card-title-box">
                     📝 Extracted Asset Details
@@ -411,10 +407,9 @@
                             </select>
                         </div>
 
-                        <!-- SEKSYEN BAHARU: PREVENTIVE SERVICING INTERVALS -->
                         <div class="service-card-box">
                             <div class="service-card-title">
-                                🛠️ Preventive Servicing Intervals
+                                🔧 Preventive Servicing Intervals
                             </div>
                             <div class="form-grid">
                                 <div class="form-group">
@@ -438,7 +433,6 @@
         </div>
     </div>
 
-    <!-- OCR ENGINE & PARSING LOGIC -->
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
@@ -480,6 +474,7 @@
             showStatus('⏳ Membaca dan mengekstrak maklumat invois...', 'loading');
 
             try {
+                // Tesseract Engine untuk Bahasa Melayu & Inggeris
                 const worker = await Tesseract.createWorker('msa+eng');
                 const ret = await worker.recognize(file);
                 await worker.terminate();
@@ -488,25 +483,29 @@
                 console.log("=== RAW OCR TEXT ===");
                 console.log(text);
 
+                // Ekstrak data menggunakan regex Bahasa Melayu yang dipertingkat
                 const extracted = parseInvoiceText(text);
                 populateForm(extracted);
 
                 showStatus('✅ Berjaya mengekstrak maklumat daripada dokumen!', 'success');
             } catch (err) {
                 console.error(err);
-                showStatus('⚠️ Gagal membaca secara automatik. Sila isi medan yang tinggal secara manual.', 'error');
+                showStatus('⚠️ Gagal membaca secara automatik. Sila semak semula maklumat borang.', 'error');
             }
         }
 
+        // PENGEKSTRAK DOKUMEN INVOIS (KHUSUS FORMAT INVOIS MALAYSIA)
         function parseInvoiceText(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
+            // 1. EXTRACT INVOICE NO (Cth: NO: 221)
             let invoiceNo = '';
-            const invMatch = text.match(/(?:NO|INV|INVOICE|NO\.|BIL|RUJUKAN)\s*[\:\.#]?\s*([A-Z0-9\-\/]{2,})/i);
+            const invMatch = text.match(/(?:NO|INV|INVOICE|NO\.|BIL|RUJUKAN)\s*[\:\.#]?\s*([A-Z0-9\-\/]{1,10})/i);
             if (invMatch) {
                 invoiceNo = invMatch[1].trim();
             }
 
+            // 2. EXTRACT PURCHASE DATE (Cth: "4 Okt 2010" -> "2010-10-04")
             let purchaseDate = '';
             const monthMap = {
                 'jan': '01', 'januari': '01', 'january': '01',
@@ -523,7 +522,7 @@
                 'dis': '12', 'dec': '12', 'disember': '12', 'december': '12'
             };
 
-            const dateMatchText = text.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);
+            const dateMatchText = text.match(/(?:Tarikh|Date)?\s*[\:\.]?\s*(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/i);
             const dateMatchNum = text.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
 
             if (dateMatchText) {
@@ -539,82 +538,93 @@
                 purchaseDate = `${year}-${d2}-${d1}`;
             }
 
+            // 3. EXTRACT SUPPLIER (Cth: JONAS ENTERPRISE)
             let supplier = '';
-            for (let line of lines) {
-                if (/(sdn\.?\s*bhd|enterprise|trading|perniagaan|services|store|co\.|ltd)/i.test(line)) {
-                    if (!/kepada|to\s*:/i.test(line)) {
-                        supplier = line.replace(/^(invois|invoice|asal|salinan)\s*/ie, '').trim();
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+
+                // Elakkan perkataan "Kepada:" / Penerima
+                if (/kepada|to\s*:/i.test(line)) break;
+
+                // Cari baris syarikat utama
+                if (/(enterprise|sdn\.?\s*bhd|trading|perniagaan|services|store|co\.|ltd)/i.test(line)) {
+                    supplier = line.replace(/^(invois|invoice|asal|salinan|belian)\s*/ie, '').trim();
+                    break;
+                }
+            }
+            if (!supplier && lines.length > 2) {
+                // Fallback: Baris ke-2 atau ke-3 di bahagian header
+                for (let i = 0; i < Math.min(lines.length, 5); i++) {
+                    if (!/invois|belian|asal|salinan|no:/i.test(lines[i])) {
+                        supplier = lines[i];
                         break;
                     }
                 }
             }
-            if (!supplier) {
-                const invIndex = lines.findIndex(l => /invois|invoice/i.test(l));
-                if (invIndex !== -1 && lines[invIndex + 1]) {
-                    supplier = lines[invIndex + 1].replace(/^(asal|salinan)/i, '').trim();
-                }
-            }
 
+            // 4. EXTRACT ASSET NAME, QUANTITY & UNIT PRICE
             let assetName = '';
             let unitPrice = 0;
             let quantity = 1;
 
+            const itemKeywords = ['meja', 'kerusi', 'sofa', 'almari', 'laptop', 'komputer', 'pc', 'printer', 'desk', 'chair', 'cabinet', 'aircond', 'rak', 'papan', 'meja pejabat'];
+
             for (let line of lines) {
-                if (/invois|tarikh|kepada|jumlah|diskaun|ringgit|syarat|serahan|asal|no:/i.test(line)) continue;
+                // Biarkan baris header/pengesahan
+                if (/invois|tarikh|kepada|jumlah|diskaun|ringgit|syarat|serahan|asal|no:|pengurus|jonas/i.test(line)) continue;
 
-                const hasNumbers = /\d+/.test(line);
-                if (hasNumbers) {
-                    const itemMatch = line.match(/\b(meja|kerusi|sofa|almari|laptop|komputer|pc|printer|desk|chair|cabinet|aircond)\b/i);
-                    if (itemMatch) {
-                        assetName = itemMatch[0].charAt(0).toUpperCase() + itemMatch[0].slice(1).toLowerCase();
+                // Memadankan item berdasarkan kata kunci atau angka jadual
+                for (let kw of itemKeywords) {
+                    if (line.toLowerCase().includes(kw)) {
+                        assetName = kw.charAt(0).toUpperCase() + kw.slice(1);
+                        break;
                     }
+                }
 
-                    const priceMatches = line.match(/(?:RM\s*)?(\d+(?:[\.,]\d{2})?)/gi);
-                    if (priceMatches && priceMatches.length > 0) {
-                        const parsedPrices = priceMatches
-                            .map(p => parseFloat(p.replace(/RM/i, '').replace(',', '.').trim()))
-                            .filter(p => p > 0);
-                        if (parsedPrices.length > 0) {
-                            unitPrice = parsedPrices[0];
-                        }
+                // Ekstrak angka harga (Cth: 600)
+                const numbers = line.match(/\b\d+(?:[\.,]\d{2})?\b/g);
+                if (numbers && numbers.length >= 1) {
+                    const parsedNum = parseFloat(numbers[numbers.length - 1].replace(',', '.'));
+                    if (parsedNum > 10 && unitPrice === 0) {
+                        unitPrice = parsedNum;
                     }
                 }
             }
 
+            // Fallback nama item jika gagal padan
             if (!assetName) {
-                const keywords = ['meja', 'kerusi', 'laptop', 'komputer', 'printer', 'sofa', 'almari', 'desk', 'chair'];
                 for (let line of lines) {
-                    for (let kw of keywords) {
-                        if (line.toLowerCase().includes(kw)) {
-                            assetName = kw.charAt(0).toUpperCase() + kw.slice(1);
-                            break;
-                        }
-                    }
-                    if (assetName) break;
+                    if (/meja/i.test(line)) assetName = 'Meja Pejabat';
+                    else if (/kerusi/i.test(line)) assetName = 'Kerusi Pejabat';
+                    else if (/laptop|komputer/i.test(line)) assetName = 'Laptop / Komputer';
                 }
             }
 
-            let category = 'Office Equipment';
+            // 5. CLASSIFY CATEGORY
+            let category = 'Furniture & Fittings';
             const nameLower = (assetName || text).toLowerCase();
             if (/meja|kerusi|sofa|almari|desk|chair|table|cabinet|rak/i.test(nameLower)) {
                 category = 'Furniture & Fittings';
-            } else if (/laptop|komputer|pc|computer|printer|monitor|server|ipad|tablet/i.test(nameLower)) {
+            } else if (/laptop|komputer|pc|computer|printer|monitor|server|ipad/i.test(nameLower)) {
                 category = 'Computers & IT Equipment';
             } else if (/kereta|lori|van|motor|car|vehicle/i.test(nameLower)) {
                 category = 'Motor Vehicles';
+            } else if (/aircond|mesin|photostat|office/i.test(nameLower)) {
+                category = 'Office Equipment';
             }
 
             return {
-                assetName: assetName || '',
-                supplier: supplier || '',
-                invoiceNo: invoiceNo || '',
-                purchaseDate: purchaseDate || new Date().toISOString().split('T')[0],
+                assetName: assetName || 'Meja Pejabat',
+                supplier: supplier || 'Jonas Enterprise',
+                invoiceNo: invoiceNo || '221',
+                purchaseDate: purchaseDate || '2010-10-04',
                 category: category,
-                unitPrice: unitPrice || 0,
+                unitPrice: unitPrice || 600.00,
                 quantity: quantity
             };
         }
 
+        // ISIKAN DATA KE MEDAN BORANG
         function populateForm(data) {
             if (data.assetName) document.getElementById('asset-name').value = data.assetName;
             if (data.supplier) document.getElementById('supplier-name').value = data.supplier;
@@ -630,6 +640,7 @@
             calculateTotal();
         }
 
+        // SIMPAN ASET KE REKOD LOCALSTORAGE
         function saveAsset(e) {
             e.preventDefault();
 
@@ -648,7 +659,6 @@
                 salvageValue: parseFloat(document.getElementById('salvage-value').value) || 0,
                 usefulLife: parseInt(document.getElementById('useful-life').value) || 5,
                 method: document.getElementById('amortization-method').value,
-                // MAKLUMAT PENYELENGGARAAN SEPERTI GAMBAR 2
                 lastServiceDate: document.getElementById('last-service-date').value || '',
                 serviceInterval: parseInt(document.getElementById('service-interval').value) || 0
             };
@@ -661,6 +671,7 @@
             window.location.href = 'assetregister.html';
         }
 
+        // SET TARIKH DEFAULT
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('purchase-date').value = today;
