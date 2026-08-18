@@ -241,12 +241,6 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        input[readonly] {
-            background-color: #f1f5f9;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
         /* PREVENTIVE SERVICING BOX */
         .service-card-box {
             grid-column: span 2;
@@ -327,7 +321,7 @@
                 <div id="status-box" class="status-box"></div>
 
                 <div class="tips-box">
-                    💡 <strong>Petua OCR:</strong> Pastikan gambar invois jelas, terang dan pembekal, tarikh, nama item serta harga kelihatan nyata untuk imbasan automatik yang tepat.
+                    💡 <strong>Petua:</strong> Selepas dokuman diimbas secara automatik, anda masih boleh menyunting atau memasukkan data tambahan dalam borang di sebelah kanan secara manual.
                 </div>
             </div>
 
@@ -386,7 +380,7 @@
 
                         <div class="form-group">
                             <label for="total-cost">TOTAL COST (RM)</label>
-                            <input type="number" step="0.01" id="total-cost" placeholder="0.00" readonly>
+                            <input type="number" step="0.01" id="total-cost" placeholder="0.00">
                         </div>
 
                         <div class="form-group">
@@ -443,15 +437,17 @@
             statusBox.innerHTML = message;
         }
 
+        // Pengiraan automatik Total Cost
         function calculateTotal() {
             const qty = parseFloat(document.getElementById('quantity').value) || 0;
             const price = parseFloat(document.getElementById('unit-price').value) || 0;
             document.getElementById('total-cost').value = (qty * price).toFixed(2);
         }
 
+        // Segera samakan tarikh servis dengan tarikh belian
         function syncServiceDate(val) {
             const lastServiceInput = document.getElementById('last-service-date');
-            if (!lastServiceInput.value) {
+            if (!lastServiceInput.value || lastServiceInput.value === document.getElementById('purchase-date').defaultValue) {
                 lastServiceInput.value = val;
             }
         }
@@ -470,42 +466,39 @@
             reader.readAsDataURL(file);
         }
 
+        // Proses pembacaan imej dokumen
         async function processOCR(file) {
-            showStatus('⏳ Membaca dan mengekstrak maklumat invois...', 'loading');
+            showStatus('⏳ Membaca dan mengekstrak maklumat dokumen invois...', 'loading');
 
             try {
-                // Tesseract Engine untuk Bahasa Melayu & Inggeris
                 const worker = await Tesseract.createWorker('msa+eng');
                 const ret = await worker.recognize(file);
                 await worker.terminate();
 
                 const text = ret.data.text;
-                console.log("=== RAW OCR TEXT ===");
+                console.log("=== OCR RESULT TEXT ===");
                 console.log(text);
 
-                // Ekstrak data menggunakan regex Bahasa Melayu yang dipertingkat
                 const extracted = parseInvoiceText(text);
                 populateForm(extracted);
 
-                showStatus('✅ Berjaya mengekstrak maklumat daripada dokumen!', 'success');
+                showStatus('✅ Berjaya diimbas! Anda masih boleh menyunting mana-mana medan borang di sebelah.', 'success');
             } catch (err) {
                 console.error(err);
-                showStatus('⚠️ Gagal membaca secara automatik. Sila semak semula maklumat borang.', 'error');
+                showStatus('⚠️ Gagal membaca automatik. Sila isi medan borang secara manual.', 'error');
             }
         }
 
-        // PENGEKSTRAK DOKUMEN INVOIS (KHUSUS FORMAT INVOIS MALAYSIA)
+        // Pembaca Teks Invois (Khusus untuk Invois Belian)
         function parseInvoiceText(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-            // 1. EXTRACT INVOICE NO (Cth: NO: 221)
+            // 1. REF / INVOICE NO
             let invoiceNo = '';
             const invMatch = text.match(/(?:NO|INV|INVOICE|NO\.|BIL|RUJUKAN)\s*[\:\.#]?\s*([A-Z0-9\-\/]{1,10})/i);
-            if (invMatch) {
-                invoiceNo = invMatch[1].trim();
-            }
+            if (invMatch) invoiceNo = invMatch[1].trim();
 
-            // 2. EXTRACT PURCHASE DATE (Cth: "4 Okt 2010" -> "2010-10-04")
+            // 2. TARIKH BELIAN (Tarikh: 4 Okt 2010 -> 2010-10-04)
             let purchaseDate = '';
             const monthMap = {
                 'jan': '01', 'januari': '01', 'january': '01',
@@ -538,42 +531,26 @@
                 purchaseDate = `${year}-${d2}-${d1}`;
             }
 
-            // 3. EXTRACT SUPPLIER (Cth: JONAS ENTERPRISE)
+            // 3. PEMBEKAL / VENDOR
             let supplier = '';
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-
-                // Elakkan perkataan "Kepada:" / Penerima
+            for (let line of lines) {
                 if (/kepada|to\s*:/i.test(line)) break;
-
-                // Cari baris syarikat utama
                 if (/(enterprise|sdn\.?\s*bhd|trading|perniagaan|services|store|co\.|ltd)/i.test(line)) {
                     supplier = line.replace(/^(invois|invoice|asal|salinan|belian)\s*/ie, '').trim();
                     break;
                 }
             }
-            if (!supplier && lines.length > 2) {
-                // Fallback: Baris ke-2 atau ke-3 di bahagian header
-                for (let i = 0; i < Math.min(lines.length, 5); i++) {
-                    if (!/invois|belian|asal|salinan|no:/i.test(lines[i])) {
-                        supplier = lines[i];
-                        break;
-                    }
-                }
-            }
 
-            // 4. EXTRACT ASSET NAME, QUANTITY & UNIT PRICE
+            // 4. NAMA ASET, HARGA & KUANTITI
             let assetName = '';
             let unitPrice = 0;
             let quantity = 1;
 
-            const itemKeywords = ['meja', 'kerusi', 'sofa', 'almari', 'laptop', 'komputer', 'pc', 'printer', 'desk', 'chair', 'cabinet', 'aircond', 'rak', 'papan', 'meja pejabat'];
+            const itemKeywords = ['meja', 'kerusi', 'sofa', 'almari', 'laptop', 'komputer', 'pc', 'printer', 'desk', 'chair', 'cabinet', 'aircond', 'rak'];
 
             for (let line of lines) {
-                // Biarkan baris header/pengesahan
-                if (/invois|tarikh|kepada|jumlah|diskaun|ringgit|syarat|serahan|asal|no:|pengurus|jonas/i.test(line)) continue;
+                if (/invois|tarikh|kepada|jumlah|diskaun|ringgit|syarat|serahan|asal|no:|pengurus/i.test(line)) continue;
 
-                // Memadankan item berdasarkan kata kunci atau angka jadual
                 for (let kw of itemKeywords) {
                     if (line.toLowerCase().includes(kw)) {
                         assetName = kw.charAt(0).toUpperCase() + kw.slice(1);
@@ -581,27 +558,17 @@
                     }
                 }
 
-                // Ekstrak angka harga (Cth: 600)
                 const numbers = line.match(/\b\d+(?:[\.,]\d{2})?\b/g);
                 if (numbers && numbers.length >= 1) {
-                    const parsedNum = parseFloat(numbers[numbers.length - 1].replace(',', '.'));
-                    if (parsedNum > 10 && unitPrice === 0) {
-                        unitPrice = parsedNum;
+                    const parsed = parseFloat(numbers[numbers.length - 1].replace(',', '.'));
+                    if (parsed > 10 && unitPrice === 0) {
+                        unitPrice = parsed;
                     }
                 }
             }
 
-            // Fallback nama item jika gagal padan
-            if (!assetName) {
-                for (let line of lines) {
-                    if (/meja/i.test(line)) assetName = 'Meja Pejabat';
-                    else if (/kerusi/i.test(line)) assetName = 'Kerusi Pejabat';
-                    else if (/laptop|komputer/i.test(line)) assetName = 'Laptop / Komputer';
-                }
-            }
-
-            // 5. CLASSIFY CATEGORY
-            let category = 'Furniture & Fittings';
+            // Kategori
+            let category = 'Office Equipment';
             const nameLower = (assetName || text).toLowerCase();
             if (/meja|kerusi|sofa|almari|desk|chair|table|cabinet|rak/i.test(nameLower)) {
                 category = 'Furniture & Fittings';
@@ -609,22 +576,20 @@
                 category = 'Computers & IT Equipment';
             } else if (/kereta|lori|van|motor|car|vehicle/i.test(nameLower)) {
                 category = 'Motor Vehicles';
-            } else if (/aircond|mesin|photostat|office/i.test(nameLower)) {
-                category = 'Office Equipment';
             }
 
             return {
-                assetName: assetName || 'Meja Pejabat',
-                supplier: supplier || 'Jonas Enterprise',
-                invoiceNo: invoiceNo || '221',
-                purchaseDate: purchaseDate || '2010-10-04',
+                assetName: assetName || '',
+                supplier: supplier || '',
+                invoiceNo: invoiceNo || '',
+                purchaseDate: purchaseDate || '',
                 category: category,
-                unitPrice: unitPrice || 600.00,
+                unitPrice: unitPrice || 0,
                 quantity: quantity
             };
         }
 
-        // ISIKAN DATA KE MEDAN BORANG
+        // Isi borang dengan nilai imbasan (tetap boleh diedit)
         function populateForm(data) {
             if (data.assetName) document.getElementById('asset-name').value = data.assetName;
             if (data.supplier) document.getElementById('supplier-name').value = data.supplier;
@@ -640,7 +605,7 @@
             calculateTotal();
         }
 
-        // SIMPAN ASET KE REKOD LOCALSTORAGE
+        // Simpan Aset
         function saveAsset(e) {
             e.preventDefault();
 
@@ -671,7 +636,6 @@
             window.location.href = 'assetregister.html';
         }
 
-        // SET TARIKH DEFAULT
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('purchase-date').value = today;
