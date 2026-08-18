@@ -442,7 +442,7 @@
             document.getElementById('totalCost').value = (qty * price).toFixed(2);
         }
 
-        // 1. PEMPROSESAN DOKUMEN & ENGINE OCR
+        // 1. PEMPROSESAN DOKUMEN & ENJIN OCR
         async function processDocument(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -472,12 +472,12 @@
 
                 previewImg.src = imageSrc;
 
-                statusDiv.innerHTML = '⏳ Meningkatkan kontras & kejelasan imej...';
+                statusDiv.innerHTML = '⏳ Meningkatkan kejelasan imej...';
                 const enhancedImage = await enhanceImageForOCR(imageSrc);
 
                 statusDiv.innerHTML = '⏳ Enjin OCR sedang membaca teks...';
 
-                // Tesseract Execution dengan tetapan optimum
+                // Tesseract Execution
                 const result = await Tesseract.recognize(enhancedImage, 'eng', {
                     logger: m => {
                         if (m.status === 'recognizing text') {
@@ -489,11 +489,11 @@
                 const rawText = result.data.text;
                 statusDiv.style.display = 'none';
 
-                // Papar Teks Ekstrak pada debug box
+                // Papar teks imbasan untuk tujuan rujukan/debug
                 debugBox.style.display = 'block';
                 debugBox.textContent = "--- TEKS SEBENAR OCR ---\n" + rawText;
 
-                // Memproses teks dan memetakan ke borang
+                // Memproses teks dan memetakan nilai ke borang
                 parseAndFillForm(rawText);
 
             } catch (error) {
@@ -529,7 +529,7 @@
             });
         }
 
-        // 2. PENAPIS BINARISASI & KONTRAS (MENGHILANGKAN BINTIK/BAYANG INVOIS)
+        // 2. PENAPIS BINARISASI IMEJ (MEMBANTU MENINGKATKAN KETEPATAN OCR)
         function enhanceImageForOCR(imgSrc) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -547,11 +547,9 @@
                     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     const data = imgData.data;
 
-                    // Skala kelabu & Threshold Binarisasi
                     for (let i = 0; i < data.length; i += 4) {
                         let gray = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-                        // Ambang binarisasi tinggi untuk menegaskan teks hitam
-                        let v = (gray < 160) ? 0 : 255;
+                        let v = (gray < 165) ? 0 : 255;
                         data[i] = v;
                         data[i + 1] = v;
                         data[i + 2] = v;
@@ -565,43 +563,41 @@
             });
         }
 
-        // 3. LOGIK PARSING & CORRECTION (MEMBETULKAN RALAT ANGKAN/HURUF)
+        // 3. LOGIK PEMPROSESAN TEKS TEKAD (PARSER INVOIS)
         function parseAndFillForm(text) {
-            // Normalisasi ralat biasa OCR pada huruf/nombor
+            // Normalisasi huruf dan simbol biasa OCR
             let cleanedText = text
                 .replace(/([0-9])O/g, '$10')
                 .replace(/O([0-9])/g, '0$1')
                 .replace(/N[0O][\:\.]?/gi, 'NO:')
-                .replace(/[\|lI](\d{2,})/g, '1$1');
+                .replace(/[\|]/g, ' ');
 
             const lines = cleanedText.split('\n').map(l => l.trim()).filter(Boolean);
 
-            // A. PEMBEKAL / VENDOR (Contoh: JONAS ENTERPRISE)
-            let supplier = '';
-            const supplierLine = lines.find(l => 
-                /ENTERPRISE|SDN\s*BHD|PERNIAGAAN|TRADERS|STORE|SUPPLY|CO\.|LIMITED|PLT/i.test(l)
-            );
-            if (supplierLine) {
-                supplier = supplierLine.replace(/^(INVOIS|INVOICE|BELIAN|ASAL|SALINAN|NOTA)\s*/i, '').trim();
-                document.getElementById('supplier').value = supplier;
-            }
-
-            // B. NO INVOIS / REF (Contoh: "NO: 221" atau "NO 211")
+            // A. NOMBOR INVOIS (REF / INVOICE NO.) -> Mengambil contoh "NO: 221"
             let invNo = '';
-            const invMatch = cleanedText.match(/\bNO\s*[\:\.\-]?\s*([A-Z0-9\-\/]{1,12})/i) ||
-                             cleanedText.match(/(?:INV|INVOIS|INVOICE|REF)[\s\:\.\#\-]+([A-Z0-9\-\/]{1,12})/i);
+            const invMatch = cleanedText.match(/(?:NO|INV|INVOIS|INVOICE|REF|RUJUKAN)[\s\:\.\#\-]+([A-Z0-9\-\/]{1,15})/i);
             
-            if (invMatch) {
+            if (invMatch && invMatch[1]) {
                 invNo = invMatch[1].trim();
             } else {
-                // Sekiranya perkataan "NO" terlepas, cari angka berasingan berdekatan header
                 const topText = lines.slice(0, 6).join(' ');
                 const numMatch = topText.match(/\b(\d{3,6})\b/);
                 if (numMatch) invNo = numMatch[1];
             }
             if (invNo) document.getElementById('invoiceNo').value = invNo;
 
-            // C. TARIKH BELIAN (Contoh: "4 Okt 2010")
+            // B. NAMA PEMBEKAL / VENDOR (Contoh: "JONAS ENTERPRISE")
+            let supplier = '';
+            const supplierLine = lines.find(l => 
+                /ENTERPRISE|SDN\s*BHD|PERNIAGAAN|TRADERS|STORE|SUPPLY|CO\.|LIMITED|PLT|SERVICES/i.test(l)
+            );
+            if (supplierLine) {
+                supplier = supplierLine.replace(/^(INVOIS|INVOICE|BELIAN|ASAL|SALINAN|NOTA)\s*/i, '').trim();
+                document.getElementById('supplier').value = supplier;
+            }
+
+            // C. TARIKH BELIAN (Contoh: "4 Okt 2010" -> "2010-10-04")
             const dateMatch = cleanedText.match(/(\d{1,2})[\s\/\.-]+([A-Za-z]{3,9}|\d{1,2})[\s\/\.-]+(\d{4})/);
             if (dateMatch) {
                 let day = dateMatch[1].padStart(2, '0');
@@ -611,7 +607,7 @@
                 const monthMap = {
                     'jan': '01', 'januari': '01', 'feb': '02', 'februari': '02',
                     'mac': '03', 'mar': '03', 'apr': '04', 'april': '04',
-                    'mei': '05', 'may': '05', 'jun': '06', 'jul': '07', 'julai': '07',
+                    'mei': '05', 'may': '05', 'jun': '06', 'julai': '07', 'jul': '07',
                     'ogo': '08', 'ogos': '08', 'aug': '08', 'sep': '09', 'september': '09',
                     'okt': '10', 'oktober': '10', 'oct': '10', 'nov': '11', 'november': '11',
                     'dis': '12', 'disember': '12', 'dec': '12'
@@ -623,106 +619,100 @@
                 }
             }
 
-            // D. NAMA ASET / DESCRIPTION (Contoh: Extrak "Meja" dari baris "01 Meja 1 600 600")
+            // D. ASSET NAME / DESCRIPTION -> Mengambil daripada butiran (Contoh: "Meja")
             let extractedAsset = '';
+            let isInsideTable = false;
 
-            // 1. Cari baris bermula nombor indeks jadual
-            for (let line of lines) {
-                if (/INVOIS|INVOICE|BELIAN|KEPADA|TAMAN|BESUT|RINGGIT|JUMLAH|SYARAT|SERAHAN|PENGURUS|TEL|TARIKH|RUJUKAN|BUTIR|KUANTITI|HARGA/i.test(line)) {
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+
+                if (/Butir|Perkara|Description|Item|No\s*Rujukan/i.test(line)) {
+                    isInsideTable = true;
                     continue;
                 }
 
-                // Corak: [Nombor Index Opsional] [NAMA ASET] [Kuantiti/Harga]
-                // Contoh: "01 Meja 1 600 600" ATAU "1 Meja 600"
-                let cleanLine = line.replace(/^[\d\.\s\|]+/, ''); // Buang "01 " di awal
-                cleanLine = cleanLine.replace(/\s+[\d\,\.]+(\s+[\d\,\.]+)*$/, '').trim(); // Buang nombor harga di hujung
-
-                if (cleanLine.length >= 2 && !/^(ASAL|NO|TEL|FAX|RM)$/i.test(cleanLine)) {
-                    extractedAsset = cleanLine;
-                    break;
+                if (/JUMLAH|TOTAL|Tolak|Diskaun|Ringgit|Syarat|Serahan|Pengurus/i.test(line)) {
+                    isInsideTable = false;
                 }
-            }
 
-            // 2. Senarai kata kunci bantuan jika jadual bercelaru
-            if (!extractedAsset) {
-                const keywords = [
-                    { kw: /\bmeja\b/i, name: 'Meja' },
-                    { kw: /\bkerusi\b/i, name: 'Kerusi' },
-                    { kw: /\bsofa\b/i, name: 'Sofa' },
-                    { kw: /\bkabinet\b/i, name: 'Kabinet' },
-                    { kw: /\balmari\b/i, name: 'Almari' },
-                    { kw: /\blaptop\b/i, name: 'Laptop' },
-                    { kw: /\bkomputer\b/i, name: 'Komputer' },
-                    { kw: /\bprinter\b/i, name: 'Printer' }
-                ];
+                if (isInsideTable) {
+                    // Buang nombor indeks rujukan di awal baris (cth: "01 ", "1 ")
+                    let candidate = line.replace(/^[0-9\.\s\-\:\#]+/, '');
+                    
+                    // Buang nombor kuantiti dan harga di hujung baris (cth: " 1 600 600", " 600.00")
+                    candidate = candidate.replace(/[\s0-9\.\,\=\+\-]+$/, '').trim();
 
-                for (let k of keywords) {
-                    if (k.kw.test(cleanedText)) {
-                        extractedAsset = k.name;
+                    if (candidate.length >= 2 && !/^(Butir|Kuantiti|Harga|Seunit|Jumlah|RM|unit|No|Rujukan)$/i.test(candidate)) {
+                        extractedAsset = candidate;
                         break;
                     }
                 }
             }
 
+            // Carian Simpanan (Fallback) sekiranya susunan baris jadual terabai
+            if (!extractedAsset) {
+                const itemLine = lines.find(l => 
+                    !/INVOIS|BELIAN|KEPADA|TAMAN|BESUT|RINGGIT|JUMLAH|SYARAT|SERAHAN|PENGURUS|TEL|TARIKH|RUJUKAN|BUTIR|KUANTITI|HARGA|DISKAUN/i.test(l) &&
+                    /[A-Za-z]{3,}/.test(l)
+                );
+                if (itemLine) {
+                    extractedAsset = itemLine.replace(/^[0-9\.\s\-\:]+/, '').replace(/[\s0-9\.\,\=\+\-]+$/, '').trim();
+                }
+            }
+
             if (extractedAsset) {
-                // Format huruf besar awal
-                extractedAsset = extractedAsset.charAt(0).toUpperCase() + extractedAsset.slice(1).toLowerCase();
+                extractedAsset = extractedAsset.charAt(0).toUpperCase() + extractedAsset.slice(1);
                 document.getElementById('assetName').value = extractedAsset;
 
-                // Tetapkan kategori secara automatik
-                if (/meja|kerusi|sofa|kabinet|almari|rak/i.test(extractedAsset)) {
+                // Auto Select Category
+                if (/meja|kerusi|sofa|kabinet|almari|rak|katil/i.test(extractedAsset)) {
                     document.getElementById('category').value = 'Furniture & Fittings';
                 } else if (/laptop|komputer|pc|desktop|monitor/i.test(extractedAsset)) {
                     document.getElementById('category').value = 'Computers';
-                } else if (/printer|aircond|fotostat|fax/i.test(extractedAsset)) {
+                } else if (/printer|aircond|fotostat|fax|mesin/i.test(extractedAsset)) {
                     document.getElementById('category').value = 'Office Equipment';
                 }
             }
 
-            // E. HARGA SEUNIT / JUMLAH (Contoh: Mengekstrak "600")
-            let extractedPrice = 0;
-            let extractedQty = 1;
+            // E. HARGA SEUNIT & JUMLAH -> Mengambil bahagian JUMLAH (Contoh: 600)
+            let totalAmount = 0;
 
-            // Cari baris yang mengandungi nama aset untuk membaca harga seunit & total
-            const assetLine = lines.find(l => /meja|kerusi|sofa|kabinet|laptop|komputer/i.test(l) || /^\d{1,2}\s+[A-Za-z]/i.test(l));
-            
-            if (assetLine) {
-                const nums = assetLine.match(/\b\d+(?:\.\d{1,2})?\b/g);
-                if (nums && nums.length >= 2) {
-                    let validNums = nums.map(n => parseFloat(n)).filter(n => n > 0);
-                    // Jika ada: Index(01), Qty(1), Harga(600), Jumlah(600)
-                    if (validNums.length >= 3) {
-                        extractedQty = validNums[1];
-                        extractedPrice = validNums[2];
-                    } else if (validNums.length === 2) {
-                        extractedQty = validNums[0];
-                        extractedPrice = validNums[1];
+            // 1. Cari nilai pada baris JUMLAH (cth: "JUMLAH 600")
+            const totalLine = lines.find(l => /^JUMLAH|^TOTAL/i.test(l));
+            if (totalLine) {
+                const matches = totalLine.match(/\b\d+(?:[\.\,]\d{1,2})?\b/g);
+                if (matches && matches.length > 0) {
+                    totalAmount = parseFloat(matches[matches.length - 1].replace(',', '.'));
+                }
+            }
+
+            // 2. Cari pada baris butiran item sekiranya tiada baris JUMLAH khas
+            if (!totalAmount || isNaN(totalAmount)) {
+                for (let line of lines) {
+                    if (/meja|kerusi|sofa|kabinet|laptop|komputer|[A-Za-z]{3,}/i.test(line)) {
+                        const nums = line.match(/\b\d+(?:[\.\,]\d{1,2})?\b/g);
+                        if (nums && nums.length >= 1) {
+                            const validNums = nums.map(n => parseFloat(n.replace(',', '.'))).filter(n => n >= 10);
+                            if (validNums.length > 0) {
+                                totalAmount = Math.max(...validNums);
+                                break;
+                            }
+                        }
                     }
                 }
             }
 
-            // Carian Gantian (Fallback Search)
-            if (!extractedPrice) {
-                const priceMatches = cleanedText.match(/\b(\d{2,6})\b/g);
-                if (priceMatches) {
-                    const validPrices = priceMatches
-                        .map(n => parseFloat(n))
-                        .filter(n => n >= 20 && n !== 2010 && n !== 2018 && n !== parseInt(invNo));
-                    if (validPrices.length > 0) {
-                        extractedPrice = Math.max(...validPrices);
-                    }
-                }
+            // Isi nilai harga ke dalam borang
+            if (totalAmount > 0) {
+                const qty = parseFloat(document.getElementById('quantity').value) || 1;
+                const unitPrice = totalAmount / qty;
+                
+                document.getElementById('unitPrice').value = unitPrice.toFixed(2);
+                document.getElementById('totalCost').value = totalAmount.toFixed(2);
             }
-
-            if (extractedQty > 0) document.getElementById('quantity').value = extractedQty;
-            if (extractedPrice > 0) {
-                document.getElementById('unitPrice').value = extractedPrice.toFixed(2);
-            }
-
-            calculateTotal();
         }
 
-        // 4. SIMPAN DOKUMEN KE LOCALSTORAGE
+        // 4. SIMPAN ASET KE LOCALSTORAGE
         function saveExtractedAsset(event) {
             event.preventDefault();
 
