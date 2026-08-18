@@ -104,7 +104,7 @@
             margin-bottom: 20px;
         }
 
-        /* UPLOAD ZONE */
+        /* UPLOAD ZONE WITH DRAG & DROP SUPPORT */
         .upload-zone {
             border: 2px dashed #cbd5e1;
             border-radius: 12px;
@@ -116,7 +116,7 @@
             position: relative;
         }
 
-        .upload-zone:hover {
+        .upload-zone:hover, .upload-zone.dragover {
             border-color: #2563eb;
             background-color: #eff6ff;
         }
@@ -151,19 +151,21 @@
 
         .preview-img {
             max-width: 100%;
-            max-height: 350px;
+            max-height: 380px;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            object-fit: contain;
         }
 
-        /* OCR PROGRESS & ALERT */
+        /* STATUS BOX */
         .status-box {
             margin-top: 16px;
             padding: 12px 16px;
             border-radius: 8px;
             font-size: 13px;
             display: none;
+            line-height: 1.4;
         }
 
         .status-loading {
@@ -307,11 +309,11 @@
                     📷 Scan Invoice / Receipt Document
                 </div>
 
-                <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="drop-zone">
+                <div class="upload-zone" id="drop-zone">
                     <div class="upload-icon">📄</div>
-                    <div class="upload-title">Muat Naik Invois / Scan Dokumen</div>
-                    <div class="upload-hint">Menyokong JPG, PNG, WEBP & PDF</div>
-                    <input type="file" id="file-input" accept="image/*" onchange="handleFileSelect(event)">
+                    <div class="upload-title">Klik atau Drag & Drop Dokumen Di Sini</div>
+                    <div class="upload-hint">Menyokong JPG, PNG, WEBP & GIF</div>
+                    <input type="file" id="file-input" accept="image/*">
                 </div>
 
                 <div class="preview-container" id="preview-container">
@@ -321,7 +323,8 @@
                 <div id="status-box" class="status-box"></div>
 
                 <div class="tips-box">
-                    💡 <strong>Petua:</strong> Selepas dokuman diimbas secara automatik, anda masih boleh menyunting atau memasukkan data tambahan dalam borang di sebelah kanan secara manual.
+                    💡 <strong>Sistem Imbasan Automatik + Manual:</strong>
+                    Sistem akan mengekstraksi data seperti Nama Pembekal, Tarikh, No Invois, dan Jumlah Kos secara automatik. Selepas imbasan, anda bebas menyunting atau mengisi sebarang medan maklumat secara manual.
                 </div>
             </div>
 
@@ -430,75 +433,122 @@
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
+        // ELEMEN DOM
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const imagePreview = document.getElementById('image-preview');
+        const statusBox = document.getElementById('status-box');
+
+        // DISPLAY STATUS MESSAGE
         function showStatus(message, type) {
-            const statusBox = document.getElementById('status-box');
             statusBox.style.display = 'block';
             statusBox.className = `status-box status-${type}`;
             statusBox.innerHTML = message;
         }
 
-        // Pengiraan automatik Total Cost
+        // AUTO CALCULATE TOTAL COST
         function calculateTotal() {
             const qty = parseFloat(document.getElementById('quantity').value) || 0;
             const price = parseFloat(document.getElementById('unit-price').value) || 0;
-            document.getElementById('total-cost').value = (qty * price).toFixed(2);
+            if (qty > 0 && price > 0) {
+                document.getElementById('total-cost').value = (qty * price).toFixed(2);
+            }
         }
 
-        // Segera samakan tarikh servis dengan tarikh belian
+        // SYNC SERVICE DATE
         function syncServiceDate(val) {
             const lastServiceInput = document.getElementById('last-service-date');
-            if (!lastServiceInput.value || lastServiceInput.value === document.getElementById('purchase-date').defaultValue) {
+            if (!lastServiceInput.value) {
                 lastServiceInput.value = val;
             }
         }
 
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // EVENT LISTENERS UNTUK UPLOAD & DRAG & DROP
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                processSelectedFile(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) {
+                processSelectedFile(e.target.files[0]);
+            }
+        });
+
+        // PROSES FAIL YANG DIPILIH
+        function processSelectedFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showStatus('⚠️ Sila muat naik fail format imej (JPG, PNG, WEBP).', 'error');
+                return;
+            }
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const img = document.getElementById('image-preview');
-                img.src = e.target.result;
-                document.getElementById('preview-container').style.display = 'block';
-                processOCR(file);
+                imagePreview.src = e.target.result;
+                previewContainer.style.display = 'block';
+                
+                // Mula proses OCR
+                runOCRProcess(file);
             };
             reader.readAsDataURL(file);
+
+            // Reset file input supaya fail sama boleh dipilih semula jika perlu
+            fileInput.value = '';
         }
 
-        // Proses pembacaan imej dokumen
-        async function processOCR(file) {
-            showStatus('⏳ Membaca dan mengekstrak maklumat dokumen invois...', 'loading');
+        // PROSES SCAN OCR TESSERACT.JS
+        async function runOCRProcess(file) {
+            showStatus('⏳ Sedang membaca dan mengekstrak maklumat dokumen...', 'loading');
 
             try {
-                const worker = await Tesseract.createWorker('msa+eng');
-                const ret = await worker.recognize(file);
-                await worker.terminate();
-
-                const text = ret.data.text;
-                console.log("=== OCR RESULT TEXT ===");
+                // Menggunakan Tesseract.recognize untuk kestabilan maksimum
+                const result = await Tesseract.recognize(file, 'eng');
+                const text = result.data.text;
+                
+                console.log("=== RAW OCR TEXT RESULT ===");
                 console.log(text);
 
                 const extracted = parseInvoiceText(text);
                 populateForm(extracted);
 
-                showStatus('✅ Berjaya diimbas! Anda masih boleh menyunting mana-mana medan borang di sebelah.', 'success');
+                showStatus('✅ Berjaya diimbas! Data telah diisi. Anda boleh menyunting sebarang medan jika perlu.', 'success');
             } catch (err) {
-                console.error(err);
-                showStatus('⚠️ Gagal membaca automatik. Sila isi medan borang secara manual.', 'error');
+                console.error("OCR Error:", err);
+                showStatus('⚠️ Tidak dapat membaca dokumen secara automatik. Anda masih boleh mengisi borang di sebelah secara manual.', 'error');
             }
         }
 
-        // Pembaca Teks Invois (Khusus untuk Invois Belian)
+        // LOGIK PARSING TEKS INVOIS MALAYSIA
         function parseInvoiceText(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-            // 1. REF / INVOICE NO
+            // 1. INVOICE / REF NO
             let invoiceNo = '';
-            const invMatch = text.match(/(?:NO|INV|INVOICE|NO\.|BIL|RUJUKAN)\s*[\:\.#]?\s*([A-Z0-9\-\/]{1,10})/i);
+            const invMatch = text.match(/(?:NO|INV|INVOICE|NO\.|BIL|RUJUKAN)\s*[\:\.#]?\s*([A-Z0-9\-\/]{1,12})/i);
             if (invMatch) invoiceNo = invMatch[1].trim();
 
-            // 2. TARIKH BELIAN (Tarikh: 4 Okt 2010 -> 2010-10-04)
+            // 2. TARIKH BELIAN
             let purchaseDate = '';
             const monthMap = {
                 'jan': '01', 'januari': '01', 'january': '01',
@@ -541,7 +591,7 @@
                 }
             }
 
-            // 4. NAMA ASET, HARGA & KUANTITI
+            // 4. ITEM, HARGA & KUANTITI
             let assetName = '';
             let unitPrice = 0;
             let quantity = 1;
@@ -589,7 +639,7 @@
             };
         }
 
-        // Isi borang dengan nilai imbasan (tetap boleh diedit)
+        // MEMASUKKAN DATA KE DALAM BORANG (DENGAN KEBENARAN EDITING)
         function populateForm(data) {
             if (data.assetName) document.getElementById('asset-name').value = data.assetName;
             if (data.supplier) document.getElementById('supplier-name').value = data.supplier;
@@ -605,7 +655,7 @@
             calculateTotal();
         }
 
-        // Simpan Aset
+        // PROSES SIMPAN KE LOCALSTORAGE
         function saveAsset(e) {
             e.preventDefault();
 
@@ -636,6 +686,7 @@
             window.location.href = 'assetregister.html';
         }
 
+        // INIT DEFAULT DATES
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('purchase-date').value = today;
