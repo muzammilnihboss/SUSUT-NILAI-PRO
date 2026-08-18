@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Manager - Susut Nilai Pro</title>
-    <!-- Tesseract.js Engine for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-    <!-- PDF.js Engine for PDF Parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
@@ -280,7 +278,6 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
     <header>
         <div class="brand-title">Susut Nilai Pro</div>
         <div class="top-nav">
@@ -297,7 +294,6 @@
     <div class="container">
         <div class="grid-layout">
             
-            <!-- LEFT CARD: SCANNER & UPLOAD -->
             <div class="card">
                 <div class="card-header-title">
                     📷 Scan Invoice / Receipt Document
@@ -312,7 +308,6 @@
 
                 <div class="preview-img-container" id="preview-container">
                     <img id="invoice-preview" class="preview-img" alt="Invoice Preview">
-                    <canvas id="hidden-canvas" style="display:none;"></canvas>
                 </div>
 
                 <div class="ocr-status" id="ocr-status">
@@ -320,11 +315,10 @@
                 </div>
 
                 <div class="ocr-tips">
-                    💡 <strong>Petua OCR:</strong> Pastikan fail invois mempunyai pencahayaan yang cukup dan tulisan teratur untuk ketepatan imbasan.
+                    💡 <strong>Petua OCR:</strong> Sistem diselaraskan untuk mengesan nama kedai, nombor invois (seperti NO: 228), tarikh (seperti 4 Okt 2018), nama aset (seperti Meja/Kerusi), dan harga (seperti RM 600).
                 </div>
             </div>
 
-            <!-- RIGHT CARD: EXTRACTED ASSET DETAILS FORM -->
             <div class="card">
                 <div class="card-header-title">
                     📝 Extracted Asset Details
@@ -333,25 +327,21 @@
                 <form id="asset-form" onsubmit="saveExtractedAsset(event)">
                     <div class="form-grid">
                         
-                        <!-- ASSET NAME -->
                         <div class="form-group col-12">
                             <label class="form-label">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
-                            <input type="text" id="assetName" class="form-control" placeholder="Cth: Executive Laptop Dell XPS" required>
+                            <input type="text" id="assetName" class="form-control" placeholder="Cth: Meja Pejabat" required>
                         </div>
 
-                        <!-- SUPPLIER NAME -->
                         <div class="form-group col-6">
                             <label class="form-label">SUPPLIER / VENDOR <span class="req">*</span></label>
-                            <input type="text" id="supplier" class="form-control" placeholder="Cth: Dell Malaysia Sdn Bhd" required>
+                            <input type="text" id="supplier" class="form-control" placeholder="Cth: Jonas Enterprise" required>
                         </div>
 
-                        <!-- INVOICE NO -->
                         <div class="form-group col-6">
                             <label class="form-label">REF / INVOICE NO. <span class="req">*</span></label>
-                            <input type="text" id="invoiceNo" class="form-control" placeholder="Cth: INV-2026-889" required>
+                            <input type="text" id="invoiceNo" class="form-control" placeholder="Cth: 228" required>
                         </div>
 
-                        <!-- CATEGORY -->
                         <div class="form-group col-6">
                             <label class="form-label">CATEGORY</label>
                             <select id="category" class="form-control">
@@ -363,49 +353,41 @@
                             </select>
                         </div>
 
-                        <!-- PURCHASE DATE -->
                         <div class="form-group col-6">
                             <label class="form-label">PURCHASE DATE</label>
                             <input type="date" id="purchaseDate" class="form-control" required>
                         </div>
 
-                        <!-- LOCATION / DEPT -->
                         <div class="form-group col-12">
                             <label class="form-label">LOCATION / DEPT <span class="req">*</span></label>
-                            <input type="text" id="location" class="form-control" placeholder="Cth: Main Office HQ" required>
+                            <input type="text" id="location" class="form-control" placeholder="Cth: Main Office HQ" value="Main Office HQ" required>
                         </div>
 
-                        <!-- QUANTITY -->
                         <div class="form-group col-4">
                             <label class="form-label">QUANTITY / UNIT</label>
                             <input type="number" id="quantity" class="form-control" value="1" min="1" oninput="calculateTotal()">
                         </div>
 
-                        <!-- UNIT PRICE -->
                         <div class="form-group col-4">
                             <label class="form-label">UNIT PRICE (RM)</label>
                             <input type="number" step="0.01" id="unitPrice" class="form-control" value="0.00" oninput="calculateTotal()">
                         </div>
 
-                        <!-- TOTAL COST -->
                         <div class="form-group col-4">
                             <label class="form-label">TOTAL COST (RM)</label>
                             <input type="number" step="0.01" id="totalCost" class="form-control" value="0.00" readonly style="background-color: #f1f5f9; font-weight: 700;">
                         </div>
 
-                        <!-- ESTIMATED SALVAGE -->
                         <div class="form-group col-6">
                             <label class="form-label">ESTIMATED SALVAGE (RM)</label>
                             <input type="number" step="0.01" id="salvage" class="form-control" value="0.00">
                         </div>
 
-                        <!-- USEFUL LIFE -->
                         <div class="form-group col-6">
                             <label class="form-label">USEFUL LIFE (YRS)</label>
                             <input type="number" id="usefulLife" class="form-control" value="5" min="1">
                         </div>
 
-                        <!-- AMORTIZATION METHOD -->
                         <div class="form-group col-12">
                             <label class="form-label">AMORTIZATION METHOD</label>
                             <select id="amortizationMethod" class="form-control">
@@ -414,7 +396,6 @@
                             </select>
                         </div>
 
-                        <!-- PREVENTIVE SERVICING INTERVALS -->
                         <div class="section-divider">
                             <div class="section-title">🔧 Preventive Servicing Intervals</div>
                         </div>
@@ -429,7 +410,6 @@
                             <input type="number" id="serviceInterval" class="form-control" placeholder="Cth: 6" min="1">
                         </div>
 
-                        <!-- SUBMIT BUTTON -->
                         <div class="col-12" style="margin-top: 12px;">
                             <button type="submit" class="btn-submit">
                                 💾 Save Asset to Register
@@ -466,7 +446,6 @@
             if (!file) return;
 
             const previewImg = document.getElementById('invoice-preview');
-            const hiddenCanvas = document.getElementById('hidden-canvas');
             const previewContainer = document.getElementById('preview-container');
             const statusDiv = document.getElementById('ocr-status');
 
@@ -475,24 +454,29 @@
             statusDiv.style.backgroundColor = '#eff6ff';
             statusDiv.style.borderColor = '#bfdbfe';
             statusDiv.style.color = '#1e40af';
-            statusDiv.innerHTML = '⏳ Memproses imbasan dokumen... Sila tunggu.';
+            statusDiv.innerHTML = '⏳ Memproses dokumen... Sila tunggu.';
 
             try {
-                let imageToProcess;
+                let imageSrc;
 
                 if (file.type === 'application/pdf') {
                     statusDiv.innerHTML = '⏳ Menukar PDF kepada Imej...';
-                    imageToProcess = await convertPdfToDataUrl(file, hiddenCanvas);
-                    previewImg.src = imageToProcess;
+                    imageSrc = await convertPdfToDataUrl(file);
                 } else {
-                    imageToProcess = URL.createObjectURL(file);
-                    previewImg.src = imageToProcess;
+                    imageSrc = URL.createObjectURL(file);
                 }
 
-                statusDiv.innerHTML = '⏳ Enjin OCR sedang membaca teks dokumen...';
+                previewImg.src = imageSrc;
+
+                statusDiv.innerHTML = '⏳ Meningkatkan kejelasan imej & memuatkan OCR...';
                 
-                // ROBUST TESSERACT OCR EXECUTION
-                const result = await Tesseract.recognize(imageToProcess, 'eng', {
+                // Enhance image contrast for precise OCR reading
+                const enhancedImage = await enhanceImageForOCR(imageSrc);
+
+                statusDiv.innerHTML = '⏳ Enjin OCR sedang membaca maklumat invois...';
+
+                // RUN TESSERACT OCR
+                const result = await Tesseract.recognize(enhancedImage, 'eng', {
                     logger: m => {
                         if (m.status === 'recognizing text') {
                             statusDiv.innerHTML = `⏳ Membaca Teks: ${Math.round(m.progress * 100)}%`;
@@ -500,11 +484,11 @@
                     }
                 });
 
-                const extractedText = result.data.text;
+                const text = result.data.text;
                 statusDiv.style.display = 'none';
 
-                // PARSE EXTRACTED TEXT
-                parseAndFillForm(extractedText);
+                // PARSE OCR TEXT TO FORM
+                parseAndFillForm(text);
 
             } catch (error) {
                 console.error("OCR Error: ", error);
@@ -512,12 +496,12 @@
                 statusDiv.style.backgroundColor = '#fef2f2';
                 statusDiv.style.borderColor = '#fca5a5';
                 statusDiv.style.color = '#991b1b';
-                statusDiv.innerHTML = '❌ Gagal membaca dokumen automatik. Sila isi maklumat secara manual pada borang di sebelah.';
+                statusDiv.innerHTML = '❌ Gagal membaca dokumen secara automatik. Sila periksa semula atau isi borang secara manual.';
             }
         }
 
-        // CONVERT PDF TO DATA URL
-        function convertPdfToDataUrl(file, canvas) {
+        // CONVERT PDF TO HIGH-RES IMAGE DATA URL
+        function convertPdfToDataUrl(file) {
             return new Promise((resolve, reject) => {
                 const fileReader = new FileReader();
                 fileReader.onload = function() {
@@ -525,6 +509,7 @@
                     pdfjsLib.getDocument(typedarray).promise.then(pdf => {
                         pdf.getPage(1).then(page => {
                             const viewport = page.getViewport({ scale: 2.0 });
+                            const canvas = document.createElement('canvas');
                             const context = canvas.getContext('2d');
                             canvas.height = viewport.height;
                             canvas.width = viewport.width;
@@ -539,27 +524,82 @@
             });
         }
 
-        // PARSE OCR TEXT (SUPPORTING MALAY & ENGLISH INVOICES)
+        // ENHANCE IMAGE CONTRAST & SCALE BEFORE OCR
+        function enhanceImageForOCR(imgSrc) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous';
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    let scale = 1;
+                    if (img.width < 1500) scale = 1500 / img.width;
+
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const data = imgData.data;
+                    const contrast = 1.25;
+                    const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                        avg = factor * (avg - 128) + 128;
+                        avg = Math.min(255, Math.max(0, avg));
+
+                        data[i] = avg;
+                        data[i + 1] = avg;
+                        data[i + 2] = avg;
+                    }
+
+                    ctx.putImageData(imgData, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                };
+                img.onerror = () => resolve(imgSrc);
+                img.src = imgSrc;
+            });
+        }
+
+        // PARSE OCR TEXT ACCURATELY FOR MALAY & ENGLISH INVOICES
         function parseAndFillForm(text) {
+            console.log("Extracted OCR Text:\n", text);
             const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
-            // 1. INVOICE / REF NO (Handles 'NO: 228', 'NO 228', 'INV-123')
-            const invMatch = text.match(/(?:NO|INV|INVOICE|REF)[\:\s\.\#\-]*([A-Z0-9\-\/]{1,20})/i);
-            if (invMatch) {
-                document.getElementById('invoiceNo').value = invMatch[1].trim();
+            // 1. REF / INVOICE NO (Detects: 'NO: 228', 'NO 228', 'INV-889', 'REF/01')
+            let invNo = '';
+            const noMatch = text.match(/(?:NO|INV|INVOIS|INVOICE|REF)[\s\.\:\#\-]+([A-Z0-9\-\/]{1,15})/i);
+            if (noMatch) {
+                const candidate = noMatch[1].trim();
+                if (!/BELIAN|ASAL|TEL|FAX|TARIKH|DATE|SDN|BHD|KEDAI|PERNIAGAAN/i.test(candidate)) {
+                    invNo = candidate;
+                }
             }
+            if (!invNo) {
+                const lineWithNo = lines.find(l => /^NO[\s\.\:]+/i.test(l));
+                if (lineWithNo) {
+                    invNo = lineWithNo.replace(/^NO[\s\.\:]+/i, '').trim().split(/\s+/)[0];
+                }
+            }
+            if (invNo) document.getElementById('invoiceNo').value = invNo;
 
-            // 2. SUPPLIER / KEDAI (e.g. JONAS ENTERPRISE, APEX FURNITURE)
+            // 2. SUPPLIER / VENDOR NAME (Detects: 'JONAS ENTERPRISE', 'APEX FURNITURE SDN BHD')
+            let supplierFound = '';
             const supplierLine = lines.find(l => 
-                /ENTERPRISE|SDN\s*BHD|PERNIAGAAN|TRADERS|STORE|CO\.|LIMITED|PLT/i.test(l)
+                /ENTERPRISE|SDN\s*BHD|PERNIAGAAN|TRADERS|STORE|SUPPLY|CO\.|LIMITED|PLT/i.test(l)
             );
             if (supplierLine) {
-                document.getElementById('supplier').value = supplierLine.replace(/^INVOIS\s*/i, '').trim();
-            } else if (lines.length > 0) {
-                document.getElementById('supplier').value = lines[0].replace(/^INVOIS\s*/i, '').trim();
+                supplierFound = supplierLine.replace(/^(INVOIS|INVOICE|BELIAN|ASAL|SALINAN)\s*/i, '').trim();
+            } else {
+                const headerLine = lines.find(l => !/INVOIS|INVOICE|BELIAN|ASAL|SALINAN|NO\:/i.test(l) && l.length > 3);
+                if (headerLine) supplierFound = headerLine.trim();
             }
+            if (supplierFound) document.getElementById('supplier').value = supplierFound;
 
-            // 3. PURCHASE DATE (Handles '4 Okt 2018', '04/10/2018', '2018-10-04')
+            // 3. PURCHASE DATE (Detects: '4 Okt 2018', '04/10/2018', '2018-10-04')
             const dateMatch = text.match(/(\d{1,2})[\s\/\.-]+([A-Za-z]{3,9}|\d{1,2})[\s\/\.-]+(\d{4})/);
             if (dateMatch) {
                 let day = dateMatch[1].padStart(2, '0');
@@ -569,7 +609,7 @@
                 const monthMap = {
                     'jan': '01', 'januari': '01',
                     'feb': '02', 'februari': '02',
-                    'mac': '03', 'mar': '03', 'mac': '03',
+                    'mac': '03', 'mar': '03',
                     'apr': '04', 'april': '04',
                     'mei': '05', 'may': '05',
                     'jun': '06',
@@ -582,35 +622,86 @@
                 };
 
                 let month = monthMap[monthStr] || monthStr.padStart(2, '0');
-                if (month.length === 2) {
+                if (month.length === 2 && !isNaN(month)) {
                     document.getElementById('purchaseDate').value = `${year}-${month}-${day}`;
                 }
             }
 
-            // 4. AMOUNT / PRICE (Handles '600', '600.00', 'RM 600')
-            const amountMatches = [...text.matchAll(/(?:JUMLAH|TOTAL|HARGA|RM)\s*[\:\=]?\s*(?:RM)?\s*([\d\,]+(?:\.\d{2})?)/gi)];
-            if (amountMatches.length > 0) {
-                const amounts = amountMatches.map(m => parseFloat(m[1].replace(/,/g, ''))).filter(n => !isNaN(n) && n > 0);
-                if (amounts.length > 0) {
-                    const maxAmount = Math.max(...amounts);
-                    document.getElementById('unitPrice').value = maxAmount.toFixed(2);
-                    calculateTotal();
+            // 4. UNIT PRICE & TOTAL COST (Detects: '600', '600.00', 'RM 600')
+            let extractedAmounts = [];
+            const amountMatches = [...text.matchAll(/(?:JUMLAH|TOTAL|HARGA|SEUNIT|AMOUNT|NET|RM|\$)\s*[\:\=]?\s*(?:RM)?\s*([\d\,]+(?:\.\d{1,2})?)/gi)];
+            for (const m of amountMatches) {
+                const val = parseFloat(m[1].replace(/,/g, ''));
+                if (!isNaN(val) && val > 0 && val < 1000000) {
+                    extractedAmounts.push(val);
                 }
             }
 
-            // 5. ASSET DESCRIPTION (Detects item like 'Meja', 'Kerusi', 'Laptop')
-            const itemLine = lines.find(l => 
-                /meja|kerusi|laptop|computer|kabinet|printer|mesin|sofa|papan/i.test(l)
-            );
-            if (itemLine) {
-                document.getElementById('assetName').value = itemLine;
-                document.getElementById('category').value = 'Furniture & Fittings';
-            } else {
+            for (const line of lines) {
+                const numbers = line.match(/\b\d+(?:\.\d{1,2})?\b/g);
+                if (numbers && numbers.length >= 2) {
+                    numbers.forEach(n => {
+                        const val = parseFloat(n);
+                        if (val >= 10 && val < 1000000) {
+                            extractedAmounts.push(val);
+                        }
+                    });
+                }
+            }
+
+            if (extractedAmounts.length > 0) {
+                const maxAmount = Math.max(...extractedAmounts);
+                document.getElementById('unitPrice').value = maxAmount.toFixed(2);
+                calculateTotal();
+            }
+
+            // 5. ASSET NAME / DESCRIPTION & CATEGORY (Detects: 'Meja', 'Kerusi', 'Laptop')
+            let detectedAssetName = '';
+            const assetKeywords = [
+                { kw: /meja/i, name: 'Meja', cat: 'Furniture & Fittings' },
+                { kw: /kerusi/i, name: 'Kerusi', cat: 'Furniture & Fittings' },
+                { kw: /sofa/i, name: 'Sofa', cat: 'Furniture & Fittings' },
+                { kw: /kabinet|cabinet/i, name: 'Kabinet', cat: 'Furniture & Fittings' },
+                { kw: /almari/i, name: 'Almari', cat: 'Furniture & Fittings' },
+                { kw: /rak/i, name: 'Rak', cat: 'Furniture & Fittings' },
+                { kw: /laptop|notebook/i, name: 'Laptop', cat: 'Computers' },
+                { kw: /komputer|pc|desktop/i, name: 'Komputer Desktop', cat: 'Computers' },
+                { kw: /printer|pencetak/i, name: 'Printer', cat: 'Office Equipment' },
+                { kw: /aircond|penyaman udara/i, name: 'Air Conditioner', cat: 'Office Equipment' },
+                { kw: /televisyen|tv|monitor/i, name: 'Monitor / TV', cat: 'Office Equipment' },
+                { kw: /kereta|car|van|lori|motor/i, name: 'Kenderaan', cat: 'Motor Vehicles' }
+            ];
+
+            for (const item of assetKeywords) {
+                const lineWithKw = lines.find(l => item.kw.test(l));
+                if (lineWithKw) {
+                    let cleanLine = lineWithKw.replace(/^[\d\.\s]+/, '').replace(/[\d\.\,]+/g, '').trim();
+                    if (cleanLine.length < 3) cleanLine = item.name;
+                    detectedAssetName = cleanLine;
+                    document.getElementById('category').value = item.cat;
+                    break;
+                }
+            }
+
+            if (!detectedAssetName) {
+                const headerIdx = lines.findIndex(l => /butir|perihal|keterangan|description|item/i.test(l));
+                if (headerIdx !== -1 && headerIdx + 1 < lines.length) {
+                    let nextLine = lines[headerIdx + 1];
+                    let cleanLine = nextLine.replace(/^[\d\.\s]+/, '').replace(/[\d\.\,]+/g, '').trim();
+                    if (cleanLine.length >= 3) detectedAssetName = cleanLine;
+                }
+            }
+
+            if (!detectedAssetName) {
                 const descLine = lines.find(l => 
-                    !/invois|asal|no|tarikh|kepada|jumlah|harga|kuantiti|perniagaan|cukai/i.test(l) && 
-                    l.length > 3 && l.length < 40
+                    !/invois|invoice|belian|asal|no|tarikh|kepada|jumlah|harga|kuantiti|perniagaan|cukai|ringgit|tel|fax/i.test(l) && 
+                    l.length >= 3 && l.length <= 40
                 );
-                if (descLine) document.getElementById('assetName').value = descLine;
+                if (descLine) detectedAssetName = descLine;
+            }
+
+            if (detectedAssetName) {
+                document.getElementById('assetName').value = detectedAssetName;
             }
         }
 
