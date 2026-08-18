@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Manager - Susut Nilai Pro</title>
-    <!-- Tesseract.js CDN Engine for OCR Processing -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -173,6 +173,7 @@
             font-size: 12px;
             font-weight: 600;
             text-align: center;
+            line-height: 1.4;
         }
 
         .ocr-tips {
@@ -197,10 +198,9 @@
         .col-8 { grid-column: span 8; }
         .col-6 { grid-column: span 6; }
         .col-4 { grid-column: span 4; }
-        .col-3 { grid-column: span 3; }
 
         @media (max-width: 640px) {
-            .col-8, .col-6, .col-4, .col-3 { grid-column: span 12; }
+            .col-8, .col-6, .col-4 { grid-column: span 12; }
         }
 
         .form-group {
@@ -237,7 +237,6 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* SECTION DIVIDER */
         .section-divider {
             grid-column: span 12;
             border-top: 1px solid #f1f5f9;
@@ -254,7 +253,6 @@
             gap: 6px;
         }
 
-        /* BUTTONS */
         .btn-submit {
             background-color: #2563eb;
             color: #ffffff;
@@ -280,7 +278,6 @@
 </head>
 <body>
 
-    <!-- TOP NAVIGATION -->
     <header>
         <div class="brand-title">Susut Nilai Pro</div>
         <div class="top-nav">
@@ -297,33 +294,34 @@
     <div class="container">
         <div class="grid-layout">
             
-            <!-- LEFT CARD: SCANNER & UPLOAD -->
             <div class="card">
                 <div class="card-header-title">
                     📷 Scan Invoice / Receipt Document
                 </div>
 
                 <div class="dropzone" id="dropzone">
-                    <input type="file" id="invoice-file" accept="image/*,.pdf" onchange="processInvoiceImage(event)">
+                    <input type="file" id="invoice-file" accept="image/*,.pdf" onchange="processDocument(event)">
                     <div class="dropzone-icon">📄</div>
                     <div class="dropzone-title">Muat Naik Invois / Scan Dokumen</div>
-                    <div class="dropzone-subtitle">Format JPG, PNG atau Gambar PDF</div>
+                    <div class="dropzone-subtitle">Menyokong JPG, PNG, WEBP & PDF</div>
                 </div>
 
                 <div class="preview-img-container" id="preview-container">
                     <img id="invoice-preview" class="preview-img" alt="Invoice Preview">
+                    <canvas id="pdf-canvas" style="display:none; max-width: 100%; border-radius: 8px; border: 1px solid #cbd5e1;"></canvas>
                 </div>
 
                 <div class="ocr-status" id="ocr-status">
-                    ⏳ Memproses pengecaman OCR dokumen... Sila tunggu.
+                    ⏳ Memproses pengecaman OCR... Sila tunggu.
                 </div>
 
                 <div class="ocr-tips">
-                    💡 <strong>Tips OCR:</strong> Pastikan gambar invois jelas dan terang. Pengecam automatik akan mengekstrak Nama Aset, Tarikh, Nombor Invois, Harga dan Pembekal.
+                    💡 <strong>Petua OCR:</strong><br>
+                    • Jika menggunakan fail HTML tempatan, pastikan anda menjalankannya melalui **Live Server** (VS Code).<br>
+                    • Pastikan imej jelas, terang, dan tidak senget.
                 </div>
             </div>
 
-            <!-- RIGHT CARD: EXTRACTED ASSET DETAILS FORM -->
             <div class="card">
                 <div class="card-header-title">
                     📝 Extracted Asset Details
@@ -332,25 +330,21 @@
                 <form id="asset-form" onsubmit="saveExtractedAsset(event)">
                     <div class="form-grid">
                         
-                        <!-- ASSET NAME -->
                         <div class="form-group col-12">
                             <label class="form-label">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
                             <input type="text" id="assetName" class="form-control" placeholder="Cth: Executive Laptop Dell XPS" required>
                         </div>
 
-                        <!-- SUPPLIER NAME -->
                         <div class="form-group col-6">
                             <label class="form-label">SUPPLIER / VENDOR <span class="req">*</span></label>
                             <input type="text" id="supplier" class="form-control" placeholder="Cth: Dell Malaysia Sdn Bhd" required>
                         </div>
 
-                        <!-- INVOICE NO -->
                         <div class="form-group col-6">
                             <label class="form-label">REF / INVOICE NO. <span class="req">*</span></label>
                             <input type="text" id="invoiceNo" class="form-control" placeholder="Cth: INV-2026-889" required>
                         </div>
 
-                        <!-- CATEGORY -->
                         <div class="form-group col-6">
                             <label class="form-label">CATEGORY</label>
                             <select id="category" class="form-control">
@@ -362,49 +356,41 @@
                             </select>
                         </div>
 
-                        <!-- PURCHASE DATE -->
                         <div class="form-group col-6">
                             <label class="form-label">PURCHASE DATE</label>
                             <input type="date" id="purchaseDate" class="form-control" required>
                         </div>
 
-                        <!-- LOCATION / DEPT -->
                         <div class="form-group col-12">
                             <label class="form-label">LOCATION / DEPT <span class="req">*</span></label>
                             <input type="text" id="location" class="form-control" placeholder="Cth: Main Office HQ" required>
                         </div>
 
-                        <!-- QUANTITY -->
                         <div class="form-group col-4">
                             <label class="form-label">QUANTITY / UNIT</label>
                             <input type="number" id="quantity" class="form-control" value="1" min="1" oninput="calculateTotal()">
                         </div>
 
-                        <!-- UNIT PRICE -->
                         <div class="form-group col-4">
                             <label class="form-label">UNIT PRICE (RM)</label>
                             <input type="number" step="0.01" id="unitPrice" class="form-control" value="0.00" oninput="calculateTotal()">
                         </div>
 
-                        <!-- TOTAL COST -->
                         <div class="form-group col-4">
                             <label class="form-label">TOTAL COST (RM)</label>
                             <input type="number" step="0.01" id="totalCost" class="form-control" value="0.00" readonly style="background-color: #f1f5f9; font-weight: 700;">
                         </div>
 
-                        <!-- ESTIMATED SALVAGE -->
                         <div class="form-group col-6">
                             <label class="form-label">ESTIMATED SALVAGE (RM)</label>
                             <input type="number" step="0.01" id="salvage" class="form-control" value="0.00">
                         </div>
 
-                        <!-- USEFUL LIFE -->
                         <div class="form-group col-6">
                             <label class="form-label">USEFUL LIFE (YRS)</label>
                             <input type="number" id="usefulLife" class="form-control" value="5" min="1">
                         </div>
 
-                        <!-- AMORTIZATION METHOD -->
                         <div class="form-group col-12">
                             <label class="form-label">AMORTIZATION METHOD</label>
                             <select id="amortizationMethod" class="form-control">
@@ -413,7 +399,6 @@
                             </select>
                         </div>
 
-                        <!-- PREVENTIVE SERVICING INTERVALS -->
                         <div class="section-divider">
                             <div class="section-title">🔧 Preventive Servicing Intervals</div>
                         </div>
@@ -428,7 +413,6 @@
                             <input type="number" id="serviceInterval" class="form-control" placeholder="Cth: 6" min="1">
                         </div>
 
-                        <!-- SUBMIT BUTTON -->
                         <div class="col-12" style="margin-top: 12px;">
                             <button type="submit" class="btn-submit">
                                 💾 Save Asset to Register
@@ -445,43 +429,65 @@
     <script>
         const STORAGE_KEY = 'susut_nilai_assets';
 
-        // Set default date to today
+        // Set PDF.js Worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
         });
 
-        // Calculate Total = Quantity * Unit Price
         function calculateTotal() {
             const qty = parseFloat(document.getElementById('quantity').value) || 0;
             const price = parseFloat(document.getElementById('unitPrice').value) || 0;
             document.getElementById('totalCost').value = (qty * price).toFixed(2);
         }
 
-        // PROCESS OCR UPON IMAGE UPLOAD
-        async function processInvoiceImage(event) {
+        // MAIN DOCUMENT PROCESSING FUNCTION
+        async function processDocument(event) {
             const file = event.target.files[0];
             if (!file) return;
 
-            // Show Preview
             const previewImg = document.getElementById('invoice-preview');
+            const pdfCanvas = document.getElementById('pdf-canvas');
             const previewContainer = document.getElementById('preview-container');
             const statusDiv = document.getElementById('ocr-status');
 
-            previewImg.src = URL.createObjectURL(file);
             previewContainer.style.display = 'block';
             statusDiv.style.display = 'block';
-            statusDiv.innerHTML = '⏳ Memproses OCR... Pengecaman teks sedang dijalankan.';
+            statusDiv.style.backgroundColor = '#eff6ff';
+            statusDiv.style.borderColor = '#bfdbfe';
+            statusDiv.style.color = '#1e40af';
+            statusDiv.innerHTML = '⏳ Memproses dokumen... Sila tunggu.';
 
             try {
-                // Initialize Tesseract Engine
+                let imageSource;
+
+                // IF PDF FILE
+                if (file.type === 'application/pdf') {
+                    previewImg.style.display = 'none';
+                    pdfCanvas.style.display = 'block';
+                    
+                    statusDiv.innerHTML = '⏳ Menukar PDF kepada Imbasan Imej...';
+                    imageSource = await convertPdfToCanvas(file, pdfCanvas);
+                } else {
+                    // IF IMAGE FILE (PNG, JPG, WEBP)
+                    pdfCanvas.style.display = 'none';
+                    previewImg.style.display = 'block';
+                    previewImg.src = URL.createObjectURL(file);
+                    imageSource = file;
+                }
+
+                statusDiv.innerHTML = '⏳ Enjin OCR sedang mengekstrak teks invois...';
+                
+                // RUN TESSERACT OCR
                 const worker = await Tesseract.createWorker('eng');
-                const ret = await worker.recognize(file);
+                const ret = await worker.recognize(imageSource);
                 await worker.terminate();
 
                 const text = ret.data.text;
                 statusDiv.style.display = 'none';
 
-                // Parse extracted text to fill form fields
+                // PARSE OCR TEXT TO FORM
                 parseAndFillForm(text);
 
             } catch (error) {
@@ -490,11 +496,38 @@
                 statusDiv.style.backgroundColor = '#fef2f2';
                 statusDiv.style.borderColor = '#fca5a5';
                 statusDiv.style.color = '#991b1b';
-                statusDiv.innerHTML = '❌ Gagal membaca dokumen OCR. Sila isi maklumat borang secara manual.';
+                statusDiv.innerHTML = '❌ Gagal membaca dokumen.<br><small>Pastikan anda membuka laman ini menerusi <strong>Live Server</strong> dan gambar berkeadaan jelas.</small>';
             }
         }
 
-        // EXTRACT KEY DATA FROM OCR TEXT USING REGEX PATTERNS
+        // HELPER: CONVERT PDF FIRST PAGE TO CANVAS
+        function convertPdfToCanvas(file, canvas) {
+            return new Promise((resolve, reject) => {
+                const fileReader = new FileReader();
+                fileReader.onload = function() {
+                    const typedarray = new Uint8Array(this.result);
+                    pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+                        pdf.getPage(1).then(page => {
+                            const viewport = page.getViewport({ scale: 1.5 });
+                            const context = canvas.getContext('2d');
+                            canvas.height = viewport.height;
+                            canvas.width = viewport.width;
+
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            page.render(renderContext).promise.then(() => {
+                                resolve(canvas);
+                            });
+                        });
+                    }).catch(reject);
+                };
+                fileReader.readAsArrayBuffer(file);
+            });
+        }
+
+        // EXTRACT KEY DATA FROM OCR TEXT USING REGEX
         function parseAndFillForm(text) {
             const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
@@ -524,7 +557,7 @@
             }
 
             // 4. PRICE / TOTAL COST
-            const amountMatches = [...text.matchAll(/(?:TOTAL|NET|AMOUNT|RM|\$)\s*[\:\=]?\s*(?:RM)?\s*([\d\,\]+\.\d{2})/gi)];
+            const amountMatches = [...text.matchAll(/(?:TOTAL|NET|AMOUNT|RM|\$)\s*[\:\=]?\s*(?:RM)?\s*([\d\,]+\.\d{2})/gi)];
             if (amountMatches.length > 0) {
                 const amounts = amountMatches.map(m => parseFloat(m[1].replace(/,/g, ''))).filter(n => !isNaN(n));
                 if (amounts.length > 0) {
@@ -570,7 +603,7 @@
             existingAssets.push(assetData);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(existingAssets));
 
-            alert('✅ Aset berjaya didaftarkan ke dalam Register New Asset!');
+            alert('✅ Aset berjaya didaftarkan!');
             window.location.href = 'assetregister.html';
         }
     </script>
