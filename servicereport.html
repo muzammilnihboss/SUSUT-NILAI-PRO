@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Manager - Susut Nilai Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <title>Service Report - Susut Nilai Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -68,21 +67,9 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 0 16px;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 24px;
-        }
-
-        @media (max-width: 992px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
         }
 
         /* CARD STYLING */
@@ -92,168 +79,147 @@
             border-radius: 16px;
             padding: 24px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            margin-bottom: 24px;
         }
 
-        .card-title-box {
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 16px;
+        }
+
+        .header-title-group {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 18px;
+            gap: 12px;
+        }
+
+        .icon-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .icon-badge.red {
+            background-color: #fce7f3;
+            color: #db2777;
+        }
+
+        .icon-badge.blue {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        .card-title {
+            font-size: 20px;
             font-weight: 800;
             color: #0f172a;
-            margin-bottom: 20px;
         }
 
-        /* UPLOAD ZONE */
-        .upload-zone {
-            border: 2px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 32px 16px;
-            text-align: center;
-            background-color: #f8fafc;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-        }
-
-        .upload-zone:hover {
-            border-color: #2563eb;
-            background-color: #eff6ff;
-        }
-
-        .upload-icon {
-            font-size: 42px;
-            margin-bottom: 12px;
-            color: #64748b;
-        }
-
-        .upload-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 4px;
-        }
-
-        .upload-hint {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        .preview-container {
-            margin-top: 16px;
-            display: none;
-            text-align: center;
-        }
-
-        .preview-img {
-            max-width: 100%;
-            max-height: 350px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        /* OCR PROGRESS & ALERT */
-        .status-box {
-            margin-top: 16px;
-            padding: 12px 16px;
-            border-radius: 8px;
+        .card-subtitle {
             font-size: 13px;
-            display: none;
+            color: #64748b;
+            margin-top: 2px;
         }
 
-        .status-loading {
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
+        .pill-badge {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
         }
 
-        .status-success {
-            background-color: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
+        /* ACTIVE ALERTS EMPTY STATE */
+        .empty-alert-state {
+            text-align: center;
+            padding: 30px 10px;
         }
 
-        .status-error {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
+        .checkmark-circle {
+            width: 44px;
+            height: 44px;
+            background-color: #10b981;
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin: 0 auto 12px auto;
         }
 
-        .tips-box {
-            margin-top: 20px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 12px;
-            color: #475569;
-            line-height: 1.5;
+        .empty-alert-text {
+            font-size: 13px;
+            color: #64748b;
         }
 
         /* FORM STYLING */
-        .form-grid {
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-label span.req {
+            color: #ef4444;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
+            font-size: 13.5px;
+            outline: none;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+        }
+
+        .form-control[readonly] {
+            background-color: #f8fafc;
+            color: #64748b;
+        }
+
+        .form-row-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr 1fr;
+            gap: 16px;
         }
 
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        label {
-            font-size: 11px;
-            font-weight: 800;
-            color: #334155;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        label .required {
-            color: #dc2626;
-        }
-
-        input, select {
+        .btn-register-red {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #0f172a;
-            outline: none;
-            background-color: #ffffff;
-            transition: border-color 0.2s ease;
-        }
-
-        input:focus, select:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        input[readonly] {
-            background-color: #f1f5f9;
-            color: #64748b;
-            cursor: not-allowed;
-        }
-
-        .btn-submit {
-            grid-column: span 2;
-            background-color: #2563eb;
+            background-color: #c20e38;
             color: #ffffff;
             border: none;
             padding: 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
@@ -261,377 +227,684 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-top: 8px;
-            transition: background-color 0.2s ease;
+            margin-top: 10px;
+            transition: background 0.2s;
         }
 
-        .btn-submit:hover {
+        .btn-register-red:hover {
+            background-color: #a10b2e;
+        }
+
+        .btn-blue {
+            background-color: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-blue:hover {
             background-color: #1d4ed8;
+        }
+
+        .btn-black {
+            background-color: #0f172a;
+            color: #ffffff;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-update-action {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-update-action:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-delete-action {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-delete-action:hover {
+            background-color: #dc2626;
+        }
+
+        /* TABLE DESIGN */
+        table.custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        table.custom-table th, table.custom-table td {
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        table.custom-table th {
+            background-color: #ffffff;
+            color: #0f172a;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .next-date-cell {
+            background-color: #f0fdf4 !important;
+            color: #166534 !important;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        .text-right { text-align: right !important; }
+        .text-left { text-align: left !important; }
+        .text-center { text-align: center !important; }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .status-scheduled { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+        .status-overdue { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+
+        /* INLINE DATE INPUT */
+        .inline-date-input {
+            padding: 6px 10px;
+            border: 1px solid #a7f3d0;
+            background-color: #ecfdf5;
+            color: #166534;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .form-row-2, .form-row-3 { grid-template-columns: 1fr; }
+        }
+
+        @media print {
+            header, .no-print, .btn-update-action, .btn-delete-action, .inline-date-input { display: none !important; }
+            body { background: #fff; padding: 0; }
+            .card { border: none; box-shadow: none; padding: 0; }
         }
     </style>
 </head>
 <body>
 
-    <header>
+    <!-- HYPERLINK TOP NAVIGATION -->
+    <header class="no-print">
         <div class="brand-title">Susut Nilai Pro</div>
         <div class="top-nav">
             <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
             <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
             <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
-            <a href="invoicemanager.html" class="nav-btn active">📄 Invoice Manager</a>
+            <a href="invoicemanager.html" class="nav-btn">📄 Invoice Manager</a>
             <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
+            <a href="servicereport.html" class="nav-btn active">🛠️ Service Report</a>
             <a href="index.html" class="nav-btn">Log Out</a>
         </div>
     </header>
 
     <div class="container">
-        <div class="grid-layout">
-            
-            <div class="card">
-                <div class="card-title-box">
-                    📷 Scan Invoice / Receipt Document
-                </div>
 
-                <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="drop-zone">
-                    <div class="upload-icon">📄</div>
-                    <div class="upload-title">Muat Naik Invois / Scan Dokumen</div>
-                    <div class="upload-hint">Menyokong JPG, PNG, WEBP & PDF</div>
-                    <input type="file" id="file-input" accept="image/*" onchange="handleFileSelect(event)">
-                </div>
-
-                <div class="preview-container" id="preview-container">
-                    <img id="image-preview" class="preview-img" alt="Invoice Preview">
-                </div>
-
-                <div id="status-box" class="status-box"></div>
-
-                <div class="tips-box">
-                    💡 <strong>Petua OCR:</strong> Pastikan gambar invois jelas, terang dan pembekal, tarikh, nama item serta harga kelihatan nyata untuk imbasan automatik yang tepat.
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-title-box">
-                    📝 Extracted Asset Details
-                </div>
-
-                <form id="asset-form" onsubmit="saveAsset(event)">
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="asset-name">ASSET NAME / DESCRIPTION <span class="required">*</span></label>
-                            <input type="text" id="asset-name" placeholder="Cth: Meja Pejabat" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="supplier-name">SUPPLIER / VENDOR <span class="required">*</span></label>
-                            <input type="text" id="supplier-name" placeholder="Cth: Jonas Enterprise" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invoice-no">REF / INVOICE NO. <span class="required">*</span></label>
-                            <input type="text" id="invoice-no" placeholder="Cth: 221" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="category">CATEGORY</label>
-                            <select id="category">
-                                <option value="Furniture & Fittings">Furniture & Fittings</option>
-                                <option value="Computers & IT Equipment">Computers & IT Equipment</option>
-                                <option value="Office Equipment">Office Equipment</option>
-                                <option value="Motor Vehicles">Motor Vehicles</option>
-                                <option value="Plant & Machinery">Plant & Machinery</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="purchase-date">PURCHASE DATE</label>
-                            <input type="date" id="purchase-date">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="location">LOCATION / DEPT <span class="required">*</span></label>
-                            <input type="text" id="location" value="Main Office HQ" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="quantity">QUANTITY / UNIT</label>
-                            <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="unit-price">UNIT PRICE (RM)</label>
-                            <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="total-cost">TOTAL COST (RM)</label>
-                            <input type="number" step="0.01" id="total-cost" placeholder="0.00" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="salvage-value">ESTIMATED SALVAGE (RM)</label>
-                            <input type="number" step="0.01" id="salvage-value" value="0.00">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="useful-life">USEFUL LIFE (YRS)</label>
-                            <input type="number" id="useful-life" value="5" min="1">
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="amortization-method">AMORTIZATION METHOD</label>
-                            <select id="amortization-method">
-                                <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
-                                <option value="Reducing Balance">Reducing Balance</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="btn-submit">
-                            💾 Save Asset to Register
-                        </button>
+        <!-- CARD 1: ACTIVE MAINTENANCE & SERVICING ALERTS -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge red">🧰</div>
+                    <div>
+                        <div class="card-title">Active Maintenance & Servicing Alerts</div>
+                        <div class="card-subtitle">Real-time schedule monitoring projected from customized maintenance intervals.</div>
                     </div>
-                </form>
+                </div>
+                <div id="overdue-badge-pill" class="pill-badge">0 Overdue Services</div>
             </div>
 
+            <div id="alerts-container">
+                <div class="empty-alert-state">
+                    <div class="checkmark-circle">✓</div>
+                    <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded. Register assets to initiate tracking.</div>
+                </div>
+            </div>
         </div>
+
+        <!-- CARD 2: LOG MAINTENANCE & SERVICE FORM -->
+        <div class="card" id="log-form-card">
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge red">🧾</div>
+                    <div>
+                        <div class="card-title">Log Maintenance & Service</div>
+                        <div class="card-subtitle">Record asset historical servicing events & costs.</div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="log-maintenance-form" onsubmit="handleSaveServiceRecord(event)">
+                
+                <!-- SELECT REGISTERED ASSET -->
+                <div class="form-group">
+                    <label class="form-label">SELECT REGISTERED ASSET <span class="req">*</span></label>
+                    <select id="select-asset" class="form-control" onchange="autoPrefillAssetDetails()" required>
+                        <option value="">-- Select Registered Asset --</option>
+                    </select>
+                </div>
+
+                <!-- ASSET NAME / DESCRIPTION -->
+                <div class="form-group">
+                    <label class="form-label">ASSET NAME / DESCRIPTION (AUTO-PREFILLED)</label>
+                    <input type="text" id="prefill-name" class="form-control" placeholder="Asset name will pre-fill" readonly>
+                </div>
+
+                <!-- SUPPLIER & INVOICE -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">SUPPLIER / CONTRACTOR</label>
+                        <input type="text" id="prefill-supplier" class="form-control" placeholder="Supplier will pre-fill">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">INVOICE NUMBER</label>
+                        <input type="text" id="prefill-invoice" class="form-control" placeholder="Invoice will pre-fill" readonly>
+                    </div>
+                </div>
+
+                <!-- CATEGORY & DEPARTMENT -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">CLASSIFICATION CATEGORY</label>
+                        <input type="text" id="prefill-category" class="form-control" placeholder="Category will pre-fill" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">DEPLOYMENT DEPARTMENT</label>
+                        <input type="text" id="prefill-dept" class="form-control" placeholder="Department will pre-fill" readonly>
+                    </div>
+                </div>
+
+                <!-- COST, QTY, DATE -->
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label class="form-label">SERVICE COST (RM) <span class="req">*</span></label>
+                        <input type="number" step="0.01" id="input-cost" class="form-control" value="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">UNIT (QTY)</label>
+                        <input type="number" id="prefill-qty" class="form-control" value="1" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SERVICE DATE <span class="req">*</span></label>
+                        <input type="date" id="input-service-date" class="form-control" required>
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="btn-register-red">
+                    📝 Register Maintenance Service Record
+                </button>
+            </form>
+        </div>
+
+        <!-- CARD 3: ASSET SERVICE & MAINTENANCE REPORT -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div>
+                    <div class="card-title">Asset Service & Maintenance Report</div>
+                    <div class="card-subtitle">Preventative maintenance schedules projected from Last Service Date, Interval, and Useful Life up to today.</div>
+                </div>
+                <div class="no-print" style="display: flex; gap: 10px;">
+                    <button onclick="scrollToLogForm()" class="btn-blue">+ Log New Service</button>
+                    <button onclick="window.print()" class="btn-black">🖨️ Print Report</button>
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No.</th>
+                            <th>Asset Name</th>
+                            <th>Category</th>
+                            <th>Location / Dept</th>
+                            <th>Last Service Date</th>
+                            <th style="background-color: #eff6ff; color: #1d4ed8;">Next Service Date</th>
+                            <th>Contractor / Vendor</th>
+                            <th>Service Cost (RM)</th>
+                            <th>Status</th>
+                            <th class="no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="service-history-tbody">
+                        <!-- Dynamic Schedules projected based on Interval & Useful Life (Up to Today) -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CARD 4: MAINTENANCE SERVICE LEDGER WITH EDIT & DELETE -->
+        <div class="card">
+            <div class="card-header-flex">
+                <div class="header-title-group">
+                    <div class="icon-badge blue">📒</div>
+                    <div>
+                        <div class="card-title">Maintenance Service Ledger</div>
+                        <div class="card-subtitle">Historical log of recorded asset maintenance transactions.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">No.</th>
+                            <th>Service Log Date</th>
+                            <th>Asset Name</th>
+                            <th>Invoice No.</th>
+                            <th>Contractor / Vendor</th>
+                            <th>Service Cost (RM)</th>
+                            <th>Next Service Date</th>
+                            <th class="no-print">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-tbody">
+                        <!-- Dynamic Ledger Entries -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
+        const STORAGE_KEY_SERVICES = 'susut_nilai_services';
+        const STORAGE_KEY_LEDGER = 'susut_nilai_maintenance_ledger';
 
-        function showStatus(message, type) {
-            const statusBox = document.getElementById('status-box');
-            statusBox.style.display = 'block';
-            statusBox.className = `status-box status-${type}`;
-            statusBox.innerHTML = message;
+        function getAssets() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
         }
 
-        function calculateTotal() {
-            const qty = parseFloat(document.getElementById('quantity').value) || 0;
-            const price = parseFloat(document.getElementById('unit-price').value) || 0;
-            document.getElementById('total-cost').value = (qty * price).toFixed(2);
+        function getServiceLogs() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_SERVICES)) || {};
         }
 
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        function getLedgerLogs() {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY_LEDGER)) || [];
+        }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById('image-preview');
-                img.src = e.target.result;
-                document.getElementById('preview-container').style.display = 'block';
-                
-                // Mula proses OCR
-                processOCR(file);
+        // ADD MONTHS TO A DATE ACCURATELY
+        function addMonthsToDate(dateStr, months) {
+            if (!dateStr || dateStr === '-') return '-';
+            const dateObj = new Date(dateStr);
+            if (isNaN(dateObj.getTime())) return '-';
+
+            dateObj.setMonth(dateObj.getMonth() + parseInt(months));
+
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const day = String(dateObj.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}`;
+        }
+
+        // POPULATE DROPDOWN FROM ASSET REGISTER
+        function loadAssetDropdown() {
+            const assets = getAssets();
+            const select = document.getElementById('select-asset');
+            select.innerHTML = '<option value="">-- Select Registered Asset --</option>';
+
+            assets.forEach(a => {
+                const name = a.name || a.assetName || 'Unnamed Asset';
+                select.innerHTML += `<option value="${a.id}">${name}</option>`;
+            });
+        }
+
+        // AUTO PRE-FILL FORM DETAILS
+        function autoPrefillAssetDetails() {
+            const assetId = document.getElementById('select-asset').value;
+            const assets = getAssets();
+            const logs = getServiceLogs();
+            const asset = assets.find(a => String(a.id) === String(assetId));
+
+            if (asset) {
+                document.getElementById('prefill-name').value = asset.name || asset.assetName || '';
+                document.getElementById('prefill-supplier').value = asset.supplier || '';
+                document.getElementById('prefill-invoice').value = asset.invoiceNo || asset.invoice || '-';
+                document.getElementById('prefill-category').value = asset.category || '-';
+                document.getElementById('prefill-dept').value = asset.location || asset.deploymentDept || '-';
+                document.getElementById('prefill-qty').value = asset.quantity || asset.unit || 1;
+
+                const log = logs[assetId] || {};
+                document.getElementById('input-service-date').value = log.lastServiceDate || asset.lastServiceDate || new Date().toISOString().split('T')[0];
+                document.getElementById('input-cost').value = log.cost !== undefined ? log.cost : '0.00';
+            } else {
+                document.getElementById('prefill-name').value = '';
+                document.getElementById('prefill-supplier').value = '';
+                document.getElementById('prefill-invoice').value = '';
+                document.getElementById('prefill-category').value = '';
+                document.getElementById('prefill-dept').value = '';
+                document.getElementById('prefill-qty').value = '1';
+                document.getElementById('input-cost').value = '0.00';
+            }
+        }
+
+        function scrollToLogForm() {
+            document.getElementById('log-form-card').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // DIRECTLY UPDATE NEXT SERVICE DATE IN REPORT TABLE
+        function updateNextServiceDateDirect(assetId, cycleIndex, newDate) {
+            if (!newDate) return;
+            const logs = getServiceLogs();
+            if (!logs[assetId]) {
+                logs[assetId] = {};
+            }
+            if (!logs[assetId].customNextDates) {
+                logs[assetId].customNextDates = {};
+            }
+            logs[assetId].customNextDates[cycleIndex] = newDate;
+            logs[assetId].updatedAt = new Date().toISOString();
+            
+            localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
+            renderAllSections();
+        }
+
+        // PROMPT UPDATE FOR TABLE BUTTON
+        function promptDateUpdate(assetId, cycleIndex, currentDate) {
+            const newDate = prompt("Enter new Next Service Date (YYYY-MM-DD):", currentDate);
+            if (newDate && newDate.trim() !== "") {
+                updateNextServiceDateDirect(assetId, cycleIndex, newDate.trim());
+            }
+        }
+
+        // SAVE MAINTENANCE RECORD
+        function handleSaveServiceRecord(e) {
+            e.preventDefault();
+            const assetId = document.getElementById('select-asset').value;
+            if (!assetId) return;
+
+            const assets = getAssets();
+            const asset = assets.find(a => String(a.id) === String(assetId));
+            const interval = asset && asset.serviceIntervalMonths ? parseInt(asset.serviceIntervalMonths) : 6;
+
+            const serviceDate = document.getElementById('input-service-date').value;
+            const cost = parseFloat(document.getElementById('input-cost').value) || 0;
+            const supplier = document.getElementById('prefill-supplier').value || 'Maintenance Vendor';
+            const assetName = document.getElementById('prefill-name').value;
+            const invoiceNo = document.getElementById('prefill-invoice').value;
+            const nextDate = addMonthsToDate(serviceDate, interval);
+
+            // 1. Update Service Log
+            const logs = getServiceLogs();
+            logs[assetId] = {
+                ...(logs[assetId] || {}),
+                lastServiceDate: serviceDate,
+                nextServiceDate: nextDate,
+                vendor: supplier,
+                cost: cost,
+                updatedAt: new Date().toISOString()
             };
-            reader.readAsDataURL(file);
+            localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
+
+            // 2. Append Transaction to Maintenance Ledger
+            const ledger = getLedgerLogs();
+            ledger.unshift({
+                id: Date.now(),
+                assetId: assetId,
+                assetName: assetName,
+                invoiceNo: invoiceNo,
+                serviceDate: serviceDate,
+                nextServiceDate: nextDate,
+                vendor: supplier,
+                cost: cost
+            });
+            localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
+
+            alert('✅ Maintenance service record saved successfully!');
+            
+            document.getElementById('log-maintenance-form').reset();
+            autoPrefillAssetDetails();
+            renderAllSections();
         }
 
-        async function processOCR(file) {
-            showStatus('⏳ Membaca dan mengekstrak maklumat invois...', 'loading');
+        // EDIT LEDGER ENTRY
+        function editLedgerEntry(ledgerId) {
+            const ledger = getLedgerLogs();
+            const entryIndex = ledger.findIndex(item => item.id === ledgerId);
+            if (entryIndex === -1) return;
 
-            try {
-                // Tesseract OCR Engine (Sokong Bahasa Melayu & Inggeris)
-                const worker = await Tesseract.createWorker('msa+eng');
-                const ret = await worker.recognize(file);
-                await worker.terminate();
+            const entry = ledger[entryIndex];
+            const assets = getAssets();
+            const asset = assets.find(a => String(a.id) === String(entry.assetId));
+            const interval = asset && asset.serviceIntervalMonths ? parseInt(asset.serviceIntervalMonths) : 6;
+            
+            const newDate = prompt("Edit Service Log Date (YYYY-MM-DD):", entry.serviceDate);
+            if (!newDate) return;
 
-                const text = ret.data.text;
-                console.log("=== RAW OCR TEXT ===");
-                console.log(text);
+            const newVendor = prompt("Edit Contractor / Vendor:", entry.vendor);
+            if (newVendor === null) return;
 
-                // Ekstrak data daripada teks OCR
-                const extracted = parseInvoiceText(text);
+            const newCostStr = prompt("Edit Service Cost (RM):", entry.cost);
+            if (newCostStr === null) return;
 
-                // Isi borang dengan maklumat hasil ambasan
-                populateForm(extracted);
+            const newCost = parseFloat(newCostStr) || 0;
+            const newNextDate = addMonthsToDate(newDate, interval);
 
-                showStatus('✅ Berjaya mengekstrak maklumat daripada dokumen!', 'success');
-            } catch (err) {
-                console.error(err);
-                showStatus('⚠️ Gagal membaca secara automatik. Sila isi medan yang tinggal secara manual.', 'error');
+            ledger[entryIndex].serviceDate = newDate;
+            ledger[entryIndex].nextServiceDate = newNextDate;
+            ledger[entryIndex].vendor = newVendor;
+            ledger[entryIndex].cost = newCost;
+
+            localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
+
+            const logs = getServiceLogs();
+            if (logs[entry.assetId]) {
+                logs[entry.assetId].lastServiceDate = newDate;
+                logs[entry.assetId].nextServiceDate = newNextDate;
+                logs[entry.assetId].vendor = newVendor;
+                logs[entry.assetId].cost = newCost;
+                localStorage.setItem(STORAGE_KEY_SERVICES, JSON.stringify(logs));
             }
+
+            alert('✅ Ledger record updated successfully!');
+            renderAllSections();
         }
 
-        // FUNGI UTAMA UNTUK MENGEKSTRAK MAKLUMAT DOKUMEN INVOIS MALAYSIA
-        function parseInvoiceText(text) {
-            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        // DELETE LEDGER ENTRY
+        function deleteLedgerEntry(ledgerId) {
+            if (!confirm("Are you sure you want to delete this maintenance record from the ledger?")) return;
 
-            // 1. EXTRACT INVOICE NO
-            let invoiceNo = '';
-            const invMatch = text.match(/(?:NO|INV|INVOICE|NO\.|BIL|RUJUKAN)\s*[\:\.#]?\s*([A-Z0-9\-\/]{2,})/i);
-            if (invMatch) {
-                invoiceNo = invMatch[1].trim();
-            }
+            let ledger = getLedgerLogs();
+            ledger = ledger.filter(item => item.id !== ledgerId);
+            localStorage.setItem(STORAGE_KEY_LEDGER, JSON.stringify(ledger));
 
-            // 2. EXTRACT PURCHASE DATE (Support: "4 Okt 2010", "04/10/2010", "2010-10-04")
-            let purchaseDate = '';
-            const monthMap = {
-                'jan': '01', 'januari': '01', 'january': '01',
-                'feb': '02', 'februari': '02', 'february': '02',
-                'mac': '03', 'mar': '03', 'march': '03',
-                'apr': '04', 'april': '04',
-                'mei': '05', 'may': '05',
-                'jun': '06', 'juni': '06', 'june': '06',
-                'jul': '07', 'julai': '07', 'july': '07',
-                'ogo': '08', 'ogos': '08', 'aug': '08', 'august': '08',
-                'sep': '09', 'sept': '09', 'september': '09',
-                'okt': '10', 'oct': '10', 'oktober': '10', 'october': '10',
-                'nov': '11', 'november': '11',
-                'dis': '12', 'dec': '12', 'disember': '12', 'december': '12'
-            };
+            alert('🗑️ Ledger record deleted.');
+            renderAllSections();
+        }
 
-            const dateMatchText = text.match(/(\d{1,2})\s+([A-Za-z]{3,9})\s+(\d{4})/);
-            const dateMatchNum = text.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
+        // RENDER REPORT & LEDGER (LIMITED UP TO TODAY'S DATE)
+        function renderAllSections() {
+            const assets = getAssets();
+            const logs = getServiceLogs();
+            const ledger = getLedgerLogs();
+            const today = new Date().toISOString().split('T')[0];
 
-            if (dateMatchText) {
-                let day = dateMatchText[1].padStart(2, '0');
-                let monthStr = dateMatchText[2].toLowerCase();
-                let year = dateMatchText[3];
-                let month = monthMap[monthStr] || monthMap[monthStr.substring(0, 3)] || '01';
-                purchaseDate = `${year}-${month}-${day}`;
-            } else if (dateMatchNum) {
-                let d1 = dateMatchNum[1].padStart(2, '0');
-                let d2 = dateMatchNum[2].padStart(2, '0');
-                let year = dateMatchNum[3];
-                purchaseDate = `${year}-${d2}-${d1}`;
-            }
+            let overdueCount = 0;
+            let overdueItemsHtml = '';
+            
+            const tbody = document.getElementById('service-history-tbody');
+            tbody.innerHTML = '';
 
-            // 3. EXTRACT SUPPLIER / VENDOR
-            let supplier = '';
-            for (let line of lines) {
-                // Cari nama syarikat/pembekal di bahagian atas
-                if (/(sdn\.?\s*bhd|enterprise|trading|perniagaan|services|store|co\.|ltd)/i.test(line)) {
-                    // Elakkan ambil nama penerima "Kepada: Perniagaan..." jika pembekal di atas
-                    if (!/kepada|to\s*:/i.test(line)) {
-                        supplier = line.replace(/^(invois|invoice|asal|salinan)\s*/ie, '').trim();
-                        break;
-                    }
-                }
-            }
-            if (!supplier) {
-                // Fallback: Cari baris berdekatan INVOIS
-                const invIndex = lines.findIndex(l => /invois|invoice/i.test(l));
-                if (invIndex !== -1 && lines[invIndex + 1]) {
-                    supplier = lines[invIndex + 1].replace(/^(asal|salinan)/i, '').trim();
-                }
-            }
+            let rowCounter = 1;
+            let totalProjectedRows = 0;
 
-            // 4. EXTRACT ASSET NAME & UNIT PRICE & QUANTITY
-            let assetName = '';
-            let unitPrice = 0;
-            let quantity = 1;
+            assets.forEach((asset) => {
+                const initialLastDate = asset.lastServiceDate;
+                const intervalMonths = parseInt(asset.serviceIntervalMonths);
+                const usefulLifeYrs = parseInt(asset.usefulLife);
 
-            // Cari perenggan butiran jadual (Meja, Kerusi, Laptop, etc.)
-            for (let line of lines) {
-                if (/invois|tarikh|kepada|jumlah|diskaun|ringgit|syarat|serahan|asal|no:/i.test(line)) continue;
+                // If asset has valid service parameters, calculate cycles up to today
+                if (initialLastDate && intervalMonths > 0 && usefulLifeYrs > 0) {
+                    const totalCycles = Math.floor((usefulLifeYrs * 12) / intervalMonths);
+                    const customDates = (logs[asset.id] && logs[asset.id].customNextDates) || {};
 
-                // Memadankan baris dengan nama item dan harga
-                const hasNumbers = /\d+/.test(line);
-                if (hasNumbers) {
-                    // Cari kata kunci item biasa
-                    const itemMatch = line.match(/\b(meja|kerusi|sofa|almari|laptop|komputer|pc|printer|desk|chair|cabinet|aircond)\b/i);
-                    if (itemMatch) {
-                        assetName = itemMatch[0].charAt(0).toUpperCase() + itemMatch[0].slice(1).toLowerCase();
-                    }
+                    for (let cycle = 1; cycle <= totalCycles; cycle++) {
+                        const prevDate = addMonthsToDate(initialLastDate, (cycle - 1) * intervalMonths);
+                        const calculatedNextDate = addMonthsToDate(initialLastDate, cycle * intervalMonths);
+                        
+                        // Check if user set a custom date for this cycle
+                        const nextDate = customDates[cycle] || calculatedNextDate;
 
-                    // Extract harga seunit / harga
-                    const priceMatches = line.match(/(?:RM\s*)?(\d+(?:[\.,]\d{2})?)/gi);
-                    if (priceMatches && priceMatches.length > 0) {
-                        const parsedPrices = priceMatches
-                            .map(p => parseFloat(p.replace(/RM/i, '').replace(',', '.').trim()))
-                            .filter(p => p > 0);
-                        if (parsedPrices.length > 0) {
-                            unitPrice = parsedPrices[0];
-                        }
-                    }
-                }
-            }
-
-            // Fallback nama aset jika tidak dijumpai dalam baris jadual
-            if (!assetName) {
-                const keywords = ['meja', 'kerusi', 'laptop', 'komputer', 'printer', 'sofa', 'almari', 'desk', 'chair'];
-                for (let line of lines) {
-                    for (let kw of keywords) {
-                        if (line.toLowerCase().includes(kw)) {
-                            assetName = kw.charAt(0).toUpperCase() + kw.slice(1);
+                        // JANA HINGGA TARIKH HARI INI SAHAJA
+                        if (nextDate > today) {
                             break;
                         }
+
+                        totalProjectedRows++;
+
+                        const vendor = (logs[asset.id] && logs[asset.id].vendor) || asset.supplier || '-';
+                        const cost = (logs[asset.id] && logs[asset.id].cost !== undefined) ? parseFloat(logs[asset.id].cost) : 0;
+                        const isOverdue = nextDate !== '-' && nextDate < today;
+
+                        if (isOverdue) {
+                            overdueCount++;
+                            overdueItemsHtml += `
+                                <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13px;">
+                                    <span>⚠️ Asset <strong>${(asset.name || asset.assetName).toUpperCase()}</strong> (Cycle #${cycle}) requires servicing! (Due Date: <strong>${nextDate}</strong>)</span>
+                                    <div style="display:flex; gap: 8px; align-items: center;">
+                                        <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, ${cycle}, this.value)">
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="text-center">${rowCounter++}</td>
+                                <td class="text-left">
+                                    <strong>${(asset.name || asset.assetName || 'Asset').toUpperCase()}</strong>
+                                    <div style="font-size: 11px; color: #64748b;">(Service #${cycle} of ${totalCycles})</div>
+                                </td>
+                                <td class="text-center">${asset.category || '-'}</td>
+                                <td class="text-center">${asset.location || asset.deploymentDept || '-'}</td>
+                                <td class="text-center">${prevDate}</td>
+                                <td class="next-date-cell">
+                                    <input type="date" value="${nextDate}" class="inline-date-input" onchange="updateNextServiceDateDirect(${asset.id}, ${cycle}, this.value)">
+                                </td>
+                                <td class="text-center">${vendor}</td>
+                                <td class="text-right">RM ${cost.toFixed(2)}</td>
+                                <td class="text-center">
+                                    <span class="status-badge ${isOverdue ? 'status-overdue' : 'status-scheduled'}">
+                                        ${isOverdue ? '⚠️ OVERDUE' : '📅 SCHEDULED'}
+                                    </span>
+                                </td>
+                                <td class="no-print text-center">
+                                    <button onclick="promptDateUpdate(${asset.id}, ${cycle}, '${nextDate}')" class="btn-update-action">✏️ Update Date</button>
+                                </td>
+                            </tr>
+                        `;
                     }
-                    if (assetName) break;
+                }
+            });
+
+            if (totalProjectedRows === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="text-center" style="padding: 24px; color: #64748b;">No maintenance service projections found up to today's date. Ensure registered assets include Last Service Date, Service Interval, and Useful Life.</td></tr>`;
+                document.getElementById('overdue-badge-pill').innerText = '0 Overdue Services';
+                document.getElementById('alerts-container').innerHTML = `
+                    <div class="empty-alert-state">
+                        <div class="checkmark-circle">✓</div>
+                        <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded.</div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('overdue-badge-pill').innerText = `${overdueCount} Overdue Services`;
+                if (overdueCount > 0) {
+                    document.getElementById('alerts-container').innerHTML = overdueItemsHtml;
+                } else {
+                    document.getElementById('alerts-container').innerHTML = `
+                        <div class="empty-alert-state">
+                            <div class="checkmark-circle">✓</div>
+                            <div class="empty-alert-text">All clean. No active preventative maintenance schedules recorded.</div>
+                        </div>
+                    `;
                 }
             }
 
-            // 5. CLASSIFY CATEGORY AUTOMATICALLY
-            let category = 'Office Equipment';
-            const nameLower = (assetName || text).toLowerCase();
-            if (/meja|kerusi|sofa|almari|desk|chair|table|cabinet|rak/i.test(nameLower)) {
-                category = 'Furniture & Fittings';
-            } else if (/laptop|komputer|pc|computer|printer|monitor|server|ipad|tablet/i.test(nameLower)) {
-                category = 'Computers & IT Equipment';
-            } else if (/kereta|lori|van|motor|car|vehicle/i.test(nameLower)) {
-                category = 'Motor Vehicles';
+            // RENDER LEDGER
+            const ledgerTbody = document.getElementById('ledger-tbody');
+            ledgerTbody.innerHTML = '';
+
+            if (ledger.length === 0) {
+                ledgerTbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding: 20px; color: #64748b;">No maintenance ledger records found.</td></tr>`;
+            } else {
+                ledger.forEach((item, index) => {
+                    ledgerTbody.innerHTML += `
+                        <tr>
+                            <td class="text-center">${index + 1}</td>
+                            <td class="text-center">${item.serviceDate}</td>
+                            <td class="text-left"><strong>${(item.assetName || '-').toUpperCase()}</strong></td>
+                            <td class="text-center">${item.invoiceNo || '-'}</td>
+                            <td class="text-center">${item.vendor || '-'}</td>
+                            <td class="text-right">RM ${parseFloat(item.cost).toFixed(2)}</td>
+                            <td class="next-date-cell">${item.nextServiceDate}</td>
+                            <td class="no-print text-center">
+                                <button onclick="editLedgerEntry(${item.id})" class="btn-update-action" style="margin-right: 4px;">✏️ Edit</button>
+                                <button onclick="deleteLedgerEntry(${item.id})" class="btn-delete-action">🗑️ Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
-
-            return {
-                assetName: assetName || '',
-                supplier: supplier || '',
-                invoiceNo: invoiceNo || '',
-                purchaseDate: purchaseDate || new Date().toISOString().split('T')[0],
-                category: category,
-                unitPrice: unitPrice || 0,
-                quantity: quantity
-            };
         }
 
-        // ISIKAN BORANG DENGAN DATA OCR
-        function populateForm(data) {
-            if (data.assetName) document.getElementById('asset-name').value = data.assetName;
-            if (data.supplier) document.getElementById('supplier-name').value = data.supplier;
-            if (data.invoiceNo) document.getElementById('invoice-no').value = data.invoiceNo;
-            if (data.purchaseDate) document.getElementById('purchase-date').value = data.purchaseDate;
-            if (data.category) document.getElementById('category').value = data.category;
-            if (data.quantity) document.getElementById('quantity').value = data.quantity;
-            if (data.unitPrice) document.getElementById('unit-price').value = data.unitPrice.toFixed(2);
-            
-            calculateTotal();
-        }
-
-        // SIMPAN ASET KE REGISTRI (LOCALSTORAGE)
-        function saveAsset(e) {
-            e.preventDefault();
-
-            const newAsset = {
-                id: 'AST-' + Date.now(),
-                name: document.getElementById('asset-name').value,
-                assetName: document.getElementById('asset-name').value,
-                supplier: document.getElementById('supplier-name').value,
-                invoiceNo: document.getElementById('invoice-no').value,
-                category: document.getElementById('category').value,
-                purchaseDate: document.getElementById('purchase-date').value,
-                location: document.getElementById('location').value,
-                quantity: parseInt(document.getElementById('quantity').value) || 1,
-                unitPrice: parseFloat(document.getElementById('unit-price').value) || 0,
-                cost: parseFloat(document.getElementById('total-cost').value) || 0,
-                salvageValue: parseFloat(document.getElementById('salvage-value').value) || 0,
-                usefulLife: parseInt(document.getElementById('useful-life').value) || 5,
-                method: document.getElementById('amortization-method').value
-            };
-
-            const existingAssets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
-            existingAssets.push(newAsset);
-            localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(existingAssets));
-
-            alert('✅ Aset berjaya didaftarkan ke dalam Ledger / Asset Register!');
-            window.location.href = 'assetregister.html';
-        }
-
-        // SET DEFAULT TARIKH HARI INI JIKA KOSONG
+        // INITIALIZE ON LOAD
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('purchase-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('input-service-date').value = new Date().toISOString().split('T')[0];
+            loadAssetDropdown();
+            renderAllSections();
         });
+        window.addEventListener('storage', renderAllSections);
     </script>
 </body>
 </html>
