@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice Manager - Susut Nilai Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+    <!-- Tesseract digunakan sebagai fallback jika Gemini gagal -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -16,57 +17,55 @@
         }
 
         body {
-            background-color: #f8fafc;
+            background: #f8fafc;
             color: #0f172a;
             min-height: 100vh;
             padding-bottom: 60px;
         }
 
-        /* HEADER NAVIGATION */
         header {
-            background-color: #ffffff;
+            background: #fff;
             padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #f1f5f9;
             margin-bottom: 24px;
+            gap: 20px;
         }
 
         .brand-title {
             font-size: 20px;
             font-weight: 800;
             color: #0f172a;
+            white-space: nowrap;
         }
 
         .top-nav {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
         }
 
         .nav-btn {
-            padding: 9px 16px;
+            padding: 9px 12px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
-            background-color: #f1f5f9;
+            background: #f1f5f9;
             color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
         }
 
         .nav-btn:hover {
-            background-color: #e2e8f0;
-            color: #0f172a;
+            background: #e2e8f0;
         }
 
         .nav-btn.active {
-            background-color: #2563eb;
-            color: #ffffff;
+            background: #2563eb;
+            color: #fff;
         }
 
         .container {
@@ -75,80 +74,103 @@
             padding: 0 16px;
         }
 
-        /* TWO COLUMN LAYOUT */
         .grid-layout {
             display: grid;
-            grid-template-columns: 1fr 1.3fr;
+            grid-template-columns: 1fr 1.2fr;
             gap: 24px;
         }
 
-        @media (max-width: 1024px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* CARD STYLING */
         .card {
-            background: #ffffff;
+            background: #fff;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 1px 3px rgba(0,0,0,.02);
         }
 
-        .card-header-title {
-            font-size: 16px;
-            font-weight: 800;
-            color: #0f172a;
+        .card-title-box {
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
             margin-bottom: 20px;
         }
 
-        /* FILE UPLOAD DROPZONE */
-        .dropzone {
+        .api-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .api-box label {
+            color: #1e3a8a;
+            margin-bottom: 7px;
+        }
+
+        .api-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .api-row input {
+            flex: 1;
+        }
+
+        .small-btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-weight: 700;
+            background: #1d4ed8;
+            color: #fff;
+        }
+
+        .small-btn.secondary {
+            background: #64748b;
+        }
+
+        .upload-zone {
             border: 2px dashed #cbd5e1;
             border-radius: 12px;
-            padding: 32px 20px;
+            padding: 32px 16px;
             text-align: center;
-            background-color: #f8fafc;
+            background: #f8fafc;
             cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
+            transition: .2s;
         }
 
-        .dropzone:hover {
+        .upload-zone:hover,
+        .upload-zone.dragover {
             border-color: #2563eb;
-            background-color: #eff6ff;
+            background: #eff6ff;
         }
 
-        .dropzone input[type="file"] {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .dropzone-icon {
-            font-size: 36px;
+        .upload-icon {
+            font-size: 42px;
             margin-bottom: 12px;
         }
 
-        .dropzone-title {
-            font-size: 14px;
+        .upload-title {
+            font-size: 15px;
             font-weight: 700;
-            color: #1e293b;
             margin-bottom: 4px;
         }
 
-        .dropzone-subtitle {
+        .upload-hint {
             font-size: 12px;
             color: #64748b;
         }
 
-        .preview-img-container {
+        #file-input {
+            display: none;
+        }
+
+        .preview-container {
             margin-top: 16px;
             display: none;
             text-align: center;
@@ -156,55 +178,68 @@
 
         .preview-img {
             max-width: 100%;
-            max-height: 300px;
+            max-height: 420px;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
-            object-fit: contain;
         }
 
-        /* OCR PROGRESS STATUS & DEBUG */
-        .ocr-status {
-            display: none;
+        .status-box {
             margin-top: 16px;
-            padding: 12px;
+            padding: 12px 16px;
             border-radius: 8px;
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            line-height: 1.4;
-        }
-
-        .ocr-debug-box {
+            font-size: 13px;
             display: none;
-            margin-top: 12px;
-            padding: 10px;
-            background-color: #1e293b;
-            color: #38bdf8;
-            font-family: monospace;
-            font-size: 11px;
-            border-radius: 8px;
-            max-height: 140px;
-            overflow-y: auto;
-            white-space: pre-wrap;
         }
 
-        /* FORM STYLING */
+        .status-loading {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .status-success {
+            background: #f0fdf4;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-error {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        .tips-box {
+            margin-top: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 12px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        .raw-box {
+            margin-top: 12px;
+            display: none;
+        }
+
+        .raw-box textarea {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 12px;
+            font-family: Consolas, monospace;
+        }
+
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
+            grid-template-columns: 1fr 1fr;
             gap: 16px;
-        }
-
-        .col-12 { grid-column: span 12; }
-        .col-8 { grid-column: span 8; }
-        .col-6 { grid-column: span 6; }
-        .col-4 { grid-column: span 4; }
-
-        @media (max-width: 640px) {
-            .col-8, .col-6, .col-4 { grid-column: span 12; }
         }
 
         .form-group {
@@ -213,534 +248,1195 @@
             gap: 6px;
         }
 
-        .form-label {
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
             font-size: 11px;
             font-weight: 800;
             color: #334155;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: .5px;
         }
 
-        .form-label span.req {
+        label .required {
             color: #dc2626;
         }
 
-        .form-control {
-            padding: 9px 12px;
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             font-size: 13px;
             color: #0f172a;
             outline: none;
-            background-color: #ffffff;
-            transition: border-color 0.2s;
+            background: #fff;
         }
 
-        .form-control:focus {
+        input:focus, select:focus {
             border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            box-shadow: 0 0 0 3px rgba(37,99,235,.1);
         }
 
-        .section-divider {
-            grid-column: span 12;
-            border-top: 1px solid #f1f5f9;
-            margin: 8px 0;
-            padding-top: 12px;
-        }
-
-        .section-title {
-            font-size: 12px;
-            font-weight: 800;
-            color: #475569;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        input[readonly] {
+            background: #f1f5f9;
+            color: #64748b;
         }
 
         .btn-submit {
-            background-color: #2563eb;
-            color: #ffffff;
+            grid-column: span 2;
+            background: #2563eb;
+            color: #fff;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 8px;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            transition: background-color 0.2s;
             margin-top: 8px;
         }
 
         .btn-submit:hover {
-            background-color: #1d4ed8;
+            background: #1d4ed8;
+        }
+
+        .confidence {
+            display: none;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 12px;
+            color: #475569;
+        }
+
+        @media (max-width: 992px) {
+            header {
+                padding: 16px;
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width,
+            .btn-submit {
+                grid-column: span 1;
+            }
+
+            .api-row {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
+
 <body>
+<header>
+    <div class="brand-title">Susut Nilai Pro</div>
 
-    <header>
-        <div class="brand-title">Susut Nilai Pro</div>
-        <div class="top-nav">
-            <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
-            <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
-            <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
-            <a href="invoicemanager.html" class="nav-btn active">📄 Invoice Manager</a>
-            <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
-            <a href="index.html" class="nav-btn">Log Out</a>
-        </div>
-    </header>
-
-    <div class="container">
-        <div class="grid-layout">
-            
-            <div class="card">
-                <div class="card-header-title">
-                    📷 Scan Invoice / Receipt Document
-                </div>
-
-                <div class="dropzone" id="dropzone">
-                    <input type="file" id="invoice-file" accept="image/*,.pdf" onchange="processDocument(event)">
-                    <div class="dropzone-icon">📄</div>
-                    <div class="dropzone-title">Muat Naik Invois / Scan Dokumen</div>
-                    <div class="dropzone-subtitle">Menyokong JPG, PNG, WEBP & PDF</div>
-                </div>
-
-                <div class="preview-img-container" id="preview-container">
-                    <img id="invoice-preview" class="preview-img" alt="Invoice Preview">
-                </div>
-
-                <div class="ocr-status" id="ocr-status">
-                    ⏳ Memproses imbasan dokumen... Sila tunggu.
-                </div>
-
-                <div class="ocr-debug-box" id="ocr-debug-box"></div>
-            </div>
-
-            <div class="card">
-                <div class="card-header-title">
-                    📝 Extracted Asset Details
-                </div>
-
-                <form id="asset-form" onsubmit="saveExtractedAsset(event)">
-                    <div class="form-grid">
-                        
-                        <div class="form-group col-12">
-                            <label class="form-label">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
-                            <input type="text" id="assetName" class="form-control" placeholder="Cth: Meja" required>
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">SUPPLIER / VENDOR <span class="req">*</span></label>
-                            <input type="text" id="supplier" class="form-control" placeholder="Cth: Jonas Enterprise" required>
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">REF / INVOICE NO. <span class="req">*</span></label>
-                            <input type="text" id="invoiceNo" class="form-control" placeholder="Cth: 221" required>
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">CATEGORY</label>
-                            <select id="category" class="form-control">
-                                <option value="Furniture & Fittings">Furniture & Fittings</option>
-                                <option value="Computers">Computers</option>
-                                <option value="Office Equipment">Office Equipment</option>
-                                <option value="Motor Vehicles">Motor Vehicles</option>
-                                <option value="Machinery">Machinery</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">PURCHASE DATE</label>
-                            <input type="date" id="purchaseDate" class="form-control" required>
-                        </div>
-
-                        <div class="form-group col-12">
-                            <label class="form-label">LOCATION / DEPT <span class="req">*</span></label>
-                            <input type="text" id="location" class="form-control" placeholder="Cth: Main Office HQ" value="Main Office HQ" required>
-                        </div>
-
-                        <div class="form-group col-4">
-                            <label class="form-label">QUANTITY / UNIT</label>
-                            <input type="number" id="quantity" class="form-control" value="1" min="1" oninput="calculateTotal()">
-                        </div>
-
-                        <div class="form-group col-4">
-                            <label class="form-label">UNIT PRICE (RM)</label>
-                            <input type="number" step="0.01" id="unitPrice" class="form-control" value="0.00" oninput="calculateTotal()">
-                        </div>
-
-                        <div class="form-group col-4">
-                            <label class="form-label">TOTAL COST (RM)</label>
-                            <input type="number" step="0.01" id="totalCost" class="form-control" value="0.00" readonly style="background-color: #f1f5f9; font-weight: 700;">
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">ESTIMATED SALVAGE (RM)</label>
-                            <input type="number" step="0.01" id="salvage" class="form-control" value="0.00">
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">USEFUL LIFE (YRS)</label>
-                            <input type="number" id="usefulLife" class="form-control" value="5" min="1">
-                        </div>
-
-                        <div class="form-group col-12">
-                            <label class="form-label">AMORTIZATION METHOD</label>
-                            <select id="amortizationMethod" class="form-control">
-                                <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
-                                <option value="Reducing Balance">Reducing Balance Method</option>
-                            </select>
-                        </div>
-
-                        <div class="section-divider">
-                            <div class="section-title">🔧 Preventive Servicing Intervals</div>
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">LAST SERVICE DATE</label>
-                            <input type="date" id="lastServiceDate" class="form-control">
-                        </div>
-
-                        <div class="form-group col-6">
-                            <label class="form-label">SERVICE INTERVAL (MONTHS)</label>
-                            <input type="number" id="serviceInterval" class="form-control" placeholder="Cth: 6" min="1">
-                        </div>
-
-                        <div class="col-12" style="margin-top: 12px;">
-                            <button type="submit" class="btn-submit">
-                                💾 Save Asset to Register
-                            </button>
-                        </div>
-
-                    </div>
-                </form>
-            </div>
-
-        </div>
+    <div class="top-nav">
+        <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
+        <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
+        <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
+        <a href="invoicemanager.html" class="nav-btn active">📄 Invoice Manager</a>
+        <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
+        <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
+        <a href="index.html" class="nav-btn">Log Out</a>
     </div>
+</header>
 
-    <script>
-        const STORAGE_KEY = 'susut_nilai_assets';
+<div class="container">
+    <div class="grid-layout">
 
-        if (window.pdfjsLib) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        <!-- LEFT -->
+        <div class="card">
+            <div class="card-title-box">📷 Scan Invoice / Receipt Document</div>
+
+            <div class="api-box">
+                <label for="gemini-api-key">GEMINI API KEY</label>
+                <div class="api-row">
+                    <input
+                        type="password"
+                        id="gemini-api-key"
+                        placeholder="Masukkan Gemini API Key"
+                        autocomplete="off"
+                    >
+                    <button class="small-btn" type="button" onclick="saveApiKey()">Simpan</button>
+                    <button class="small-btn secondary" type="button" onclick="clearApiKey()">Padam</button>
+                </div>
+                <div style="font-size:11px;color:#475569;margin-top:7px;">
+                    API key digunakan untuk analisis invoice oleh Gemini. Untuk aplikasi sebenar,
+                    lebih selamat panggil Gemini melalui backend dan hadkan key mengikut domain.
+                </div>
+            </div>
+
+            <div
+                class="upload-zone"
+                id="drop-zone"
+                onclick="document.getElementById('file-input').click()"
+            >
+                <div class="upload-icon">📄</div>
+                <div class="upload-title">Muat Naik Invois / Scan Dokumen</div>
+                <div class="upload-hint">JPG, PNG, WEBP & PDF</div>
+                <input
+                    type="file"
+                    id="file-input"
+                    accept="image/jpeg,image/png,image/webp,application/pdf"
+                    onchange="handleFileSelect(event)"
+                >
+            </div>
+
+            <div class="preview-container" id="preview-container">
+                <img id="image-preview" class="preview-img" alt="Invoice Preview">
+            </div>
+
+            <div id="status-box" class="status-box"></div>
+
+            <div id="confidence-box" class="confidence"></div>
+
+            <div class="raw-box" id="raw-box">
+                <label>RAW OCR / GEMINI RESULT</label>
+                <textarea id="raw-text" readonly></textarea>
+            </div>
+
+            <div class="tips-box">
+                💡 <strong>Petua:</strong> Gunakan gambar yang terang, tidak senget, tidak kabur
+                dan pastikan keseluruhan invoice kelihatan. Sistem akan cuba menggunakan
+                <strong>Gemini Vision</strong> terlebih dahulu dan <strong>Tesseract</strong>
+                sebagai fallback.
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="card">
+            <div class="card-title-box">📝 Extracted Asset Details</div>
+
+            <form id="asset-form" onsubmit="saveAsset(event)">
+                <div class="form-grid">
+
+                    <div class="form-group full-width">
+                        <label for="asset-name">
+                            ASSET NAME / DESCRIPTION <span class="required">*</span>
+                        </label>
+                        <input type="text" id="asset-name" placeholder="Cth: Meja Pejabat" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="supplier-name">
+                            SUPPLIER / VENDOR <span class="required">*</span>
+                        </label>
+                        <input type="text" id="supplier-name" placeholder="Cth: Jonas Enterprise" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoice-no">
+                            REF / INVOICE NO. <span class="required">*</span>
+                        </label>
+                        <input type="text" id="invoice-no" placeholder="Cth: INV-221" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">CATEGORY</label>
+                        <select id="category">
+                            <option value="Furniture & Fittings">Furniture & Fittings</option>
+                            <option value="Computers & IT Equipment">Computers & IT Equipment</option>
+                            <option value="Office Equipment">Office Equipment</option>
+                            <option value="Motor Vehicles">Motor Vehicles</option>
+                            <option value="Plant & Machinery">Plant & Machinery</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="purchase-date">PURCHASE DATE</label>
+                        <input type="date" id="purchase-date">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">
+                            LOCATION / DEPT <span class="required">*</span>
+                        </label>
+                        <input type="text" id="location" value="Main Office HQ" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">QUANTITY / UNIT</label>
+                        <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="unit-price">UNIT PRICE (RM)</label>
+                        <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total-cost">TOTAL COST (RM)</label>
+                        <input type="number" step="0.01" id="total-cost" placeholder="0.00" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salvage-value">ESTIMATED SALVAGE (RM)</label>
+                        <input type="number" step="0.01" id="salvage-value" value="0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="useful-life">USEFUL LIFE (YRS)</label>
+                        <input type="number" id="useful-life" value="5" min="1">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="amortization-method">DEPRECIATION / AMORTIZATION METHOD</label>
+                        <select id="amortization-method">
+                            <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
+                            <option value="Reducing Balance">Reducing Balance</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        💾 Save Asset to Register
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* =========================================================
+   SUSUT NILAI PRO - INVOICE MANAGER
+   Gemini Vision = OCR + document understanding
+   Tesseract = fallback
+   ========================================================= */
+
+const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
+const GEMINI_KEY_STORAGE = 'susut_nilai_gemini_api_key';
+
+/*
+ * Model yang digunakan.
+ * Jika model ini tidak tersedia pada akaun/API key anda,
+ * tukar kepada model Gemini yang tersedia dalam Google AI Studio.
+ */
+const GEMINI_MODEL = 'gemini-2.5-flash';
+
+let currentFile = null;
+let currentProcessedDataUrl = null;
+
+/* ---------- UI ---------- */
+
+function showStatus(message, type) {
+    const box = document.getElementById('status-box');
+    box.style.display = 'block';
+    box.className = `status-box status-${type}`;
+    box.innerHTML = message;
+}
+
+function showConfidence(message) {
+    const box = document.getElementById('confidence-box');
+    box.style.display = 'block';
+    box.innerHTML = message;
+}
+
+function hideConfidence() {
+    document.getElementById('confidence-box').style.display = 'none';
+}
+
+function showRawText(text) {
+    const box = document.getElementById('raw-box');
+    const textarea = document.getElementById('raw-text');
+    box.style.display = 'block';
+    textarea.value = typeof text === 'string'
+        ? text
+        : JSON.stringify(text, null, 2);
+}
+
+function calculateTotal() {
+    const qty = parseFloat(document.getElementById('quantity').value) || 0;
+    const price = parseFloat(document.getElementById('unit-price').value) || 0;
+
+    document.getElementById('total-cost').value =
+        (qty * price).toFixed(2);
+}
+
+/* ---------- API KEY ---------- */
+
+function saveApiKey() {
+    const key = document.getElementById('gemini-api-key').value.trim();
+
+    if (!key) {
+        alert('Sila masukkan Gemini API Key.');
+        return;
+    }
+
+    localStorage.setItem(GEMINI_KEY_STORAGE, key);
+    showStatus('🔑 Gemini API Key berjaya disimpan pada browser ini.', 'success');
+}
+
+function clearApiKey() {
+    localStorage.removeItem(GEMINI_KEY_STORAGE);
+    document.getElementById('gemini-api-key').value = '';
+    showStatus('🗑️ Gemini API Key telah dipadam daripada browser.', 'success');
+}
+
+function getApiKey() {
+    return (
+        document.getElementById('gemini-api-key').value.trim() ||
+        localStorage.getItem(GEMINI_KEY_STORAGE) ||
+        ''
+    );
+}
+
+/* ---------- FILE HANDLING ---------- */
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) processSelectedFile(file);
+}
+
+async function processSelectedFile(file) {
+    currentFile = file;
+    hideConfidence();
+
+    if (!file.type.startsWith('image/') && file.type !== 'application/pdf') {
+        showStatus('⚠️ Format fail tidak disokong.', 'error');
+        return;
+    }
+
+    try {
+        showStatus('⏳ Menyediakan dokumen untuk OCR...', 'loading');
+
+        const imageDataUrl = await convertFileToImage(file);
+
+        currentProcessedDataUrl = await preprocessImage(imageDataUrl);
+
+        const preview = document.getElementById('image-preview');
+        preview.src = currentProcessedDataUrl;
+        document.getElementById('preview-container').style.display = 'block';
+
+        await processOCR(currentProcessedDataUrl, file);
+    } catch (error) {
+        console.error(error);
+        showStatus('❌ Gagal menyediakan dokumen: ' + escapeHtml(error.message), 'error');
+    }
+}
+
+function convertFileToImage(file) {
+    return new Promise((resolve, reject) => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Gagal membaca gambar.'));
+            reader.readAsDataURL(file);
+            return;
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
-        });
+        /*
+         * Untuk PDF, browser tidak boleh terus dihantar sebagai imej.
+         * Versi ini cuba membaca PDF jika browser mempunyai PDF viewer,
+         * tetapi untuk ketepatan terbaik gunakan eksport halaman invoice
+         * kepada PNG/JPG.
+         */
+        reject(new Error(
+            'PDF diterima sebagai format input, tetapi untuk OCR paling stabil sila tukarkan halaman PDF kepada JPG/PNG dahulu.'
+        ));
+    });
+}
 
-        function calculateTotal() {
-            const qty = parseFloat(document.getElementById('quantity').value) || 0;
-            const price = parseFloat(document.getElementById('unitPrice').value) || 0;
-            document.getElementById('totalCost').value = (qty * price).toFixed(2);
-        }
+/* ---------- IMAGE PREPROCESSING ---------- */
 
-        // 1. PEMPROSESAN DOKUMEN & ENJIN OCR
-        async function processDocument(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+function preprocessImage(dataUrl) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
 
-            const previewImg = document.getElementById('invoice-preview');
-            const previewContainer = document.getElementById('preview-container');
-            const statusDiv = document.getElementById('ocr-status');
-            const debugBox = document.getElementById('ocr-debug-box');
-
-            previewContainer.style.display = 'block';
-            statusDiv.style.display = 'block';
-            debugBox.style.display = 'none';
-            statusDiv.style.backgroundColor = '#eff6ff';
-            statusDiv.style.borderColor = '#bfdbfe';
-            statusDiv.style.color = '#1e40af';
-            statusDiv.innerHTML = '⏳ Memproses imbasan dokumen... Sila tunggu.';
-
+        img.onload = () => {
             try {
-                let imageSrc;
-
-                if (file.type === 'application/pdf') {
-                    statusDiv.innerHTML = '⏳ Menukar PDF kepada Imej...';
-                    imageSrc = await convertPdfToDataUrl(file);
-                } else {
-                    imageSrc = URL.createObjectURL(file);
-                }
-
-                previewImg.src = imageSrc;
-
-                statusDiv.innerHTML = '⏳ Meningkatkan kejelasan imej...';
-                const enhancedImage = await enhanceImageForOCR(imageSrc);
-
-                statusDiv.innerHTML = '⏳ Enjin OCR sedang membaca teks...';
-
-                // Tesseract Execution
-                const result = await Tesseract.recognize(enhancedImage, 'eng', {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            statusDiv.innerHTML = `⏳ Membaca Dokumen: ${Math.round(m.progress * 100)}%`;
-                        }
-                    }
-                });
-
-                const rawText = result.data.text;
-                statusDiv.style.display = 'none';
-
-                // Papar teks imbasan untuk tujuan rujukan/debug
-                debugBox.style.display = 'block';
-                debugBox.textContent = "--- TEKS SEBENAR OCR ---\n" + rawText;
-
-                // Memproses teks dan memetakan nilai ke borang
-                parseAndFillForm(rawText);
-
-            } catch (error) {
-                console.error("OCR Error: ", error);
-                statusDiv.style.display = 'block';
-                statusDiv.style.backgroundColor = '#fef2f2';
-                statusDiv.style.borderColor = '#fca5a5';
-                statusDiv.style.color = '#991b1b';
-                statusDiv.innerHTML = '❌ Gagal membaca dokumen secara automatik. Sila isi borang secara manual.';
-            }
-        }
-
-        function convertPdfToDataUrl(file) {
-            return new Promise((resolve, reject) => {
-                const fileReader = new FileReader();
-                fileReader.onload = function() {
-                    const typedarray = new Uint8Array(this.result);
-                    pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-                        pdf.getPage(1).then(page => {
-                            const viewport = page.getViewport({ scale: 2.0 });
-                            const canvas = document.createElement('canvas');
-                            const context = canvas.getContext('2d');
-                            canvas.height = viewport.height;
-                            canvas.width = viewport.width;
-
-                            page.render({ canvasContext: context, viewport: viewport }).promise.then(() => {
-                                resolve(canvas.toDataURL('image/png'));
-                            });
-                        });
-                    }).catch(reject);
-                };
-                fileReader.readAsArrayBuffer(file);
-            });
-        }
-
-        // 2. PENAPIS BINARISASI IMEJ (MEMBANTU MENINGKATKAN KETEPATAN OCR)
-        function enhanceImageForOCR(imgSrc) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-
-                    let scale = 1.8;
-                    canvas.width = img.width * scale;
-                    canvas.height = img.height * scale;
-
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    const data = imgData.data;
-
-                    for (let i = 0; i < data.length; i += 4) {
-                        let gray = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-                        let v = (gray < 165) ? 0 : 255;
-                        data[i] = v;
-                        data[i + 1] = v;
-                        data[i + 2] = v;
-                    }
-
-                    ctx.putImageData(imgData, 0, 0);
-                    resolve(canvas.toDataURL('image/png'));
-                };
-                img.onerror = () => resolve(imgSrc);
-                img.src = imgSrc;
-            });
-        }
-
-        // 3. LOGIK PEMPROSESAN TEKS TEKAD (PARSER INVOIS)
-        function parseAndFillForm(text) {
-            // Normalisasi huruf dan simbol biasa OCR
-            let cleanedText = text
-                .replace(/([0-9])O/g, '$10')
-                .replace(/O([0-9])/g, '0$1')
-                .replace(/N[0O][\:\.]?/gi, 'NO:')
-                .replace(/[\|]/g, ' ');
-
-            const lines = cleanedText.split('\n').map(l => l.trim()).filter(Boolean);
-
-            // A. NOMBOR INVOIS (REF / INVOICE NO.) -> Mengambil contoh "NO: 221"
-            let invNo = '';
-            const invMatch = cleanedText.match(/(?:NO|INV|INVOIS|INVOICE|REF|RUJUKAN)[\s\:\.\#\-]+([A-Z0-9\-\/]{1,15})/i);
-            
-            if (invMatch && invMatch[1]) {
-                invNo = invMatch[1].trim();
-            } else {
-                const topText = lines.slice(0, 6).join(' ');
-                const numMatch = topText.match(/\b(\d{3,6})\b/);
-                if (numMatch) invNo = numMatch[1];
-            }
-            if (invNo) document.getElementById('invoiceNo').value = invNo;
-
-            // B. NAMA PEMBEKAL / VENDOR (Contoh: "JONAS ENTERPRISE")
-            let supplier = '';
-            const supplierLine = lines.find(l => 
-                /ENTERPRISE|SDN\s*BHD|PERNIAGAAN|TRADERS|STORE|SUPPLY|CO\.|LIMITED|PLT|SERVICES/i.test(l)
-            );
-            if (supplierLine) {
-                supplier = supplierLine.replace(/^(INVOIS|INVOICE|BELIAN|ASAL|SALINAN|NOTA)\s*/i, '').trim();
-                document.getElementById('supplier').value = supplier;
-            }
-
-            // C. TARIKH BELIAN (Contoh: "4 Okt 2010" -> "2010-10-04")
-            const dateMatch = cleanedText.match(/(\d{1,2})[\s\/\.-]+([A-Za-z]{3,9}|\d{1,2})[\s\/\.-]+(\d{4})/);
-            if (dateMatch) {
-                let day = dateMatch[1].padStart(2, '0');
-                let monthStr = dateMatch[2].toLowerCase();
-                let year = dateMatch[3];
-
-                const monthMap = {
-                    'jan': '01', 'januari': '01', 'feb': '02', 'februari': '02',
-                    'mac': '03', 'mar': '03', 'apr': '04', 'april': '04',
-                    'mei': '05', 'may': '05', 'jun': '06', 'julai': '07', 'jul': '07',
-                    'ogo': '08', 'ogos': '08', 'aug': '08', 'sep': '09', 'september': '09',
-                    'okt': '10', 'oktober': '10', 'oct': '10', 'nov': '11', 'november': '11',
-                    'dis': '12', 'disember': '12', 'dec': '12'
-                };
-
-                let month = monthMap[monthStr] || monthStr.padStart(2, '0');
-                if (month.length === 2 && !isNaN(month)) {
-                    document.getElementById('purchaseDate').value = `${year}-${month}-${day}`;
-                }
-            }
-
-            // D. ASSET NAME / DESCRIPTION -> Mengambil daripada butiran (Contoh: "Meja")
-            let extractedAsset = '';
-            let isInsideTable = false;
-
-            for (let i = 0; i < lines.length; i++) {
-                let line = lines[i];
-
-                if (/Butir|Perkara|Description|Item|No\s*Rujukan/i.test(line)) {
-                    isInsideTable = true;
-                    continue;
-                }
-
-                if (/JUMLAH|TOTAL|Tolak|Diskaun|Ringgit|Syarat|Serahan|Pengurus/i.test(line)) {
-                    isInsideTable = false;
-                }
-
-                if (isInsideTable) {
-                    // Buang nombor indeks rujukan di awal baris (cth: "01 ", "1 ")
-                    let candidate = line.replace(/^[0-9\.\s\-\:\#]+/, '');
-                    
-                    // Buang nombor kuantiti dan harga di hujung baris (cth: " 1 600 600", " 600.00")
-                    candidate = candidate.replace(/[\s0-9\.\,\=\+\-]+$/, '').trim();
-
-                    if (candidate.length >= 2 && !/^(Butir|Kuantiti|Harga|Seunit|Jumlah|RM|unit|No|Rujukan)$/i.test(candidate)) {
-                        extractedAsset = candidate;
-                        break;
-                    }
-                }
-            }
-
-            // Carian Simpanan (Fallback) sekiranya susunan baris jadual terabai
-            if (!extractedAsset) {
-                const itemLine = lines.find(l => 
-                    !/INVOIS|BELIAN|KEPADA|TAMAN|BESUT|RINGGIT|JUMLAH|SYARAT|SERAHAN|PENGURUS|TEL|TARIKH|RUJUKAN|BUTIR|KUANTITI|HARGA|DISKAUN/i.test(l) &&
-                    /[A-Za-z]{3,}/.test(l)
+                /*
+                 * Upscale: teks kecil lebih mudah dibaca OCR.
+                 * Had maksimum mengelakkan canvas terlalu besar.
+                 */
+                const scale = Math.min(
+                    2.5,
+                    Math.max(1.5, 1800 / Math.max(img.width, img.height))
                 );
-                if (itemLine) {
-                    extractedAsset = itemLine.replace(/^[0-9\.\s\-\:]+/, '').replace(/[\s0-9\.\,\=\+\-]+$/, '').trim();
+
+                const width = Math.min(Math.round(img.width * scale), 5000);
+                const height = Math.min(Math.round(img.height * scale), 7000);
+
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const imageData = ctx.getImageData(0, 0, width, height);
+                const data = imageData.data;
+
+                /*
+                 * Grayscale + contrast enhancement.
+                 * Tidak memaksa threshold hitam/putih kerana invoice
+                 * moden kadang-kadang mempunyai logo dan warna.
+                 */
+                const contrast = 1.25;
+                const midpoint = 128;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+
+                    let gray =
+                        0.299 * r +
+                        0.587 * g +
+                        0.114 * b;
+
+                    gray = ((gray - midpoint) * contrast) + midpoint;
+                    gray = Math.max(0, Math.min(255, gray));
+
+                    data[i] = gray;
+                    data[i + 1] = gray;
+                    data[i + 2] = gray;
                 }
+
+                ctx.putImageData(imageData, 0, 0);
+
+                resolve(canvas.toDataURL('image/jpeg', 0.92));
+            } catch (err) {
+                reject(err);
             }
+        };
 
-            if (extractedAsset) {
-                extractedAsset = extractedAsset.charAt(0).toUpperCase() + extractedAsset.slice(1);
-                document.getElementById('assetName').value = extractedAsset;
+        img.onerror = () => reject(new Error('Imej tidak dapat diproses.'));
+        img.src = dataUrl;
+    });
+}
 
-                // Auto Select Category
-                if (/meja|kerusi|sofa|kabinet|almari|rak|katil/i.test(extractedAsset)) {
-                    document.getElementById('category').value = 'Furniture & Fittings';
-                } else if (/laptop|komputer|pc|desktop|monitor/i.test(extractedAsset)) {
-                    document.getElementById('category').value = 'Computers';
-                } else if (/printer|aircond|fotostat|fax|mesin/i.test(extractedAsset)) {
-                    document.getElementById('category').value = 'Office Equipment';
-                }
+/* ---------- OCR PIPELINE ---------- */
+
+async function processOCR(processedDataUrl, originalFile) {
+    const apiKey = getApiKey();
+
+    if (!apiKey) {
+        showStatus(
+            '⚠️ Gemini API Key belum dimasukkan. Masukkan API Key dahulu.',
+            'error'
+        );
+
+        /*
+         * Masih cuba Tesseract supaya sistem tidak terus berhenti.
+         */
+        await runTesseractFallback(processedDataUrl);
+        return;
+    }
+
+    try {
+        showStatus(
+            '🤖 Gemini sedang membaca invoice dan mengenal pasti setiap medan...',
+            'loading'
+        );
+
+        const result = await extractInvoiceWithGemini(
+            processedDataUrl,
+            originalFile
+        );
+
+        populateForm(result);
+
+        showRawText(result);
+
+        const confidence = calculateConfidence(result);
+
+        showConfidence(
+            `🤖 Gemini Vision berjaya membaca dokumen. ` +
+            `Anggaran keyakinan medan: <strong>${confidence}%</strong>. ` +
+            `Sila semak nombor invoice, tarikh dan harga sebelum simpan.`
+        );
+
+        showStatus(
+            '✅ Invoice berjaya dianalisis oleh Gemini dan borang telah diisi.',
+            'success'
+        );
+
+    } catch (error) {
+        console.error('Gemini error:', error);
+
+        showStatus(
+            '⚠️ Gemini gagal membaca dokumen. Mencuba Tesseract sebagai fallback...',
+            'loading'
+        );
+
+        await runTesseractFallback(processedDataUrl);
+    }
+}
+
+/* ---------- GEMINI VISION ---------- */
+
+async function extractInvoiceWithGemini(imageDataUrl, originalFile) {
+    const apiKey = getApiKey();
+
+    if (!apiKey) {
+        throw new Error('Gemini API Key tidak ditemui.');
+    }
+
+    const base64 = imageDataUrl.split(',')[1];
+
+    const prompt = `
+Anda ialah sistem OCR dan document extraction untuk Invoice Manager
+sebuah sistem pendaftaran aset.
+
+Baca imej invoice/receipt yang diberikan dengan sangat teliti.
+
+TUGAS:
+1. Kenal pasti nama pembekal/vendor.
+2. Kenal pasti nombor invoice/reference.
+3. Kenal pasti tarikh pembelian.
+4. Kenal pasti item/aset.
+5. Kenal pasti kuantiti.
+6. Kenal pasti harga seunit.
+7. Kenal pasti jumlah keseluruhan.
+8. Tentukan kategori aset berdasarkan item.
+9. Jika maklumat tidak kelihatan atau tidak wujud, kosongkan medan tersebut.
+10. JANGAN reka atau teka nilai yang tiada dalam dokumen.
+
+PERATURAN PENTING:
+- Kekalkan nombor invoice tepat seperti yang tertera.
+- Bezakan 0 dengan O, 1 dengan I, 5 dengan S dan 8 dengan B.
+- Harga mesti nombor sahaja tanpa RM.
+- Jika harga menggunakan koma sebagai perpuluhan, tukarkan kepada nombor decimal.
+- Tarikh mesti dalam format YYYY-MM-DD.
+- Jika terdapat beberapa item, gunakan item pertama yang kelihatan sebagai aset utama.
+- quantity mesti nombor bulat.
+- unitPrice ialah harga seunit item pertama.
+- totalCost ialah jumlah keseluruhan invoice jika jelas.
+- Jangan gunakan subtotal, tax atau discount sebagai totalCost kecuali itu memang jumlah akhir.
+- Jika tidak pasti, kosongkan nilai tersebut.
+- Jangan masukkan penerangan tambahan di luar JSON.
+
+KATEGORI YANG DIBENARKAN:
+Furniture & Fittings
+Computers & IT Equipment
+Office Equipment
+Motor Vehicles
+Plant & Machinery
+
+BAHASA:
+Invoice mungkin dalam Bahasa Melayu atau Bahasa Inggeris.
+`;
+
+    const schema = {
+        type: "object",
+        properties: {
+            assetName: {
+                type: "string",
+                description: "Nama item/aset pertama pada invoice. Kosong jika tidak jelas."
+            },
+            supplier: {
+                type: "string",
+                description: "Nama pembekal/vendor. Kosong jika tidak jelas."
+            },
+            invoiceNo: {
+                type: "string",
+                description: "Nombor invoice/reference. Kosong jika tidak jelas."
+            },
+            purchaseDate: {
+                type: "string",
+                description: "Tarikh pembelian dalam YYYY-MM-DD. Kosong jika tidak jelas."
+            },
+            category: {
+                type: "string",
+                enum: [
+                    "Furniture & Fittings",
+                    "Computers & IT Equipment",
+                    "Office Equipment",
+                    "Motor Vehicles",
+                    "Plant & Machinery"
+                ]
+            },
+            quantity: {
+                type: "integer",
+                description: "Kuantiti item pertama. Gunakan 0 jika tidak jelas."
+            },
+            unitPrice: {
+                type: "number",
+                description: "Harga seunit item pertama. Gunakan 0 jika tidak jelas."
+            },
+            totalCost: {
+                type: "number",
+                description: "Jumlah akhir invoice. Gunakan 0 jika tidak jelas."
+            },
+            confidence: {
+                type: "integer",
+                description: "Anggaran keyakinan keseluruhan 0 hingga 100."
             }
+        },
+        required: [
+            "assetName",
+            "supplier",
+            "invoiceNo",
+            "purchaseDate",
+            "category",
+            "quantity",
+            "unitPrice",
+            "totalCost",
+            "confidence"
+        ]
+    };
 
-            // E. HARGA SEUNIT & JUMLAH -> Mengambil bahagian JUMLAH (Contoh: 600)
-            let totalAmount = 0;
+    const endpoint =
+        `https://generativelanguage.googleapis.com/v1beta/models/` +
+        `${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
-            // 1. Cari nilai pada baris JUMLAH (cth: "JUMLAH 600")
-            const totalLine = lines.find(l => /^JUMLAH|^TOTAL/i.test(l));
-            if (totalLine) {
-                const matches = totalLine.match(/\b\d+(?:[\.\,]\d{1,2})?\b/g);
-                if (matches && matches.length > 0) {
-                    totalAmount = parseFloat(matches[matches.length - 1].replace(',', '.'));
-                }
-            }
-
-            // 2. Cari pada baris butiran item sekiranya tiada baris JUMLAH khas
-            if (!totalAmount || isNaN(totalAmount)) {
-                for (let line of lines) {
-                    if (/meja|kerusi|sofa|kabinet|laptop|komputer|[A-Za-z]{3,}/i.test(line)) {
-                        const nums = line.match(/\b\d+(?:[\.\,]\d{1,2})?\b/g);
-                        if (nums && nums.length >= 1) {
-                            const validNums = nums.map(n => parseFloat(n.replace(',', '.'))).filter(n => n >= 10);
-                            if (validNums.length > 0) {
-                                totalAmount = Math.max(...validNums);
-                                break;
-                            }
+    const body = {
+        contents: [
+            {
+                role: "user",
+                parts: [
+                    { text: prompt },
+                    {
+                        inline_data: {
+                            mime_type: "image/jpeg",
+                            data: base64
                         }
                     }
-                }
+                ]
             }
+        ],
+        generationConfig: {
+            temperature: 0,
+            responseMimeType: "application/json",
+            responseSchema: schema
+        }
+    };
 
-            // Isi nilai harga ke dalam borang
-            if (totalAmount > 0) {
-                const qty = parseFloat(document.getElementById('quantity').value) || 1;
-                const unitPrice = totalAmount / qty;
-                
-                document.getElementById('unitPrice').value = unitPrice.toFixed(2);
-                document.getElementById('totalCost').value = totalAmount.toFixed(2);
-            }
+    const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body)
+    });
+
+    const responseText = await response.text();
+
+    if (!response.ok) {
+        let message = responseText;
+
+        try {
+            const errorJson = JSON.parse(responseText);
+            message =
+                errorJson?.error?.message ||
+                errorJson?.message ||
+                responseText;
+        } catch (_) {}
+
+        throw new Error(
+            `Gemini API ${response.status}: ${message}`
+        );
+    }
+
+    const json = JSON.parse(responseText);
+
+    const text =
+        json?.candidates?.[0]?.content?.parts
+            ?.map(part => part.text || '')
+            .join('')
+            .trim();
+
+    if (!text) {
+        throw new Error('Gemini tidak mengembalikan kandungan.');
+    }
+
+    let result;
+
+    try {
+        result = JSON.parse(text);
+    } catch (err) {
+        throw new Error('Output Gemini bukan JSON yang sah.');
+    }
+
+    return normaliseExtractedData(result);
+}
+
+/* ---------- TESSERACT FALLBACK ---------- */
+
+async function runTesseractFallback(imageDataUrl) {
+    try {
+        showStatus(
+            '🔎 Tesseract sedang menjalankan OCR fallback...',
+            'loading'
+        );
+
+        const worker = await Tesseract.createWorker('msa+eng');
+
+        const ret = await worker.recognize(imageDataUrl);
+
+        await worker.terminate();
+
+        const text = ret?.data?.text || '';
+
+        if (!text.trim()) {
+            throw new Error('Tesseract tidak menemui teks.');
         }
 
-        // 4. SIMPAN ASET KE LOCALSTORAGE
-        function saveExtractedAsset(event) {
-            event.preventDefault();
+        console.log('RAW TESSERACT:', text);
+        showRawText(text);
 
-            const assetData = {
-                id: 'AST-' + Date.now(),
-                name: document.getElementById('assetName').value,
-                supplier: document.getElementById('supplier').value,
-                invoiceNo: document.getElementById('invoiceNo').value,
-                category: document.getElementById('category').value,
-                purchaseDate: document.getElementById('purchaseDate').value,
-                dept: document.getElementById('location').value,
-                quantity: parseFloat(document.getElementById('quantity').value) || 1,
-                unitPrice: parseFloat(document.getElementById('unitPrice').value) || 0,
-                cost: parseFloat(document.getElementById('totalCost').value) || 0,
-                salvage: parseFloat(document.getElementById('salvage').value) || 0,
-                usefulLife: parseFloat(document.getElementById('usefulLife').value) || 5,
-                amortizationMethod: document.getElementById('amortizationMethod').value,
-                lastServiceDate: document.getElementById('lastServiceDate').value || '',
-                serviceInterval: document.getElementById('serviceInterval').value || ''
-            };
+        const extracted = parseInvoiceTextFallback(text);
 
-            const existingAssets = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-            existingAssets.push(assetData);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(existingAssets));
+        populateForm(extracted);
 
-            alert('✅ Aset berjaya didaftarkan!');
-            window.location.href = 'assetregister.html';
+        showConfidence(
+            '🔎 Tesseract fallback digunakan. <strong>Sila semak semua medan</strong> sebelum menyimpan.'
+        );
+
+        showStatus(
+            '⚠️ Data berjaya dibaca menggunakan fallback OCR. Ketepatan mungkin lebih rendah berbanding Gemini.',
+            'success'
+        );
+
+    } catch (error) {
+        console.error('Tesseract error:', error);
+
+        showStatus(
+            '❌ OCR gagal. Sila gunakan gambar yang lebih jelas atau isi borang secara manual.',
+            'error'
+        );
+    }
+}
+
+/* ---------- NORMALISE DATA ---------- */
+
+function normaliseExtractedData(data) {
+    const result = {
+        assetName: cleanText(data.assetName),
+        supplier: cleanText(data.supplier),
+        invoiceNo: cleanText(data.invoiceNo),
+        purchaseDate: normaliseDate(data.purchaseDate),
+        category: normaliseCategory(data.category),
+        quantity: positiveInteger(data.quantity, 1),
+        unitPrice: positiveNumber(data.unitPrice),
+        totalCost: positiveNumber(data.totalCost),
+        confidence: Math.max(
+            0,
+            Math.min(100, Number(data.confidence) || 0)
+        )
+    };
+
+    /*
+     * Jika total tidak diberikan tetapi quantity x unitPrice jelas,
+     * kita boleh kira total untuk borang.
+     */
+    if (result.totalCost <= 0 &&
+        result.quantity > 0 &&
+        result.unitPrice > 0) {
+        result.totalCost =
+            Number((result.quantity * result.unitPrice).toFixed(2));
+    }
+
+    return result;
+}
+
+function cleanText(value) {
+    if (value === null || value === undefined) return '';
+    return String(value).trim();
+}
+
+function positiveNumber(value) {
+    const number = Number(value);
+    return Number.isFinite(number) && number >= 0 ? number : 0;
+}
+
+function positiveInteger(value, fallback = 1) {
+    const number = parseInt(value, 10);
+    return Number.isFinite(number) && number > 0
+        ? number
+        : fallback;
+}
+
+function normaliseDate(value) {
+    if (!value) return '';
+
+    const text = String(value).trim();
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+        return text;
+    }
+
+    const match = text.match(
+        /^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/
+    );
+
+    if (match) {
+        const day = match[1].padStart(2, '0');
+        const month = match[2].padStart(2, '0');
+        const year = match[3];
+
+        return `${year}-${month}-${day}`;
+    }
+
+    return '';
+}
+
+function normaliseCategory(category) {
+    const value = String(category || '').toLowerCase();
+
+    if (/furniture|meja|kerusi|sofa|almari|desk|chair|table|cabinet|rak/.test(value)) {
+        return 'Furniture & Fittings';
+    }
+
+    if (/computer|komputer|laptop|pc|printer|monitor|server|ipad|tablet|it equipment/.test(value)) {
+        return 'Computers & IT Equipment';
+    }
+
+    if (/vehicle|motor|kereta|car|lori|van/.test(value)) {
+        return 'Motor Vehicles';
+    }
+
+    if (/plant|machinery|machine|mesin/.test(value)) {
+        return 'Plant & Machinery';
+    }
+
+    return 'Office Equipment';
+}
+
+/* ---------- FALLBACK PARSER ---------- */
+
+function parseInvoiceTextFallback(text) {
+    const lines = text
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean);
+
+    let invoiceNo = '';
+    let purchaseDate = '';
+    let supplier = '';
+    let assetName = '';
+    let quantity = 1;
+    let unitPrice = 0;
+    let totalCost = 0;
+
+    const invoicePatterns = [
+        /(?:invoice|invois|inv|no\.?\s*invoice|invoice\s*no|bil|rujukan|ref)\s*[:#.\-]?\s*([A-Z0-9][A-Z0-9\-\/]+)/i
+    ];
+
+    for (const pattern of invoicePatterns) {
+        const match = text.match(pattern);
+        if (match) {
+            invoiceNo = match[1].trim();
+            break;
         }
-    </script>
+    }
+
+    const datePatterns = [
+        /(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/,
+        /(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})/
+    ];
+
+    for (const pattern of datePatterns) {
+        const match = text.match(pattern);
+
+        if (!match) continue;
+
+        if (match[1].length === 4) {
+            purchaseDate =
+                `${match[1]}-${match[2].padStart(2,'0')}-${match[3].padStart(2,'0')}`;
+        } else {
+            purchaseDate =
+                `${match[3]}-${match[2].padStart(2,'0')}-${match[1].padStart(2,'0')}`;
+        }
+
+        break;
+    }
+
+    for (const line of lines.slice(0, 12)) {
+        if (
+            /sdn\.?\s*bhd|enterprise|trading|perniagaan|services|store|ltd|limited|sdn/i.test(line) &&
+            !/kepada|bill to|ship to|customer/i.test(line)
+        ) {
+            supplier = line;
+            break;
+        }
+    }
+
+    const itemKeywords = [
+        'meja', 'kerusi', 'sofa', 'almari',
+        'laptop', 'komputer', 'computer', 'pc',
+        'printer', 'monitor', 'desk', 'chair',
+        'cabinet', 'table', 'aircond', 'air conditioner',
+        'machine', 'mesin'
+    ];
+
+    for (const line of lines) {
+        const lower = line.toLowerCase();
+
+        if (
+            itemKeywords.some(keyword => lower.includes(keyword)) &&
+            /\d/.test(line)
+        ) {
+            const keyword = itemKeywords.find(
+                keyword => lower.includes(keyword)
+            );
+
+            assetName = keyword
+                ? keyword.charAt(0).toUpperCase() + keyword.slice(1)
+                : '';
+
+            const numbers = line
+                .match(/(?:RM\s*)?\d+(?:[,.]\d{1,2})?/gi) || [];
+
+            const values = numbers
+                .map(value =>
+                    parseFloat(
+                        value.replace(/RM/ig, '').replace(/,/g, '')
+                    )
+                )
+                .filter(value => Number.isFinite(value));
+
+            if (values.length >= 2) {
+                quantity = Number.isInteger(values[0])
+                    ? values[0]
+                    : 1;
+
+                unitPrice = values[values.length - 1];
+            } else if (values.length === 1) {
+                unitPrice = values[0];
+            }
+
+            break;
+        }
+    }
+
+    const totalMatch = text.match(
+        /(?:grand\s*total|total|jumlah\s*akhir|jumlah|net\s*total)\s*[:\-]?\s*(?:RM\s*)?([\d,]+\.\d{2})/i
+    );
+
+    if (totalMatch) {
+        totalCost = parseFloat(
+            totalMatch[1].replace(/,/g, '')
+        );
+    }
+
+    const category = normaliseCategory(assetName);
+
+    return normaliseExtractedData({
+        assetName,
+        supplier,
+        invoiceNo,
+        purchaseDate,
+        category,
+        quantity,
+        unitPrice,
+        totalCost,
+        confidence: 45
+    });
+}
+
+/* ---------- FORM ---------- */
+
+function populateForm(data) {
+    if (!data) return;
+
+    if (data.assetName) {
+        document.getElementById('asset-name').value = data.assetName;
+    }
+
+    if (data.supplier) {
+        document.getElementById('supplier-name').value = data.supplier;
+    }
+
+    if (data.invoiceNo) {
+        document.getElementById('invoice-no').value = data.invoiceNo;
+    }
+
+    if (data.purchaseDate) {
+        document.getElementById('purchase-date').value = data.purchaseDate;
+    }
+
+    if (data.category) {
+        document.getElementById('category').value = data.category;
+    }
+
+    if (data.quantity > 0) {
+        document.getElementById('quantity').value = data.quantity;
+    }
+
+    if (data.unitPrice > 0) {
+        document.getElementById('unit-price').value =
+            Number(data.unitPrice).toFixed(2);
+    }
+
+    /*
+     * Jika Gemini membaca totalCost, gunakan nilai tersebut.
+     * Jika tidak, calculateTotal akan kira quantity x unitPrice.
+     */
+    if (data.totalCost > 0) {
+        document.getElementById('total-cost').value =
+            Number(data.totalCost).toFixed(2);
+    } else {
+        calculateTotal();
+    }
+}
+
+function calculateConfidence(data) {
+    if (Number.isFinite(data.confidence) && data.confidence > 0) {
+        return data.confidence;
+    }
+
+    const fields = [
+        data.assetName,
+        data.supplier,
+        data.invoiceNo,
+        data.purchaseDate,
+        data.quantity,
+        data.unitPrice,
+        data.totalCost
+    ];
+
+    const filled = fields.filter(
+        value => value !== '' && value !== 0 && value !== null && value !== undefined
+    ).length;
+
+    return Math.round((filled / fields.length) * 100);
+}
+
+/* ---------- SAVE ASSET ---------- */
+
+function saveAsset(event) {
+    event.preventDefault();
+
+    const newAsset = {
+        id: 'AST-' + Date.now(),
+
+        name: document.getElementById('asset-name').value.trim(),
+        assetName: document.getElementById('asset-name').value.trim(),
+
+        supplier: document.getElementById('supplier-name').value.trim(),
+        invoiceNo: document.getElementById('invoice-no').value.trim(),
+
+        category: document.getElementById('category').value,
+        purchaseDate: document.getElementById('purchase-date').value,
+
+        location: document.getElementById('location').value.trim(),
+
+        quantity:
+            parseInt(document.getElementById('quantity').value, 10) || 1,
+
+        unitPrice:
+            parseFloat(document.getElementById('unit-price').value) || 0,
+
+        cost:
+            parseFloat(document.getElementById('total-cost').value) || 0,
+
+        salvageValue:
+            parseFloat(document.getElementById('salvage-value').value) || 0,
+
+        usefulLife:
+            parseInt(document.getElementById('useful-life').value, 10) || 5,
+
+        method:
+            document.getElementById('amortization-method').value,
+
+        createdAt: new Date().toISOString()
+    };
+
+    if (!newAsset.name || !newAsset.supplier || !newAsset.invoiceNo) {
+        alert('Sila lengkapkan Asset Name, Supplier dan Invoice No.');
+        return;
+    }
+
+    const existingAssets =
+        JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+
+    existingAssets.push(newAsset);
+
+    localStorage.setItem(
+        STORAGE_KEY_ASSETS,
+        JSON.stringify(existingAssets)
+    );
+
+    alert('✅ Aset berjaya didaftarkan ke dalam Ledger / Asset Register!');
+
+    /*
+     * Kekalkan behaviour asal:
+     * pergi ke assetregister.html selepas save.
+     */
+    window.location.href = 'assetregister.html';
+}
+
+/* ---------- DRAG & DROP ---------- */
+
+const dropZone = document.getElementById('drop-zone');
+
+dropZone.addEventListener('dragover', event => {
+    event.preventDefault();
+    dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', event => {
+    event.preventDefault();
+    dropZone.classList.remove('dragover');
+
+    const file = event.dataTransfer.files[0];
+
+    if (file) {
+        processSelectedFile(file);
+    }
+});
+
+/* ---------- SECURITY / HTML ---------- */
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/* ---------- INITIALISE ---------- */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const savedKey = localStorage.getItem(GEMINI_KEY_STORAGE);
+
+    if (savedKey) {
+        document.getElementById('gemini-api-key').value = savedKey;
+    }
+
+    const dateInput = document.getElementById('purchase-date');
+
+    if (!dateInput.value) {
+        const today = new Date();
+
+        /*
+         * Gunakan local date, bukan toISOString(),
+         * supaya timezone Malaysia tidak menyebabkan tarikh
+         * berundur sehari.
+         */
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        dateInput.value = `${yyyy}-${mm}-${dd}`;
+    }
+});
+</script>
+
 </body>
 </html>
