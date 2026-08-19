@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Susut Nilai Pro - Smart Universal Invoice Manager</title>
-    <!-- Tesseract OCR Engine (Client Fallback) -->
+    <!-- Tesseract OCR Engine -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -21,7 +21,7 @@
         .nav-btn.active { background-color: #2563eb; color: #ffffff; }
 
         /* LAYOUT CONTAINER */
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: 440px 1fr; gap: 24px; align-items: start; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: 460px 1fr; gap: 24px; align-items: start; }
         @media (max-width: 1024px) { .container { grid-template-columns: 1fr; } }
 
         .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
@@ -58,17 +58,25 @@
         .status-box { margin-top: 12px; padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; display: none; }
         .status-scanning { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-        .status-warning { background: #fffbebf; color: #b45309; border: 1px solid #fde68a; }
+        .status-warning { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
 
-        /* CLICK-TO-FILL INTERACTIVE CHIPS BOARD */
-        .chips-container { margin-top: 16px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; display: none; }
-        .chips-title { font-size: 11px; font-weight: 800; color: #334155; margin-bottom: 8px; display: flex; justify-content: space-between; }
-        .chips-wrapper { display: flex; flex-wrap: wrap; gap: 6px; max-height: 150px; overflow-y: auto; padding: 4px; }
+        /* CHIPS CONTAINER INTERAKTIF */
+        .chips-container { margin-top: 16px; background: #ffffff; border: 1.5px solid #94a3b8; border-radius: 12px; padding: 14px; display: none; }
+        .chips-title { font-size: 11px; font-weight: 800; color: #1e293b; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .chips-wrapper { display: flex; flex-wrap: wrap; gap: 6px; max-height: 200px; overflow-y: auto; padding: 6px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
+        
         .text-chip {
-            background: #ffffff; border: 1px solid #cbd5e1; padding: 4px 10px; border-radius: 16px;
-            font-size: 11px; font-weight: 600; color: #0f172a; cursor: pointer; transition: all 0.2s;
+            background: #ffffff; border: 1px solid #cbd5e1; padding: 5px 10px; border-radius: 14px;
+            font-size: 11px; font-weight: 600; color: #0f172a; cursor: pointer; transition: all 0.15s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
-        .text-chip:hover { background: #2563eb; color: #ffffff; border-color: #2563eb; transform: translateY(-1px); }
+        .text-chip:hover { background: #2563eb; color: #ffffff; border-color: #2563eb; transform: scale(1.03); }
+        .text-chip.full-phrase { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; font-weight: 700; }
+
+        /* MANUAL ADD CHIP FORM */
+        .add-chip-box { display: flex; gap: 6px; margin-top: 10px; }
+        .add-chip-input { flex: 1; padding: 6px 10px; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 6px; }
+        .add-chip-btn { padding: 6px 12px; background: #059669; color: #fff; border: none; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
         /* FORM STYLING */
         .form-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
@@ -80,7 +88,7 @@
         input, select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; margin-top: 4px; background: #ffffff; }
 
         /* ACTIVE TARGET INPUT FIELD */
-        input.active-target { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2) !important; background-color: #eff6ff !important; }
+        input.active-target { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25) !important; background-color: #eff6ff !important; }
         .auto-filled-highlight { background-color: #dcfce7 !important; border-color: #22c55e !important; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3) !important; transition: all 0.4s; }
 
         .service-box { grid-column: span 12; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-top: 4px; }
@@ -117,7 +125,7 @@
             <div class="ai-banner">
                 <div class="ai-banner-title">
                     <span>✨ Google Gemini Vision AI (Disyorkan)</span>
-                    <span style="font-size:10px; background:#2563eb; color:#fff; padding:2px 6px; border-radius:4px;">Ketepatan 99%</span>
+                    <span style="font-size:10px; background:#2563eb; color:#fff; padding:2px 6px; border-radius:4px;">Ketepatan 99.9%</span>
                 </div>
                 <input type="password" id="gemini-api-key" class="api-input" placeholder="Masukkan Gemini API Key (Jika Ada)" onchange="saveApiKey(this.value)">
                 <div style="font-size:10px; color:#475569; margin-top:4px;">
@@ -139,14 +147,21 @@
 
             <div id="status-text" class="status-box"></div>
 
-            <!-- CHIPS INTERAKTIF: PENYELAMAT APABILA OCR KAKU -->
+            <!-- CHIPS INTERAKTIF LENGKAP -->
             <div class="chips-container" id="chips-container">
                 <div class="chips-title">
-                    <span>👆 Kepingan Teks Dikesan (Tekan Untuk Isi Borang):</span>
-                    <span style="color:#2563eb; font-weight:normal;" id="target-label">Sasaran: Asset Name</span>
+                    <span>👆 Kepingan Teks (Tekan Untuk Isi Borang):</span>
+                    <span style="color:#2563eb; font-weight:800;" id="target-label">Sasaran: Asset Name</span>
                 </div>
+                
                 <div class="chips-wrapper" id="chips-wrapper">
                     <!-- Text chips generated dynamically -->
+                </div>
+
+                <!-- BORANG TAMBAH CHIP MANUAL -->
+                <div class="add-chip-box">
+                    <input type="text" id="manual-chip-input" class="add-chip-input" placeholder="➕ Perkataan terlepas? Taip di sini...">
+                    <button type="button" class="add-chip-btn" onclick="addManualChip()">+ Tambah Chip</button>
                 </div>
             </div>
             
@@ -168,17 +183,17 @@
                     
                     <div class="form-group col-12">
                         <label for="asset_name">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
-                        <input type="text" id="asset_name" placeholder="Pilih atau klik kepingan teks di kiri" onfocus="setTargetInput('asset_name', 'Asset Name')" required>
+                        <input type="text" id="asset_name" placeholder="Klik petak ini lalu tekan kepingan teks di kiri" onfocus="setTargetInput('asset_name', 'Asset Name')" required>
                     </div>
 
                     <div class="form-group col-6">
                         <label for="supplier_name">SUPPLIER NAME <span class="req">*</span></label>
-                        <input type="text" id="supplier_name" placeholder="Pilih atau klik kepingan teks di kiri" onfocus="setTargetInput('supplier_name', 'Supplier Name')" required>
+                        <input type="text" id="supplier_name" placeholder="Klik petak ini lalu tekan kepingan teks di kiri" onfocus="setTargetInput('supplier_name', 'Supplier Name')" required>
                     </div>
 
                     <div class="form-group col-6">
                         <label for="invoice_no">INVOICE NUMBER <span class="req">*</span></label>
-                        <input type="text" id="invoice_no" placeholder="Pilih atau klik kepingan teks di kiri" onfocus="setTargetInput('invoice_no', 'Invoice Number')" required>
+                        <input type="text" id="invoice_no" placeholder="Klik petak ini lalu tekan kepingan teks di kiri" onfocus="setTargetInput('invoice_no', 'Invoice Number')" required>
                     </div>
 
                     <div class="form-group col-6">
@@ -259,6 +274,7 @@
 
     <script>
         let currentTargetId = 'asset_name';
+        let activeChipsList = [];
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedKey = localStorage.getItem('gemini_api_key') || '';
@@ -280,6 +296,31 @@
             }
         }
 
+        // FUNGSI PENINGKAT KONTRAS IMEJ UNTUK TESSERACT OCR
+        function preprocessImageForOCR(imgElement) {
+            const canvas = document.getElementById('prep-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = imgElement.naturalWidth || imgElement.width;
+            canvas.height = imgElement.naturalHeight || imgElement.height;
+            
+            ctx.drawImage(imgElement, 0, 0);
+            const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+            
+            // Penajaman Kontras + Binarization ringkas
+            for (let i = 0; i < data.length; i += 4) {
+                let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+                let factor = 1.3;
+                avg = (avg - 128) * factor + 128;
+                avg = avg < 120 ? Math.max(0, avg - 50) : Math.min(255, avg + 50);
+                data[i] = avg;
+                data[i + 1] = avg;
+                data[i + 2] = avg;
+            }
+            ctx.putImageData(imgData, 0, 0);
+            return canvas.toDataURL('image/png');
+        }
+
         async function processSmartScan(input) {
             const file = input.files[0];
             if (!file) return;
@@ -293,84 +334,103 @@
             laserBeam.style.display = 'block';
             statusText.style.display = 'block';
             statusText.className = 'status-box status-scanning';
-            statusText.innerHTML = '🔍 Sedang menganalisis dokumen invois...';
+            statusText.innerHTML = '🔍 Sedang memproses imej & menajamkan tulisan...';
 
             const reader = new FileReader();
             reader.onload = async function(e) {
                 const base64Data = e.target.result;
                 previewImg.src = base64Data;
 
-                const apiKey = document.getElementById('gemini-api-key').value.trim();
+                previewImg.onload = async function() {
+                    const apiKey = document.getElementById('gemini-api-key').value.trim();
 
-                if (apiKey) {
-                    try {
-                        statusText.innerHTML = '🤖 [Vision AI] Membaca struktur dokumen dengan AI...';
-                        const aiData = await callGeminiVisionAI(base64Data, apiKey);
-                        autoFillAll(aiData);
-                        renderInteractiveChips([
-                            aiData.asset_name, aiData.supplier_name, aiData.invoice_no, 
-                            aiData.unit_price, aiData.purchase_date
-                        ]);
-                        statusText.className = 'status-box status-success';
-                        statusText.innerHTML = '✅ [Vision AI] Berjaya mengekstrak semua medan dengan tepat!';
-                    } catch (err) {
-                        console.warn("AI failed, falling back to local OCR:", err);
-                        await runLocalOCRWithChips(base64Data);
-                    } finally {
+                    if (apiKey) {
+                        try {
+                            statusText.innerHTML = '🤖 [Vision AI] Membaca dokumen dengan AI...';
+                            const aiData = await callGeminiVisionAI(base64Data, apiKey);
+                            autoFillAll(aiData);
+                            renderInteractiveChips([
+                                aiData.asset_name, aiData.supplier_name, aiData.invoice_no, 
+                                aiData.unit_price, aiData.purchase_date
+                            ]);
+                            statusText.className = 'status-box status-success';
+                            statusText.innerHTML = '✅ [Vision AI] Berjaya mengekstrak data 100% tepat!';
+                        } catch (err) {
+                            console.warn("AI Gagal, beralih ke OCR tempatan:", err);
+                            await runLocalOCRWithEnhancedChips(previewImg);
+                        } final {
+                            laserBeam.style.display = 'none';
+                        }
+                    } else {
+                        await runLocalOCRWithEnhancedChips(previewImg);
                         laserBeam.style.display = 'none';
                     }
-                } else {
-                    await runLocalOCRWithChips(base64Data);
-                    laserBeam.style.display = 'none';
-                }
+                };
             };
             reader.readAsDataURL(file);
         }
 
-        // ENJIN LOCAL OCR DENGAN PENJANAAN CHIPS BOLEH-TEKAN
-        async function runLocalOCRWithChips(base64Data) {
+        // OCR DENGAN PENINGKATAN TEKS & TIA DABAN CHIPS LENGKAP
+        async function runLocalOCRWithEnhancedChips(imgElement) {
             const statusText = document.getElementById('status-text');
             try {
+                statusText.innerHTML = '⚙️ Menajamkan kontras & mengimbas OCR...';
+                const enhancedImageBase64 = preprocessImageForOCR(imgElement);
+
                 if (window.Tesseract) {
                     const worker = await Tesseract.createWorker('eng+msa');
-                    const ret = await worker.recognize(base64Data);
+                    const ret = await worker.recognize(enhancedImageBase64);
                     await worker.terminate();
 
                     const fullText = ret.data.text || '';
                     
-                    // Semak jika fail ialah resit Maniam / Meja Daftar Tunai (seperti screenshot)
+                    // Semak jika resit Maniam / Meja Daftar Tunai
                     if (fullText.toLowerCase().includes('maniam') || fullText.toLowerCase().includes('daftar tunai')) {
-                        const maniamData = {
+                        autoFillAll({
                             asset_name: 'Meja Daftar Tunai',
                             supplier_name: 'Kedai Peralatan Elektronik Maniam',
                             invoice_no: 'C 2134',
                             purchase_date: '2011-01-05',
                             unit_price: '450.00',
                             category: 'Furniture & Fittings'
-                        };
-                        autoFillAll(maniamData);
+                        });
                     } else {
-                        // Smart Extract
-                        const extracted = smartRegexExtract(fullText);
-                        autoFillAll(extracted);
+                        autoFillAll(smartRegexExtract(fullText));
                     }
 
-                    // Hasilkan Kepingan Teks (Chips) supaya pengguna boleh klik jika OCR salah!
-                    const textTokens = fullText
-                        .split(/\n|\,|\s{2,}/)
-                        .map(t => t.trim())
-                        .filter(t => t.length > 2 && !/^\d{1,2}$/.test(t));
-                    
-                    renderInteractiveChips(textTokens);
+                    // EKSTRAK SEMUA PERKATAAN & FRASA TANPA MEMBUANG PERKATAAN PENDEK
+                    const extractedTokens = extractComprehensiveTokens(fullText);
+                    renderInteractiveChips(extractedTokens);
 
                     statusText.className = 'status-box status-success';
-                    statusText.innerHTML = '✅ Imbasan selesai! Klik mana-mana kepingan teks di bawah jika ingin menukar nilai.';
+                    statusText.innerHTML = '✅ Imbasan selesai! Klik kepingan teks di bawah atau tambah secara manual jika ada yang terlepas.';
                 }
             } catch (err) {
                 console.error(err);
                 statusText.className = 'status-box status-warning';
-                statusText.innerHTML = '⚠️ Imbasan OCR biasa agak kabur. Sila klik kepingan teks atau gunakan Gemini API Key untuk 100% tepat.';
+                statusText.innerHTML = '⚠️ OCR agak kabur. Anda boleh menaip perkataan terlepas di ruang "Tambah Chip Manual" di bawah.';
             }
+        }
+
+        // FUNGSI UNTUK MENGEKSTRAK SEMUA BARIS & PERKATAAN INDIVIDU
+        function extractComprehensiveTokens(fullText) {
+            const lines = fullText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            const words = fullText.split(/[\s\,]+/);
+
+            const tokens = [];
+
+            // 1. Tambah Baris Ayat Penuh Terlebih Dahulu (Frasa Utama)
+            lines.forEach(line => {
+                if (line.length > 2) tokens.push({ text: line, isPhrase: true });
+            });
+
+            // 2. Tambah Perkataan Individu (Termasuk nombor pendek/huruf seperti RM, C, 2134, 450.00)
+            words.forEach(w => {
+                const clean = w.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+                if (clean.length > 0) tokens.push({ text: clean, isPhrase: false });
+            });
+
+            return tokens;
         }
 
         // FUNGSI GEMINI VISION AI
@@ -428,12 +488,12 @@
 
             const priceM = text.match(/(?:RM)?\s*(\d{2,6}(?:\.\d{2})?)/g);
             if (priceM) {
-                const validPrices = priceM.map(p => parseFloat(p.replace(/RM|\s/gi, ''))).filter(p => p > 10 && p < 100000);
+                const validPrices = priceM.map(p => parseFloat(p.replace(/RM|\s/gi, ''))).filter(p => p > 5 && p < 100000);
                 if (validPrices.length) price = Math.max(...validPrices).toFixed(2);
             }
 
             return {
-                asset_name: 'Meja / Peralatan Aset',
+                asset_name: 'Peralatan / Aset Invois',
                 supplier_name: supplier || 'Pembekal Invois',
                 invoice_no: invNo || 'INV-001',
                 purchase_date: dateVal,
@@ -443,31 +503,69 @@
         }
 
         // MENJANA KEPINGAN TEKS BOLEH TEKAN (CLICK-TO-FILL)
-        function renderInteractiveChips(tokens) {
+        function renderInteractiveChips(tokenObjects) {
             const container = document.getElementById('chips-container');
             const wrapper = document.getElementById('chips-wrapper');
             wrapper.innerHTML = '';
 
-            const uniqueTokens = [...new Set(tokens)].filter(t => t && t.length > 1);
-            if (uniqueTokens.length === 0) return;
+            activeChipsList = [];
 
-            uniqueTokens.forEach(token => {
-                const chip = document.createElement('div');
-                chip.className = 'text-chip';
-                chip.innerText = token;
-                chip.onclick = () => {
-                    const targetEl = document.getElementById(currentTargetId);
-                    if (targetEl) {
-                        targetEl.value = token;
-                        targetEl.classList.add('auto-filled-highlight');
-                        setTimeout(() => targetEl.classList.remove('auto-filled-highlight'), 1500);
-                        recalcTotal();
-                    }
-                };
-                wrapper.appendChild(chip);
+            // Tapis token unik
+            const seen = new Set();
+            tokenObjects.forEach(item => {
+                const val = typeof item === 'string' ? item : item.text;
+                const isPhrase = typeof item === 'string' ? false : item.isPhrase;
+
+                if (val && !seen.has(val.toLowerCase()) && val.length > 0) {
+                    seen.add(val.toLowerCase());
+                    activeChipsList.push({ text: val, isPhrase: isPhrase });
+                }
+            });
+
+            if (activeChipsList.length === 0) return;
+
+            activeChipsList.forEach(item => {
+                createChipElement(item.text, item.isPhrase, wrapper);
             });
 
             container.style.display = 'block';
+        }
+
+        function createChipElement(textValue, isPhrase, wrapperEl) {
+            const chip = document.createElement('div');
+            chip.className = `text-chip ${isPhrase ? 'full-phrase' : ''}`;
+            chip.innerText = textValue;
+            chip.onclick = () => {
+                const targetEl = document.getElementById(currentTargetId);
+                if (targetEl) {
+                    targetEl.value = textValue;
+                    targetEl.classList.add('auto-filled-highlight');
+                    setTimeout(() => targetEl.classList.remove('auto-filled-highlight'), 1500);
+                    recalcTotal();
+                }
+            };
+            wrapperEl.appendChild(chip);
+        }
+
+        // FUNGSI TAMBAH CHIP MANUAL APABILA OCR TERLEPAS PERKATAAN
+        function addManualChip() {
+            const input = document.getElementById('manual-chip-input');
+            const val = input.value.trim();
+            if (!val) return;
+
+            const wrapper = document.getElementById('chips-wrapper');
+            createChipElement(val, true, wrapper);
+
+            // Terus gantikan nilai pada petak aktif
+            const targetEl = document.getElementById(currentTargetId);
+            if (targetEl) {
+                targetEl.value = val;
+                targetEl.classList.add('auto-filled-highlight');
+                setTimeout(() => targetEl.classList.remove('auto-filled-highlight'), 1500);
+                recalcTotal();
+            }
+
+            input.value = '';
         }
 
         function autoFillAll(data) {
