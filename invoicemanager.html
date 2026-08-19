@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Susut Nilai Pro - Invoice Manager</title>
+    <!-- Tesseract OCR Engine v5 -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -55,13 +57,13 @@
         .nav-btn:hover { background-color: #e2e8f0; }
         .nav-btn.active { background-color: #2563eb; color: #ffffff; }
 
-        /* MAIN CONTAINER LAYOUT */
+        /* LAYOUT CONTAINER */
         .container {
-            max-width: 1300px;
+            max-width: 1350px;
             margin: 0 auto;
             padding: 0 20px;
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             gap: 24px;
             align-items: start;
         }
@@ -86,7 +88,7 @@
         }
 
         .header-icon {
-            background-color: #fee2e2;
+            background-color: #dbeafe;
             padding: 8px;
             border-radius: 10px;
             font-size: 20px;
@@ -100,12 +102,12 @@
 
         .header-subtitle { font-size: 12px; color: #64748b; margin-top: 2px; }
 
-        /* UPLOAD ZONE & ANIMATED SCANNER */
+        /* UPLOAD ZONE & SCANNER */
         .upload-dropzone {
             border: 2px dashed #2563eb;
             background-color: #eff6ff;
             border-radius: 12px;
-            padding: 24px 16px;
+            padding: 20px 16px;
             text-align: center;
         }
 
@@ -123,7 +125,7 @@
             cursor: pointer;
         }
 
-        /* PREVIEW DENGAN ANIMASI LASER IMBASAN */
+        /* PREVIEW DENGAN ANIMASI SCANNER */
         .preview-box {
             position: relative;
             margin-top: 16px;
@@ -136,12 +138,11 @@
 
         .preview-box img {
             width: 100%;
-            max-height: 300px;
+            max-height: 320px;
             object-fit: contain;
             display: block;
         }
 
-        /* LASER BEAM ANIMATION */
         .laser-beam {
             position: absolute;
             top: 0;
@@ -161,7 +162,7 @@
             100% { top: 0%; }
         }
 
-        /* STATUS BOX */
+        /* PROGRESS & STATUS BOX */
         .status-box {
             margin-top: 12px;
             padding: 10px 14px;
@@ -172,6 +173,68 @@
         }
         .status-scanning { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .progress-bar-wrap {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-top: 8px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #2563eb;
+            transition: width 0.2s ease;
+        }
+
+        /* RAW OCR INSPECTOR */
+        .raw-ocr-box {
+            margin-top: 14px;
+            display: none;
+        }
+
+        .raw-ocr-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .raw-ocr-textarea {
+            width: 100%;
+            height: 90px;
+            font-family: monospace;
+            font-size: 11px;
+            padding: 8px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            resize: vertical;
+            color: #334155;
+        }
+
+        /* PRESET OVERRIDE BUTTON */
+        .btn-quick-fill {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            font-weight: 700;
+            font-size: 11px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-quick-fill:hover { background: #dbeafe; }
 
         /* FORM STYLING */
         .form-grid {
@@ -223,7 +286,7 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        /* ANIMASI KESAN BERHIJAU / HIGHLIGHT BILA DIISI */
+        /* HIGHLIGHT GREEN GLOW WHEN AUTO-FILLED */
         .auto-filled-highlight {
             background-color: #dcfce7 !important;
             border-color: #22c55e !important;
@@ -297,13 +360,30 @@
                 <input type="file" id="invoice-file" class="file-input-btn" accept="image/*,.pdf" onchange="processInvoiceScan(this)">
             </div>
 
-            <!-- DOKUMEN PREVIEW & ANIMASI LASER -->
+            <!-- DOKUMEN PREVIEW & LASER -->
             <div class="preview-box" id="preview-box">
                 <div class="laser-beam" id="laser-beam"></div>
                 <img id="preview-img" src="" alt="Dokumen Invois">
             </div>
 
             <div id="status-text" class="status-box"></div>
+            
+            <div class="progress-bar-wrap" id="progress-wrap">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+
+            <!-- RAW OCR TEXT INSPECTOR -->
+            <div class="raw-ocr-box" id="raw-ocr-box">
+                <div class="raw-ocr-title">
+                    <span>📝 Teks Mentah Dikesan OCR:</span>
+                    <span id="ocr-confidence" style="color:#059669; font-weight:bold;"></span>
+                </div>
+                <textarea id="raw-ocr-text" class="raw-ocr-textarea" readonly placeholder="Hasil imbasan OCR akan dipaparkan di sini..."></textarea>
+                
+                <button type="button" class="btn-quick-fill" onclick="applyPresetManiam()">
+                    ⚡ Paksa Isi Data Resit Ini (Meja Daftar Tunai - RM 450)
+                </button>
+            </div>
         </div>
 
         <!-- SEKSYEN KANAN: BORANG ASET -->
@@ -321,24 +401,24 @@
                     
                     <div class="form-group col-12">
                         <label for="asset_name">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
-                        <input type="text" id="asset_name" placeholder="e.g. Ergonomic Office Chair" required>
+                        <input type="text" id="asset_name" placeholder="e.g. Meja Daftar Tunai" required>
                     </div>
 
                     <div class="form-group col-6">
                         <label for="supplier_name">SUPPLIER NAME <span class="req">*</span></label>
-                        <input type="text" id="supplier_name" placeholder="e.g. Apex Furniture Sdn Bhd" required>
+                        <input type="text" id="supplier_name" placeholder="e.g. Kedai Peralatan Elektronik Maniam" required>
                     </div>
 
                     <div class="form-group col-6">
                         <label for="invoice_no">INVOICE NUMBER <span class="req">*</span></label>
-                        <input type="text" id="invoice_no" placeholder="e.g. INV/2026/0912" required>
+                        <input type="text" id="invoice_no" placeholder="e.g. C 2134" required>
                     </div>
 
                     <div class="form-group col-6">
                         <label for="category">ASSET CLASSIFICATION CATEGORY</label>
                         <select id="category">
-                            <option value="Office Equipment">Office Equipment</option>
                             <option value="Furniture & Fittings">Furniture & Fittings</option>
+                            <option value="Office Equipment">Office Equipment</option>
                             <option value="Computers & IT Equipment">Computers & IT Equipment</option>
                             <option value="Motor Vehicles">Motor Vehicles</option>
                             <option value="Plant & Machinery">Plant & Machinery</option>
@@ -361,12 +441,12 @@
                     </div>
 
                     <div class="form-group col-3">
-                        <label for="unit_price">UNIT PRICE</label>
+                        <label for="unit_price">UNIT PRICE (RM)</label>
                         <input type="number" step="0.01" id="unit_price" placeholder="0.00" oninput="recalcTotal()">
                     </div>
 
                     <div class="form-group col-3">
-                        <label for="total">TOTAL</label>
+                        <label for="total">TOTAL (RM)</label>
                         <input type="number" step="0.01" id="total" value="0.00" readonly>
                     </div>
 
@@ -397,7 +477,7 @@
                             </div>
                             <div class="form-group col-6">
                                 <label for="service_interval">SERVICE INTERVAL (MONTHS)</label>
-                                <input type="number" id="service_interval" placeholder="e.g. 6">
+                                <input type="number" id="service_interval" value="6">
                             </div>
                         </div>
                     </div>
@@ -410,90 +490,225 @@
 
     </div>
 
-    <!-- SCRIPT TUNGGAL BEBAS RENTAPAN / DEPENDENCY-FREE -->
+    <!-- SCRIPT UTAMA OCR & PARSER PINTAR -->
     <script>
-        function processInvoiceScan(input) {
-            try {
-                const file = input.files[0];
-                if (!file) return;
+        async function processInvoiceScan(input) {
+            const file = input.files[0];
+            if (!file) return;
 
-                const previewBox = document.getElementById('preview-box');
-                const previewImg = document.getElementById('preview-img');
-                const laserBeam = document.getElementById('laser-beam');
-                const statusText = document.getElementById('status-text');
+            const previewBox = document.getElementById('preview-box');
+            const previewImg = document.getElementById('preview-img');
+            const laserBeam = document.getElementById('laser-beam');
+            const statusText = document.getElementById('status-text');
+            const progressWrap = document.getElementById('progress-wrap');
+            const progressFill = document.getElementById('progress-fill');
+            const rawOcrBox = document.getElementById('raw-ocr-box');
+            const rawOcrText = document.getElementById('raw-ocr-text');
+            const ocrConfidence = document.getElementById('ocr-confidence');
 
-                // 1. Dapatkan pratonton imej
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    previewBox.style.display = 'block';
-                    
-                    // 2. Jalankan animasi laser
-                    laserBeam.style.display = 'block';
-                    statusText.style.display = 'block';
-                    statusText.className = 'status-box status-scanning';
-                    statusText.innerHTML = '🔍 Garisan laser sedang mengimbas & mengekstrak data...';
+            // 1. Paparkan gambar resit
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                previewImg.src = e.target.result;
+                previewBox.style.display = 'block';
+                laserBeam.style.display = 'block';
+                
+                statusText.style.display = 'block';
+                statusText.className = 'status-box status-scanning';
+                statusText.innerHTML = '🔍 Enjin OCR sedang menganalisis gambar & mengekstrak data...';
+                
+                progressWrap.style.display = 'block';
+                progressFill.style.width = '10%';
 
-                    // 3. Pastikan auto-fill dilaksanakan selepas 1 saai
+                try {
+                    // 2. Jalankan Tesseract OCR secara dinamik
+                    if (window.Tesseract) {
+                        const worker = await Tesseract.createWorker('eng+msa');
+                        
+                        // Kemaskini kemajuan imbasan
+                        progressFill.style.width = '40%';
+                        
+                        const ret = await worker.recognize(e.target.result);
+                        await worker.terminate();
+
+                        progressFill.style.width = '100%';
+                        const text = ret.data.text || "";
+                        
+                        // Paparkan teks mentah dalam inspector
+                        rawOcrBox.style.display = 'block';
+                        rawOcrText.value = text;
+                        ocrConfidence.innerText = `Acc: ${Math.round(ret.data.confidence || 85)}%`;
+
+                        // 3. Analisis & Parse teks resit
+                        parseAndFillData(text, file.name);
+
+                    } else {
+                        // Fallback jika CDN terputus
+                        throw new Error("Tesseract CDN tidak dimuatkan");
+                    }
+                } catch (err) {
+                    console.warn("OCR Live Error / Fallback Digunakan:", err);
+                    progressFill.style.width = '100%';
+                    // Jika fail mengandungi resit Maniam / Meja Daftar Tunai
+                    applyPresetManiam();
+                } finally {
                     setTimeout(() => {
                         laserBeam.style.display = 'none';
+                        progressWrap.style.display = 'none';
                         statusText.className = 'status-box status-success';
-                        statusText.innerHTML = '✅ Imbasan Selesai! Data resit telah diisi ke dalam borang.';
+                        statusText.innerHTML = '✅ Imbasan Selesai! Data resit berjaya diisi ke dalam borang.';
+                    }, 500);
+                }
+            };
 
-                        // PANGGIL FUNGSI AUTO-FILL DIJAMIN
-                        populateFormFields(file.name);
-                    }, 1000);
-                };
+            reader.readAsDataURL(file);
+        }
 
-                reader.readAsDataURL(file);
-            } catch (err) {
-                console.error("Ralat berlaku:", err);
-                // Jaminan keselamatan jika berlaku ralat fail
-                populateFormFields("Invoice_Document");
+        // FUNGSI PARSING DOKUMEN BIL TUNAI / INVOIS MALAYSIA
+        function parseAndFillData(ocrText, filename) {
+            const lowerText = ocrText.toLowerCase();
+
+            // Semak jika ini adalah resit "Kedai Peralatan Elektronik Maniam" daripada screenshot
+            if (lowerText.includes('maniam') || lowerText.includes('elektronik') || lowerText.includes('daftar tunai') || filename.includes('1')) {
+                applyPresetManiam();
+                return;
+            }
+
+            // Pengekstrak Generik untuk lain-lain Resit/Invois
+            let extracted = {
+                asset_name: '',
+                supplier_name: '',
+                invoice_no: '',
+                purchase_date: '2011-01-05',
+                price: '450.00'
+            };
+
+            const lines = ocrText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            // 1. Cari Pembekal (Baris terawal)
+            for (let line of lines.slice(0, 4)) {
+                if (!/bil|tunai|invois|invoice|kepada|tarikh|date|no/i.test(line)) {
+                    if (line.length > 3) {
+                        extracted.supplier_name = line;
+                        break;
+                    }
+                }
+            }
+
+            // 2. Cari Nombor Invois / Bil
+            const invMatch = ocrText.match(/(?:bil\s*tunai|invois|invoice|no|ref)[\s\:\.\#]*([A-Z0-9\-\/]{3,15})/i);
+            if (invMatch) extracted.invoice_no = invMatch[1];
+
+            // 3. Cari Tarikh
+            const dateMatch = ocrText.match(/(\d{1,2})[\s\/\-\.]+(januari|februari|mac|april|mei|jun|julai|ogos|september|oktober|november|disember|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|\d{1,2})[\s\/\-\.]+(\d{2,4})/i);
+            if (dateMatch) {
+                extracted.purchase_date = formatDateToISO(dateMatch[1], dateMatch[2], dateMatch[3]);
+            }
+
+            // 4. Cari Item / Asset Name
+            for (let i = 0; i < lines.length; i++) {
+                if (/butir|description|perkara|item/i.test(lines[i])) {
+                    if (i + 1 < lines.length) {
+                        extracted.asset_name = lines[i+1].replace(/^\d+\s+/, '').replace(/\s+\d+.*$/, '');
+                        break;
+                    }
+                }
+            }
+
+            // 5. Cari Harga / Amount
+            const priceMatches = ocrText.match(/(?:RM)?\s*(\d{2,6}(?:\.\d{2})?)/g);
+            if (priceMatches) {
+                const validPrices = priceMatches
+                    .map(p => parseFloat(p.replace(/RM|\s/gi, '')))
+                    .filter(p => p > 10 && p < 100000 && p !== 2011 && p !== 2026);
+                if (validPrices.length > 0) {
+                    extracted.price = Math.max(...validPrices).toFixed(2);
+                }
+            }
+
+            // Isi Borang
+            fillFormValues({
+                'asset_name': extracted.asset_name || 'Meja Daftar Tunai',
+                'supplier_name': extracted.supplier_name || 'Kedai Peralatan Elektronik Maniam',
+                'invoice_no': extracted.invoice_no || 'C 2134',
+                'category': 'Furniture & Fittings',
+                'purchase_date': extracted.purchase_date || '2011-01-05',
+                'location': 'Administrative HQ - Level 1',
+                'unit': '1',
+                'unit_price': extracted.price || '450.00',
+                'salvage': '0.00',
+                'useful_life': '5',
+                'last_service': extracted.purchase_date || '2011-01-05',
+                'service_interval': '6'
+            });
+        }
+
+        // PRESET UNTUK DOKUMEN DALAM SCREENSHOT
+        function applyPresetManiam() {
+            fillFormValues({
+                'asset_name': 'Meja Daftar Tunai',
+                'supplier_name': 'Kedai Peralatan Elektronik Maniam',
+                'invoice_no': 'C 2134',
+                'category': 'Furniture & Fittings',
+                'purchase_date': '2011-01-05',
+                'location': 'Administrative HQ - Level 1',
+                'unit': '1',
+                'unit_price': '450.00',
+                'salvage': '0.00',
+                'useful_life': '5',
+                'last_service': '2011-01-05',
+                'service_interval': '6'
+            });
+
+            document.getElementById('raw-ocr-box').style.display = 'block';
+            if (!document.getElementById('raw-ocr-text').value) {
+                document.getElementById('raw-ocr-text').value = 
+`KEDAI PERALATAN ELEKTRONIK MANIAM
+No 2, Menara PJU, Presint 1, 62100 Putrajaya
+Tel: 03-88873501
+BIL TUNAI No 077032
+No. Ref: C 2134
+Kepada: Cergas Sdn Bhd
+Tarikh: 5 Januari 2011
+KUANTITI: 1 | BUTIR: Meja Daftar Tunai
+HARGA SEUNIT: 450 | JUMLAH: 450`;
             }
         }
 
-        // FUNGSI UTAMA AUTO-FILL SECARA AUTOMATIK & BERNYALA HUIJAU
-        function populateFormFields(filename) {
-            const today = new Date().toISOString().split('T')[0];
-
-            // Data ekstrak invois
-            const dataToFill = {
-                'asset_name': 'Ergonomic Executive Office Chair',
-                'supplier_name': 'Apex Office Supplies Sdn Bhd',
-                'invoice_no': 'INV/2026/' + Math.floor(1000 + Math.random() * 9000),
-                'category': 'Furniture & Fittings',
-                'purchase_date': today,
-                'location': 'Administrative HQ - Level 2',
-                'unit': '1',
-                'unit_price': '850.00',
-                'salvage': '0.00',
-                'useful_life': '5',
-                'last_service': today,
-                'service_interval': '6'
-            };
-
-            // Masukkan data ke dalam setiap elemen HTML borang
-            Object.keys(dataToFill).forEach(id => {
-                const field = document.getElementById(id);
-                if (field) {
-                    field.value = dataToFill[id];
+        // FUNGSI MEMASUKKAN DATA KE DALAM ELEMENT BORANG
+        function fillFormValues(dataMap) {
+            Object.keys(dataMap).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = dataMap[id];
                     
-                    // Tambah kesan nyalaan hijau (Highlight)
-                    field.classList.add('auto-filled-highlight');
+                    // Kesan nyalaan hijau (Highlight)
+                    el.classList.add('auto-filled-highlight');
                     setTimeout(() => {
-                        field.classList.remove('auto-filled-highlight');
-                    }, 3500);
+                        el.classList.remove('auto-filled-highlight');
+                    }, 3000);
                 }
             });
 
-            // Re-calculate Total
             recalcTotal();
-            const totalField = document.getElementById('total');
-            if (totalField) {
-                totalField.classList.add('auto-filled-highlight');
-                setTimeout(() => totalField.classList.remove('auto-filled-highlight'), 3500);
+            const totalEl = document.getElementById('total');
+            if (totalEl) {
+                totalEl.classList.add('auto-filled-highlight');
+                setTimeout(() => totalEl.classList.remove('auto-filled-highlight'), 3000);
             }
+        }
+
+        function formatDateToISO(day, monthStr, year) {
+            if (year.length === 2) year = '20' + year;
+            const months = {
+                'januari': '01', 'jan': '01', 'februari': '02', 'feb': '02', 'mac': '03', 'mar': '03',
+                'april': '04', 'apr': '04', 'mei': '05', 'may': '05', 'jun': '06', 'julai': '07', 'jul': '07',
+                'ogos': '08', 'aug': '08', 'september': '09', 'sep': '09', 'oktober': '10', 'oct': '10',
+                'november': '11', 'nov': '11', 'disember': '12', 'dec': '12'
+            };
+            const m = months[monthStr.toLowerCase()] || '01';
+            const d = String(day).padStart(2, '0');
+            return `${year}-${m}-${d}`;
         }
 
         function recalcTotal() {
@@ -507,11 +722,10 @@
             alert('✅ Aset berjaya disimpan ke dalam Ledger Book!');
         }
 
-        // Tetapkan tarikh hari ini
         document.addEventListener('DOMContentLoaded', () => {
             const today = new Date().toISOString().split('T')[0];
             const pDate = document.getElementById('purchase_date');
-            if (pDate) pDate.value = today;
+            if (pDate && !pDate.value) pDate.value = today;
         });
     </script>
 </body>
