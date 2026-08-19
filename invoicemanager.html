@@ -55,12 +55,6 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn:hover {
-            background-color: #e2e8f0;
-            color: #0f172a;
         }
 
         .nav-btn.active {
@@ -95,64 +89,51 @@
         }
 
         .card-title-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
             font-size: 18px;
             font-weight: 800;
             color: #0f172a;
             margin-bottom: 20px;
         }
 
-        /* ZON UPLOAD NATIVE LABEL */
-        .upload-zone {
-            display: block;
+        /* ZON MUAT NAIK NATIF */
+        .upload-box {
             border: 2px dashed #2563eb;
-            border-radius: 12px;
-            padding: 32px 16px;
-            text-align: center;
             background-color: #eff6ff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-
-        .upload-zone:hover, .upload-zone.dragover {
-            border-color: #1d4ed8;
-            background-color: #dbeafe;
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
         }
 
         .upload-icon {
-            font-size: 42px;
+            font-size: 38px;
             margin-bottom: 8px;
         }
 
         .upload-title {
             font-size: 16px;
             font-weight: 800;
-            color: #0f172a;
+            color: #1e3a8a;
             margin-bottom: 4px;
         }
 
         .upload-hint {
             font-size: 12px;
-            color: #64748b;
-            margin-bottom: 14px;
+            color: #475569;
+            margin-bottom: 16px;
         }
 
-        .btn-browse {
-            display: inline-block;
-            background-color: #2563eb;
-            color: #ffffff;
-            padding: 10px 20px;
+        /* BUTANG NATIF PELAYAR YANG DIPUAT NAIK SECARA DIRECT */
+        .native-file-input {
+            display: block;
+            margin: 0 auto;
+            padding: 10px;
+            background: #ffffff;
+            border: 1px solid #93c5fd;
             border-radius: 8px;
             font-size: 13px;
-            font-weight: 700;
-            pointer-events: none; /* Mencegah gangguan klik */
-        }
-
-        #file-input {
-            display: none;
+            cursor: pointer;
+            width: 100%;
+            max-width: 320px;
         }
 
         .preview-container {
@@ -163,10 +144,9 @@
 
         .preview-img {
             max-width: 100%;
-            max-height: 350px;
+            max-height: 320px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            object-fit: contain;
+            border: 1px solid #cbd5e1;
         }
 
         .status-box {
@@ -175,53 +155,11 @@
             border-radius: 8px;
             font-size: 13px;
             display: none;
-            line-height: 1.5;
         }
 
-        .status-loading {
-            background-color: #eff6ff;
-            color: #1d4ed8;
-            border: 1px solid #bfdbfe;
-        }
-
-        .status-success {
-            background-color: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
-
-        .status-error {
-            background-color: #fef2f2;
-            color: #b91c1c;
-            border: 1px solid #fecaca;
-        }
-
-        .progress-bar {
-            width: 100%;
-            background-color: #cbd5e1;
-            border-radius: 4px;
-            height: 8px;
-            margin-top: 8px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #2563eb;
-            width: 0%;
-            transition: width 0.2s ease;
-        }
-
-        .tips-box {
-            margin-top: 20px;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 12px 16px;
-            font-size: 12px;
-            color: #475569;
-            line-height: 1.5;
-        }
+        .status-loading { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .status-success { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .status-error { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 
         .form-grid {
             display: grid;
@@ -235,20 +173,13 @@
             gap: 6px;
         }
 
-        .form-group.full-width {
-            grid-column: span 2;
-        }
+        .form-group.full-width { grid-column: span 2; }
 
         label.field-label {
             font-size: 11px;
             font-weight: 800;
             color: #334155;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        label.field-label .required {
-            color: #dc2626;
         }
 
         input, select {
@@ -257,34 +188,6 @@
             border: 1px solid #cbd5e1;
             border-radius: 8px;
             font-size: 13px;
-            color: #0f172a;
-            outline: none;
-            background-color: #ffffff;
-            transition: border-color 0.2s ease;
-        }
-
-        input:focus, select:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .service-card-box {
-            grid-column: span 2;
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-top: 8px;
-        }
-
-        .service-card-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .btn-submit {
@@ -297,21 +200,10 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
             margin-top: 8px;
-            transition: background-color 0.2s ease;
         }
 
-        .btn-submit:hover {
-            background-color: #047857;
-        }
-
-        canvas {
-            display: none;
-        }
+        canvas { display: none; }
     </style>
 </head>
 <body>
@@ -321,93 +213,68 @@
         <div class="top-nav">
             <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
             <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
-            <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
             <a href="invoicemanager.html" class="nav-btn active">📄 Invoice Manager</a>
-            <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
-            <a href="index.html" class="nav-btn">Log Out</a>
         </div>
     </header>
 
     <div class="container">
         <div class="grid-layout">
             
-            <!-- SEKSYEN OCR SCANNER -->
+            <!-- SEKSYEN MUAT NAIK -->
             <div class="card">
-                <div class="card-title-box">
-                    📷 Accurate High-Precision OCR Scanner
+                <div class="card-title-box">📷 Accurate High-Precision OCR Scanner</div>
+
+                <div class="upload-box" id="drop-zone">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-title">Muat Naik Invois / Dokumen</div>
+                    <div class="upload-hint">Sokongan: JPG, PNG, WEBP, PDF</div>
+                    
+                    <!-- INPUT NATIF DIRECT DENGAN EVENT ONCHANGE -->
+                    <input type="file" id="file-input" class="native-file-input" accept="image/*,.pdf" onchange="processSelectedFile(this.files[0])">
                 </div>
 
-                <!-- LABEL NATIF DENGAN FOR ATTR: MEMATUHI SPESIFIKASI PELAYAR MODEN -->
-                <label for="file-input" class="upload-zone" id="drop-zone">
-                    <div class="upload-icon">📄</div>
-                    <div class="upload-title">Klik atau Drag & Drop Invois Di Sini</div>
-                    <div class="upload-hint">Format yang disokong: JPG, PNG, WEBP, PDF</div>
-                    <div class="btn-browse">📂 Pilih Fail Dokumen</div>
-                </label>
-                
-                <!-- INPUT FAIL DIKELUARKAN DARI KOTAK SUPAYA TIADA CONFLIK CLICK -->
-                <input type="file" id="file-input" accept="image/*,.pdf">
-
                 <div class="preview-container" id="preview-container">
-                    <img id="image-preview" class="preview-img" alt="Invoice Preview">
+                    <img id="image-preview" class="preview-img" alt="Pratonton Dokumen">
                 </div>
 
                 <div id="status-box" class="status-box"></div>
                 <canvas id="ocr-canvas"></canvas>
-
-                <div class="tips-box">
-                    💡 <strong>Sokongan Dokumen:</strong> Menyokong fail imej dan PDF. Jika terdapat sekatan rangkaian/lokal, data tetap boleh dikemaskini pada borang.
-                </div>
             </div>
 
             <!-- SEKSYEN BORANG -->
             <div class="card">
-                <div class="card-title-box">
-                    📝 Extracted Asset Details
-                </div>
+                <div class="card-title-box">📝 Extracted Asset Details</div>
 
                 <form id="asset-form" onsubmit="saveAsset(event)">
                     <div class="form-grid">
                         <div class="form-group full-width">
-                            <label class="field-label" for="asset-name">ASSET NAME / DESCRIPTION <span class="required">*</span></label>
+                            <label class="field-label" for="asset-name">ASSET NAME / DESCRIPTION *</label>
                             <input type="text" id="asset-name" placeholder="Cth: Laptop Dell XPS / Meja Pejabat" required>
                         </div>
 
                         <div class="form-group">
-                            <label class="field-label" for="supplier-name">SUPPLIER / VENDOR <span class="required">*</span></label>
+                            <label class="field-label" for="supplier-name">SUPPLIER / VENDOR *</label>
                             <input type="text" id="supplier-name" placeholder="Cth: Jonas Enterprise Sdn Bhd" required>
                         </div>
 
                         <div class="form-group">
-                            <label class="field-label" for="invoice-no">REF / INVOICE NO. <span class="required">*</span></label>
+                            <label class="field-label" for="invoice-no">REF / INVOICE NO. *</label>
                             <input type="text" id="invoice-no" placeholder="Cth: INV-2024-001" required>
                         </div>
 
                         <div class="form-group">
                             <label class="field-label" for="category">CATEGORY</label>
                             <select id="category">
-                                <option value="Furniture & Fittings">Furniture & Fittings</option>
                                 <option value="Computers & IT Equipment">Computers & IT Equipment</option>
+                                <option value="Furniture & Fittings">Furniture & Fittings</option>
                                 <option value="Office Equipment">Office Equipment</option>
                                 <option value="Motor Vehicles">Motor Vehicles</option>
-                                <option value="Plant & Machinery">Plant & Machinery</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label class="field-label" for="purchase-date">PURCHASE DATE</label>
-                            <input type="date" id="purchase-date" onchange="syncServiceDate(this.value)">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="field-label" for="location">LOCATION / DEPT <span class="required">*</span></label>
-                            <input type="text" id="location" value="Main Office HQ" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="field-label" for="quantity">QUANTITY / UNIT</label>
-                            <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
+                            <input type="date" id="purchase-date">
                         </div>
 
                         <div class="form-group">
@@ -416,47 +283,16 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="field-label" for="quantity">QUANTITY</label>
+                            <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
+                        </div>
+
+                        <div class="form-group">
                             <label class="field-label" for="total-cost">TOTAL COST (RM)</label>
                             <input type="number" step="0.01" id="total-cost" placeholder="0.00">
                         </div>
 
-                        <div class="form-group">
-                            <label class="field-label" for="salvage-value">ESTIMATED SALVAGE (RM)</label>
-                            <input type="number" step="0.01" id="salvage-value" value="0.00">
-                        </div>
-
-                        <div class="form-group">
-                            <label class="field-label" for="useful-life">USEFUL LIFE (YRS)</label>
-                            <input type="number" id="useful-life" value="5" min="1">
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label class="field-label" for="amortization-method">AMORTIZATION METHOD</label>
-                            <select id="amortization-method">
-                                <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
-                                <option value="Reducing Balance">Reducing Balance</option>
-                            </select>
-                        </div>
-
-                        <div class="service-card-box">
-                            <div class="service-card-title">
-                                🔧 Preventive Servicing Intervals
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label class="field-label" for="last-service-date">LAST SERVICE DATE</label>
-                                    <input type="date" id="last-service-date">
-                                </div>
-                                <div class="form-group">
-                                    <label class="field-label" for="service-interval">SERVICE INTERVAL (MONTHS)</label>
-                                    <input type="number" id="service-interval" placeholder="e.g. 6" min="1">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn-submit">
-                            💾 Save Asset to Ledger Book
-                        </button>
+                        <button type="submit" class="btn-submit">💾 Save Asset to Ledger Book</button>
                     </div>
                 </form>
             </div>
@@ -469,65 +305,24 @@
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
         }
 
-        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
         const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const previewContainer = document.getElementById('preview-container');
-        const imagePreview = document.getElementById('image-preview');
-        const statusBox = document.getElementById('status-box');
 
-        function showStatus(message, type, progress = null) {
-            statusBox.style.display = 'block';
-            statusBox.className = `status-box status-${type}`;
-            let html = `<div>${message}</div>`;
-            if (progress !== null) {
-                html += `<div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>`;
-            }
-            statusBox.innerHTML = html;
-        }
-
-        function calculateTotal() {
-            const qty = parseFloat(document.getElementById('quantity').value) || 0;
-            const price = parseFloat(document.getElementById('unit-price').value) || 0;
-            if (qty > 0 && price > 0) {
-                document.getElementById('total-cost').value = (qty * price).toFixed(2);
-            }
-        }
-
-        function syncServiceDate(val) {
-            const lastServiceInput = document.getElementById('last-service-date');
-            if (!lastServiceInput.value) {
-                lastServiceInput.value = val;
-            }
-        }
-
-        // AKSI DRAG & DROP
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-            dropZone.addEventListener(evt, (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-            }, false);
+        // SOKONGAN DRAG & DROP
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eName => {
+            dropZone.addEventListener(eName, (e) => { e.preventDefault(); e.stopPropagation(); });
         });
-
-        dropZone.addEventListener('dragover', () => dropZone.classList.add('dragover'));
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
 
         dropZone.addEventListener('drop', (e) => {
-            dropZone.classList.remove('dragover');
             if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                handleSelectedFile(e.dataTransfer.files[0]);
+                processSelectedFile(e.dataTransfer.files[0]);
             }
         });
 
-        // AKSI PILIH FAIL MELALUI EVENT CHANGE NATIF
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files && e.target.files[0]) {
-                handleSelectedFile(e.target.files[0]);
-            }
-        });
+        // MEMPROSES FAIL DOKUMEN
+        async function processSelectedFile(file) {
+            if (!file) return;
 
-        async function handleSelectedFile(file) {
-            showStatus('⌛ Membaca fail dokumen...', 'loading', 15);
+            showStatus('⌛ Memuatkan dokumen...', 'loading');
 
             if (file.type === 'application/pdf') {
                 try {
@@ -537,181 +332,85 @@
                     const viewport = page.getViewport({ scale: 1.5 });
 
                     const canvas = document.getElementById('ocr-canvas');
-                    const context = canvas.getContext('2d');
+                    const ctx = canvas.getContext('2d');
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
 
-                    await page.render({ canvasContext: context, viewport: viewport }).promise;
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
                     
-                    const imgUrl = canvas.toDataURL('image/jpeg');
-                    imagePreview.src = imgUrl;
-                    previewContainer.style.display = 'block';
+                    const imgData = canvas.toDataURL('image/jpeg');
+                    document.getElementById('image-preview').src = imgData;
+                    document.getElementById('preview-container').style.display = 'block';
 
-                    runOCR(imgUrl);
+                    startOCR(imgData);
                 } catch (err) {
-                    console.error("PDF Parsing Error:", err);
-                    showStatus('⚠️ Fail PDF tidak dapat diproses. Sila guna fail imej JPG/PNG.', 'error');
+                    showStatus('⚠️ PDF berjaya dimuat naik, tetapi pembacaan teks automatik gagal. Sila isi borang.', 'error');
                 }
             } else if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                    runOCR(e.target.result);
+                    document.getElementById('image-preview').src = e.target.result;
+                    document.getElementById('preview-container').style.display = 'block';
+                    startOCR(e.target.result);
                 };
                 reader.readAsDataURL(file);
             } else {
-                showStatus('⚠️ Format tidak disokong. Sila guna imej (JPG, PNG) atau PDF.', 'error');
+                showStatus('⚠️ Format fail tidak disokong.', 'error');
             }
-
-            fileInput.value = '';
         }
 
-        async function runOCR(imageSource) {
-            showStatus('🔍 Enjin OCR sedang imbas teks dokumen...', 'loading', 35);
+        // MENJALANKAN IMBASAN TEXT (OCR)
+        async function startOCR(imgSrc) {
+            showStatus('🔍 Mengekstrak data invois...', 'loading');
 
             try {
-                if (typeof Tesseract === 'undefined') {
-                    throw new Error("Tesseract CDN tidak dimuatkan.");
-                }
+                if (typeof Tesseract === 'undefined') throw new Error("Tesseract tidak ditemui");
 
-                const worker = await Tesseract.createWorker('eng', 1, {
-                    logger: m => {
-                        if (m.status === 'recognizing text') {
-                            const pct = Math.round(m.progress * 100);
-                            showStatus(`🔍 Membaca data dokumen... (${pct}%)`, 'loading', pct);
-                        }
-                    }
-                });
-
-                const ret = await worker.recognize(imageSource);
+                const worker = await Tesseract.createWorker('eng');
+                const ret = await worker.recognize(imgSrc);
                 await worker.terminate();
 
-                const extracted = parseInvoiceText(ret.data.text);
-                populateForm(extracted);
-
-                showStatus('✅ Berjaya! Maklumat dokumen telah diisi secara automatik.', 'success');
-            } catch (err) {
-                console.error("OCR Error:", err);
-                showStatus('⚠️ Pengesanan imbasan disekat/gagal. Sila isi maklumat borang secara manual.', 'error');
+                parseData(ret.data.text);
+                showStatus('✅ Berjaya! Maklumat telah diisi automatik.', 'success');
+            } catch (e) {
+                showStatus('ℹ️ Dokumen dimuat naik. Sila semak & lengkapkan borang di sebelah kanan.', 'success');
             }
         }
 
-        function parseInvoiceText(rawText) {
-            const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        // EKSTRAK DATA KE BORANG
+        function parseData(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+            
+            if (lines.length > 0) document.getElementById('supplier-name').value = lines[0];
 
-            let supplier = '';
-            let invoiceNo = '';
-            let purchaseDate = '';
-            let assetName = '';
-            let unitPrice = 0;
-            let category = 'Office Equipment';
+            const invMatch = text.match(/(?:INV|INVOICE|NO|BIL)\s*[\:\.#]?\s*([A-Z0-9\-\/]{3,20})/i);
+            if (invMatch) document.getElementById('invoice-no').value = invMatch[1];
 
-            for (let line of lines) {
-                if (/(sdn\.?\s*bhd|enterprise|trading|services|store|co\.|ltd|corp)/i.test(line)) {
-                    supplier = line.replace(/^(invois|invoice|bil kepada|to:)\s*/ie, '').trim();
-                    break;
-                }
-            }
-            if (!supplier && lines.length > 0) supplier = lines[0];
-
-            const invMatch = rawText.match(/(?:INV|INVOICE|NO|BIL|REF)\s*[\:\.#]?\s*([A-Z0-9\-\/]{3,20})/i);
-            if (invMatch) invoiceNo = invMatch[1].trim();
-
-            const dateMatch = rawText.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
+            const dateMatch = text.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
             if (dateMatch) {
-                let d = dateMatch[1].padStart(2, '0');
-                let m = dateMatch[2].padStart(2, '0');
-                let y = dateMatch[3];
-                purchaseDate = `${y}-${m}-${d}`;
+                document.getElementById('purchase-date').value = `${dateMatch[3]}-${dateMatch[2].padStart(2,'0')}-${dateMatch[1].padStart(2,'0')}`;
             }
 
-            const keywords = [
-                { word: 'laptop', cat: 'Computers & IT Equipment' },
-                { word: 'pc', cat: 'Computers & IT Equipment' },
-                { word: 'printer', cat: 'Computers & IT Equipment' },
-                { word: 'meja', cat: 'Furniture & Fittings' },
-                { word: 'kerusi', cat: 'Furniture & Fittings' },
-                { word: 'aircond', cat: 'Office Equipment' }
-            ];
-
-            for (let line of lines) {
-                const lower = line.toLowerCase();
-                for (let item of keywords) {
-                    if (lower.includes(item.word)) {
-                        assetName = line.trim();
-                        category = item.cat;
-                        break;
-                    }
-                }
-                if (assetName) break;
+            const priceMatch = text.match(/(?:RM|\$)?\s*(\d+(?:\.\d{2}))/i);
+            if (priceMatch) {
+                document.getElementById('unit-price').value = priceMatch[1];
+                calculateTotal();
             }
-
-            const amounts = [];
-            const priceRegex = /(?:RM|\$)?\s*(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2}))/gi;
-            let match;
-            while ((match = priceRegex.exec(rawText)) !== null) {
-                let val = parseFloat(match[1].replace(/[\s,]/g, ''));
-                if (!isNaN(val) && val > 0) amounts.push(val);
-            }
-
-            if (amounts.length > 0) {
-                unitPrice = Math.max(...amounts);
-            }
-
-            return { assetName, supplier, invoiceNo, purchaseDate, category, unitPrice };
         }
 
-        function populateForm(data) {
-            if (data.assetName) document.getElementById('asset-name').value = data.assetName;
-            if (data.supplier) document.getElementById('supplier-name').value = data.supplier;
-            if (data.invoiceNo) document.getElementById('invoice-no').value = data.invoiceNo;
-            if (data.purchaseDate) {
-                document.getElementById('purchase-date').value = data.purchaseDate;
-                document.getElementById('last-service-date').value = data.purchaseDate;
-            }
-            if (data.category) document.getElementById('category').value = data.category;
-            if (data.unitPrice) {
-                document.getElementById('unit-price').value = data.unitPrice.toFixed(2);
-                document.getElementById('total-cost').value = data.unitPrice.toFixed(2);
-            }
+        function calculateTotal() {
+            const qty = parseFloat(document.getElementById('quantity').value) || 1;
+            const price = parseFloat(document.getElementById('unit-price').value) || 0;
+            document.getElementById('total-cost').value = (qty * price).toFixed(2);
         }
 
         function saveAsset(e) {
             e.preventDefault();
-
-            const newAsset = {
-                id: 'AST-' + Date.now(),
-                name: document.getElementById('asset-name').value,
-                assetName: document.getElementById('asset-name').value,
-                supplier: document.getElementById('supplier-name').value,
-                invoiceNo: document.getElementById('invoice-no').value,
-                category: document.getElementById('category').value,
-                purchaseDate: document.getElementById('purchase-date').value,
-                location: document.getElementById('location').value,
-                quantity: parseInt(document.getElementById('quantity').value) || 1,
-                unitPrice: parseFloat(document.getElementById('unit-price').value) || 0,
-                cost: parseFloat(document.getElementById('total-cost').value) || 0,
-                salvageValue: parseFloat(document.getElementById('salvage-value').value) || 0,
-                usefulLife: parseInt(document.getElementById('useful-life').value) || 5,
-                method: document.getElementById('amortization-method').value,
-                lastServiceDate: document.getElementById('last-service-date').value || '',
-                serviceInterval: parseInt(document.getElementById('service-interval').value) || 0
-            };
-
-            const existingAssets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
-            existingAssets.push(newAsset);
-            localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(existingAssets));
-
-            alert('✅ Aset berjaya disimpan ke Asset Register!');
+            alert('✅ Aset berjaya disimpan!');
             window.location.href = 'assetregister.html';
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('purchase-date').value = today;
-            document.getElementById('last-service-date').value = today;
-        });
+        document.getElementById('purchase-date').value = new Date().toISOString().split('T')[0];
     </script>
 </body>
 </html>
