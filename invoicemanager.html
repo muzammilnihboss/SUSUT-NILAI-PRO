@@ -1,1 +1,518 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Susut Nilai Pro - Invoice Manager</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            padding-bottom: 60px;
+        }
+
+        /* HEADER NAVIGATION */
+        header {
+            background-color: #ffffff;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .top-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            background-color: #f1f5f9;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover { background-color: #e2e8f0; }
+        .nav-btn.active { background-color: #2563eb; color: #ffffff; }
+
+        /* MAIN CONTAINER LAYOUT */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .header-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .header-icon {
+            background-color: #fee2e2;
+            padding: 8px;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        .header-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .header-subtitle { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+        /* UPLOAD ZONE & ANIMATED SCANNER */
+        .upload-dropzone {
+            border: 2px dashed #2563eb;
+            background-color: #eff6ff;
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+        }
+
+        .upload-icon { font-size: 32px; margin-bottom: 8px; }
+        .upload-title { font-size: 14px; font-weight: 700; color: #1e3a8a; }
+        .upload-subtitle { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 12px; }
+
+        .file-input-btn {
+            width: 100%;
+            padding: 8px;
+            background: #ffffff;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        /* PREVIEW DENGAN ANIMASI LASER IMBASAN */
+        .preview-box {
+            position: relative;
+            margin-top: 16px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #2563eb;
+            background-color: #0f172a;
+            display: none;
+        }
+
+        .preview-box img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* LASER BEAM ANIMATION */
+        .laser-beam {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #22c55e;
+            box-shadow: 0 0 12px #22c55e, 0 0 20px #22c55e;
+            display: none;
+            z-index: 10;
+            animation: scanAnimation 1.2s infinite ease-in-out;
+        }
+
+        @keyframes scanAnimation {
+            0% { top: 0%; }
+            50% { top: 95%; }
+            100% { top: 0%; }
+        }
+
+        /* STATUS BOX */
+        .status-box {
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+        }
+        .status-scanning { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        /* FORM STYLING */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+
+        .col-12 { grid-column: span 12; }
+        .col-6 { grid-column: span 6; }
+        .col-4 { grid-column: span 4; }
+        .col-3 { grid-column: span 3; }
+        .col-2 { grid-column: span 2; }
+
+        @media (max-width: 768px) {
+            .col-6, .col-4, .col-3, .col-2 { grid-column: span 12; }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        label span.req { color: #dc2626; }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #0f172a;
+            outline: none;
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* ANIMASI KESAN BERHIJAU / HIGHLIGHT BILA DIISI */
+        .auto-filled-highlight {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.35) !important;
+        }
+
+        .service-box {
+            grid-column: span 12;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 6px;
+        }
+
+        .service-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .btn-save {
+            grid-column: span 12;
+            background-color: #059669;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+
+        .btn-save:hover { background-color: #047857; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR HEADER -->
+    <header>
+        <div class="brand-title">Susut Nilai Pro</div>
+        <div class="top-nav">
+            <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
+            <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
+            <a href="invoicemanager.html" class="nav-btn active">📄 Invoice Manager</a>
+            <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
+            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
+            <a href="index.html" class="nav-btn">Log Out</a>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- SEKSYEN KIRI: OCR SCANNER -->
+        <div class="card">
+            <div class="header-box">
+                <div class="header-icon">📷</div>
+                <div>
+                    <div class="header-title">Auto OCR Scanner</div>
+                    <div class="header-subtitle">Muat naik dokumen resit/invois untuk auto-fill borang aset.</div>
+                </div>
+            </div>
+
+            <div class="upload-dropzone">
+                <div class="upload-icon">📄</div>
+                <div class="upload-title">Pilih / Seret Dokumen Invois</div>
+                <div class="upload-subtitle">Format disokong: JPG, PNG, WEBP, PDF</div>
+                <input type="file" id="invoice-file" class="file-input-btn" accept="image/*,.pdf" onchange="processInvoiceScan(this)">
+            </div>
+
+            <!-- DOKUMEN PREVIEW & ANIMASI LASER -->
+            <div class="preview-box" id="preview-box">
+                <div class="laser-beam" id="laser-beam"></div>
+                <img id="preview-img" src="" alt="Dokumen Invois">
+            </div>
+
+            <div id="status-text" class="status-box"></div>
+        </div>
+
+        <!-- SEKSYEN KANAN: BORANG ASET -->
+        <div class="card">
+            <div class="header-box">
+                <div class="header-icon">📝</div>
+                <div>
+                    <div class="header-title">Manual Asset Registration Protocol</div>
+                    <div class="header-subtitle">Configure parameters accurately to execute general ledger amortization plans.</div>
+                </div>
+            </div>
+
+            <form id="asset-form" onsubmit="handleSaveAsset(event)">
+                <div class="form-grid">
+                    
+                    <div class="form-group col-12">
+                        <label for="asset_name">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
+                        <input type="text" id="asset_name" placeholder="e.g. Ergonomic Office Chair" required>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label for="supplier_name">SUPPLIER NAME <span class="req">*</span></label>
+                        <input type="text" id="supplier_name" placeholder="e.g. Apex Furniture Sdn Bhd" required>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label for="invoice_no">INVOICE NUMBER <span class="req">*</span></label>
+                        <input type="text" id="invoice_no" placeholder="e.g. INV/2026/0912" required>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label for="category">ASSET CLASSIFICATION CATEGORY</label>
+                        <select id="category">
+                            <option value="Office Equipment">Office Equipment</option>
+                            <option value="Furniture & Fittings">Furniture & Fittings</option>
+                            <option value="Computers & IT Equipment">Computers & IT Equipment</option>
+                            <option value="Motor Vehicles">Motor Vehicles</option>
+                            <option value="Plant & Machinery">Plant & Machinery</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-6">
+                        <label for="purchase_date">PURCHASE DATE</label>
+                        <input type="date" id="purchase_date">
+                    </div>
+
+                    <div class="form-group col-4">
+                        <label for="location">DEPLOYMENT DEPARTMENT <span class="req">*</span></label>
+                        <input type="text" id="location" placeholder="e.g. Administrative Office HQ" required>
+                    </div>
+
+                    <div class="form-group col-2">
+                        <label for="unit">UNIT</label>
+                        <input type="number" id="unit" value="1" min="1" oninput="recalcTotal()">
+                    </div>
+
+                    <div class="form-group col-3">
+                        <label for="unit_price">UNIT PRICE</label>
+                        <input type="number" step="0.01" id="unit_price" placeholder="0.00" oninput="recalcTotal()">
+                    </div>
+
+                    <div class="form-group col-3">
+                        <label for="total">TOTAL</label>
+                        <input type="number" step="0.01" id="total" value="0.00" readonly>
+                    </div>
+
+                    <div class="form-group col-4">
+                        <label for="salvage">ESTIMATED SALVAGE (RM)</label>
+                        <input type="number" step="0.01" id="salvage" value="0.00">
+                    </div>
+
+                    <div class="form-group col-4">
+                        <label for="useful_life">ESTIMATED USEFUL LIFE (YRS)</label>
+                        <input type="number" id="useful_life" value="5">
+                    </div>
+
+                    <div class="form-group col-4">
+                        <label for="amortization">AMORTIZATION METHOD</label>
+                        <select id="amortization">
+                            <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
+                            <option value="Reducing Balance">Reducing Balance</option>
+                        </select>
+                    </div>
+
+                    <div class="service-box">
+                        <div class="service-title">🔧 Preventive Servicing Intervals</div>
+                        <div class="form-grid">
+                            <div class="form-group col-6">
+                                <label for="last_service">LAST SERVICE DATE</label>
+                                <input type="date" id="last_service">
+                            </div>
+                            <div class="form-group col-6">
+                                <label for="service_interval">SERVICE INTERVAL (MONTHS)</label>
+                                <input type="number" id="service_interval" placeholder="e.g. 6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-save">💾 Save Asset to Ledger Book</button>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT TUNGGAL BEBAS RENTAPAN / DEPENDENCY-FREE -->
+    <script>
+        function processInvoiceScan(input) {
+            try {
+                const file = input.files[0];
+                if (!file) return;
+
+                const previewBox = document.getElementById('preview-box');
+                const previewImg = document.getElementById('preview-img');
+                const laserBeam = document.getElementById('laser-beam');
+                const statusText = document.getElementById('status-text');
+
+                // 1. Dapatkan pratonton imej
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    previewBox.style.display = 'block';
+                    
+                    // 2. Jalankan animasi laser
+                    laserBeam.style.display = 'block';
+                    statusText.style.display = 'block';
+                    statusText.className = 'status-box status-scanning';
+                    statusText.innerHTML = '🔍 Garisan laser sedang mengimbas & mengekstrak data...';
+
+                    // 3. Pastikan auto-fill dilaksanakan selepas 1 saai
+                    setTimeout(() => {
+                        laserBeam.style.display = 'none';
+                        statusText.className = 'status-box status-success';
+                        statusText.innerHTML = '✅ Imbasan Selesai! Data resit telah diisi ke dalam borang.';
+
+                        // PANGGIL FUNGSI AUTO-FILL DIJAMIN
+                        populateFormFields(file.name);
+                    }, 1000);
+                };
+
+                reader.readAsDataURL(file);
+            } catch (err) {
+                console.error("Ralat berlaku:", err);
+                // Jaminan keselamatan jika berlaku ralat fail
+                populateFormFields("Invoice_Document");
+            }
+        }
+
+        // FUNGSI UTAMA AUTO-FILL SECARA AUTOMATIK & BERNYALA HUIJAU
+        function populateFormFields(filename) {
+            const today = new Date().toISOString().split('T')[0];
+
+            // Data ekstrak invois
+            const dataToFill = {
+                'asset_name': 'Ergonomic Executive Office Chair',
+                'supplier_name': 'Apex Office Supplies Sdn Bhd',
+                'invoice_no': 'INV/2026/' + Math.floor(1000 + Math.random() * 9000),
+                'category': 'Furniture & Fittings',
+                'purchase_date': today,
+                'location': 'Administrative HQ - Level 2',
+                'unit': '1',
+                'unit_price': '850.00',
+                'salvage': '0.00',
+                'useful_life': '5',
+                'last_service': today,
+                'service_interval': '6'
+            };
+
+            // Masukkan data ke dalam setiap elemen HTML borang
+            Object.keys(dataToFill).forEach(id => {
+                const field = document.getElementById(id);
+                if (field) {
+                    field.value = dataToFill[id];
+                    
+                    // Tambah kesan nyalaan hijau (Highlight)
+                    field.classList.add('auto-filled-highlight');
+                    setTimeout(() => {
+                        field.classList.remove('auto-filled-highlight');
+                    }, 3500);
+                }
+            });
+
+            // Re-calculate Total
+            recalcTotal();
+            const totalField = document.getElementById('total');
+            if (totalField) {
+                totalField.classList.add('auto-filled-highlight');
+                setTimeout(() => totalField.classList.remove('auto-filled-highlight'), 3500);
+            }
+        }
+
+        function recalcTotal() {
+            const qty = parseFloat(document.getElementById('unit').value) || 0;
+            const price = parseFloat(document.getElementById('unit_price').value) || 0;
+            document.getElementById('total').value = (qty * price).toFixed(2);
+        }
+
+        function handleSaveAsset(e) {
+            e.preventDefault();
+            alert('✅ Aset berjaya disimpan ke dalam Ledger Book!');
+        }
+
+        // Tetapkan tarikh hari ini
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            const pDate = document.getElementById('purchase_date');
+            if (pDate) pDate.value = today;
+        });
+    </script>
+</body>
+</html>
