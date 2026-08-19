@@ -3,96 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Manager - Susut Nilai Pro</title>
-    <!-- Library OCR & PDF -->
+    <title>Invoice Manager - OCR Auto Fill</title>
+    <!-- Library Tesseract OCR & PDF.js -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #f8fafc; padding: 20px; color: #0f172a; }
-        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: #fff; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #f8fafc; color: #0f172a; padding: 30px; }
         
-        .upload-area {
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px; }
+        .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .card-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+        .upload-zone {
             border: 2px dashed #2563eb;
-            background: #eff6ff;
-            padding: 25px;
+            background-color: #f0f7ff;
+            border-radius: 12px;
+            padding: 30px 20px;
             text-align: center;
-            border-radius: 10px;
-            margin-bottom: 15px;
+            transition: all 0.2s ease;
         }
 
-        .file-btn {
-            margin-top: 10px;
-            padding: 10px 15px;
-            background: #2563eb;
+        .upload-icon { font-size: 36px; margin-bottom: 8px; }
+        .upload-title { font-size: 16px; font-weight: 700; color: #1e3a8a; }
+        .upload-hint { font-size: 12px; color: #64748b; margin-top: 4px; margin-bottom: 16px; }
+
+        .native-file-input {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #ffffff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .preview-box {
+            margin-top: 16px;
+            width: 100%;
+            max-height: 250px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            display: none;
+        }
+
+        .status-container {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: none;
+        }
+        .status-loading { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .status-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .progress-bar { width: 100%; background: #cbd5e1; height: 6px; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #2563eb; width: 0%; transition: width 0.3s ease; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: span 2; }
+
+        label { font-size: 11px; font-weight: 800; color: #334155; text-transform: uppercase; }
+        input, select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none; }
+        input:focus, select:focus { border-color: #2563eb; }
+
+        .btn-submit {
+            grid-column: span 2;
+            background-color: #059669;
             color: white;
             border: none;
-            border-radius: 6px;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: bold;
+            margin-top: 10px;
         }
-
-        #file-input { display: none; }
+        .btn-submit:hover { background-color: #047857; }
         
-        .preview-box { width: 100%; max-height: 300px; object-fit: contain; margin-top: 10px; display: none; border: 1px solid #ddd; }
-        .status-msg { padding: 10px; border-radius: 6px; font-size: 13px; margin-top: 10px; display: none; }
-        .info { background: #e0f2fe; color: #0369a1; }
-        .success { background: #dcfce7; color: #15803d; }
-        .error { background: #fee2e2; color: #b91c1c; }
-
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; }
-        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
-        .btn-submit { width: 100%; padding: 12px; background: #059669; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        canvas { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- SEKSYEN MUAT NAIK DOKUMEN -->
+    <!-- SEKSYEN OCR SCANNER -->
     <div class="card">
-        <h3>📷 OCR Scanner Invois</h3>
-        <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Sila pilih fail invois untuk dimuat naik.</p>
+        <div class="card-title">📷 Accurate High-Precision OCR Scanner</div>
 
-        <div class="upload-area" id="drop-zone">
-            📄 <strong>Pilih atau Tarik Fail Ke Sini</strong><br>
-            <span style="font-size: 11px; color: #666;">Format: PNG, JPG, PDF</span><br><br>
-            
-            <button class="file-btn" onclick="document.getElementById('file-input').click()">📂 Pilih Fail Dokumen</button>
-            <input type="file" id="file-input" accept="image/*,.pdf" onchange="handleFile(this.files[0])">
+        <div class="upload-zone" id="drop-zone">
+            <div class="upload-icon">📄</div>
+            <div class="upload-title">Muat Naik Invois / Dokumen</div>
+            <div class="upload-hint">Sokongan: JPG, PNG, WEBP, PDF</div>
+            <input type="file" id="file-input" class="native-file-input" accept="image/*,.pdf" onchange="processFile(this.files[0])">
         </div>
 
         <img id="image-preview" class="preview-box" alt="Pratonton Dokumen">
-        <canvas id="pdf-canvas" style="display:none;"></canvas>
-        <div id="status" class="status-msg"></div>
+        <canvas id="processing-canvas"></canvas>
+
+        <div id="status-box" class="status-container"></div>
     </div>
 
-    <!-- SEKSYEN BORANG HASIL EKSSTRAK -->
+    <!-- SEKSYEN BORANG ASET -->
     <div class="card">
-        <h3>📝 Data Aset Invois</h3>
-        <form id="asset-form" onsubmit="saveData(event)">
-            <div class="form-group">
-                <label>NAMA ASET / DESKRIPSI</label>
-                <input type="text" id="asset-name" required>
+        <div class="card-title">📝 Extracted Asset Details</div>
+
+        <form id="asset-form" onsubmit="saveAsset(event)">
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label for="asset-name">ASSET NAME / DESCRIPTION *</label>
+                    <input type="text" id="asset-name" placeholder="Cth: Laptop Dell XPS / Meja Pejabat" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="supplier-name">SUPPLIER / VENDOR *</label>
+                    <input type="text" id="supplier-name" placeholder="Cth: Jonas Enterprise Sdn Bhd" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="invoice-no">REF / INVOICE NO. *</label>
+                    <input type="text" id="invoice-no" placeholder="Cth: INV-2024-001" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">CATEGORY</label>
+                    <select id="category">
+                        <option value="Computers & IT Equipment">Computers & IT Equipment</option>
+                        <option value="Furniture & Fittings">Furniture & Fittings</option>
+                        <option value="Office Equipment">Office Equipment</option>
+                        <option value="Motor Vehicles">Motor Vehicles</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="purchase-date">PURCHASE DATE</label>
+                    <input type="date" id="purchase-date">
+                </div>
+
+                <div class="form-group">
+                    <label for="unit-price">UNIT PRICE (RM)</label>
+                    <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()">
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">QUANTITY</label>
+                    <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
+                </div>
+
+                <div class="form-group full">
+                    <label for="total-cost">TOTAL COST (RM)</label>
+                    <input type="number" step="0.01" id="total-cost" placeholder="0.00">
+                </div>
+
+                <button type="submit" class="btn-submit">💾 Save Asset to Ledger Book</button>
             </div>
-            <div class="form-group">
-                <label>PEMBEKAL / VENDOR</label>
-                <input type="text" id="supplier-name" required>
-            </div>
-            <div class="form-group">
-                <label>NO. INVOIS</label>
-                <input type="text" id="invoice-no" required>
-            </div>
-            <div class="form-group">
-                <label>TARIKH BELIAN</label>
-                <input type="date" id="purchase-date">
-            </div>
-            <div class="form-group">
-                <label>HARGA SEUNIT (RM)</label>
-                <input type="number" step="0.01" id="unit-price">
-            </div>
-            <button type="submit" class="btn-submit">💾 Simpan Aset</button>
         </form>
     </div>
 </div>
@@ -102,85 +169,176 @@
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
 
-    function showStatus(text, type) {
-        const el = document.getElementById('status');
-        el.className = `status-msg ${type}`;
-        el.innerText = text;
-        el.style.display = 'block';
+    function showStatus(msg, type, progress = null) {
+        const box = document.getElementById('status-box');
+        box.className = `status-container status-${type}`;
+        box.style.display = 'block';
+
+        let html = `<div>${msg}</div>`;
+        if (progress !== null) {
+            html += `<div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>`;
+        }
+        box.innerHTML = html;
     }
 
-    // FUNGSI MEMBACA FAIL
-    async function handleFile(file) {
+    async function processFile(file) {
         if (!file) return;
 
-        showStatus('⌛ Membaca fail dokumen...', 'info');
+        showStatus('⌛ Membaca fail dokumen...', 'loading', 10);
         const imgPreview = document.getElementById('image-preview');
 
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
-            reader.onload = (e) => {
-                imgPreview.src = e.target.result;
-                imgPreview.style.display = 'block';
-                runOCR(e.target.result);
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    // TUKAR FAIL IMEJ (TERMASUK WEBP) KEPADA CANVAS DATA URL UNTUK STABILITI OCR
+                    const canvas = document.getElementById('processing-canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    const processedDataUrl = canvas.toDataURL('image/png');
+                    imgPreview.src = processedDataUrl;
+                    imgPreview.style.display = 'block';
+
+                    runOCR(processedDataUrl);
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         } else if (file.type === 'application/pdf') {
             try {
-                const buffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const page = await pdf.getPage(1);
-                
-                const canvas = document.getElementById('pdf-canvas');
+
+                const canvas = document.getElementById('processing-canvas');
                 const ctx = canvas.getContext('2d');
-                const viewport = page.getViewport({ scale: 1.5 });
+                const viewport = page.getViewport({ scale: 2.0 });
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
 
                 await page.render({ canvasContext: ctx, viewport: viewport }).promise;
-                const imgData = canvas.toDataURL('image/jpeg');
-                
-                imgPreview.src = imgData;
+                const pdfDataUrl = canvas.toDataURL('image/png');
+
+                imgPreview.src = pdfDataUrl;
                 imgPreview.style.display = 'block';
-                runOCR(imgData);
+
+                runOCR(pdfDataUrl);
             } catch (err) {
-                showStatus('⚠️ PDF dimasukkan tetapi gagal diproses oleh enjin PDF.', 'error');
+                showStatus('⚠️ Gagal membaca PDF. Sila guna fail imej PNG/JPG/WEBP.', 'error');
             }
-        } else {
-            showStatus('⚠️ Format tidak disokong. Sila muat naik JPG, PNG atau PDF.', 'error');
         }
     }
 
-    // FUNGSI OCR
-    async function runOCR(imageSource) {
-        showStatus('🔍 Enjin OCR sedang mengekstrak teks...', 'info');
+    async function runOCR(dataUrl) {
+        showStatus('🔍 Enjin Tesseract OCR sedang membaca teks dokumen...', 'loading', 30);
+
         try {
-            const worker = await Tesseract.createWorker('eng');
-            const res = await worker.recognize(imageSource);
+            if (typeof Tesseract === 'undefined') {
+                throw new Error("Library Tesseract tidak ditemui.");
+            }
+
+            const worker = await Tesseract.createWorker('eng', 1, {
+                logger: m => {
+                    if (m.status === 'recognizing text') {
+                        const pct = Math.round(m.progress * 100);
+                        showStatus(`🔍 Mengekstrak data invois... (${pct}%)`, 'loading', pct);
+                    }
+                }
+            });
+
+            const result = await worker.recognize(dataUrl);
             await worker.terminate();
 
-            parseTextToForm(res.data.text);
-            showStatus('✅ Dokumen berjaya dimuat naik & diimbas!', 'success');
+            const text = result.data.text;
+            console.log("--- TEKS DIIMBAS ---", text);
+
+            parseAndFillForm(text);
+            showStatus('✅ OCR Berjaya! Maklumat telah diisi ke dalam borang.', 'success');
         } catch (err) {
-            console.error(err);
-            showStatus('ℹ️ Fail berjaya dimuat naik. Sila lengkapkan borang secara manual (Akses OCR disekat rangkaian/localhost).', 'info');
+            console.error("Ralat OCR:", err);
+            showStatus('⚠️ Akses OCR disekat atau gagal. Jika menjalankan secara tempatan, sila jalankan via Live Server.', 'error');
         }
     }
 
-    function parseTextToForm(text) {
-        const lines = text.split('\n').filter(l => l.trim().length > 0);
-        if (lines.length > 0) document.getElementById('supplier-name').value = lines[0].trim();
+    function parseAndFillForm(text) {
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
 
-        const inv = text.match(/(?:INV|INVOICE|NO|BIL)\s*[\:\.#]?\s*([A-Z0-9\-\/]{3,20})/i);
-        if (inv) document.getElementById('invoice-no').value = inv[1];
+        // 1. CARI PEMBEKAL / VENDOR
+        let supplier = '';
+        for (let line of lines) {
+            if (/(sdn\.?\s*bhd|enterprise|trading|services|store|co\.|ltd|corp|pvt)/i.test(line)) {
+                supplier = line.replace(/^(invois|invoice|bil kepada|to:)\s*/ie, '').trim();
+                break;
+            }
+        }
+        if (!supplier && lines.length > 0) supplier = lines[0];
 
-        const price = text.match(/(?:RM|\$)?\s*(\d+\.\d{2})/i);
-        if (price) document.getElementById('unit-price').value = price[1];
+        // 2. CARI NO INVOIS
+        let invoiceNo = '';
+        const invMatch = text.match(/(?:INV|INVOICE|NO|BIL|REF)\s*[\:\.#]?\s*([A-Z0-9\-\/]{3,20})/i);
+        if (invMatch) invoiceNo = invMatch[1].trim();
+
+        // 3. CARI TARIKH BELIAN
+        let purchaseDate = '';
+        const dateMatch = text.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+        if (dateMatch) {
+            let day = dateMatch[1].padStart(2, '0');
+            let month = dateMatch[2].padStart(2, '0');
+            let year = dateMatch[3].length === 2 ? '20' + dateMatch[3] : dateMatch[3];
+            purchaseDate = `${year}-${month}-${day}`;
+        }
+
+        // 4. CARI NAMA ASET / ITEM
+        let assetName = '';
+        const keywords = ['laptop', 'notebook', 'pc', 'desktop', 'printer', 'monitor', 'chair', 'table', 'meja', 'kerusi', 'iphone', 'macbook', 'dell', 'hp', 'lenovo', 'asus'];
+        for (let line of lines) {
+            const lower = line.toLowerCase();
+            if (keywords.some(k => lower.includes(k))) {
+                assetName = line;
+                break;
+            }
+        }
+        if (!assetName && lines.length > 1) assetName = lines[1];
+
+        // 5. CARI HARGA / TOTAL (RM)
+        const amounts = [];
+        const priceRegex = /(?:RM|\$)?\s*(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2}))/gi;
+        let match;
+        while ((match = priceRegex.exec(text)) !== null) {
+            let val = parseFloat(match[1].replace(/[\s,]/g, ''));
+            if (!isNaN(val) && val > 0) amounts.push(val);
+        }
+
+        let maxPrice = amounts.length > 0 ? Math.max(...amounts) : 0;
+
+        // ISI SECARA AUTOMATIK KE DALAM MEDAN BORANG
+        if (assetName) document.getElementById('asset-name').value = assetName;
+        if (supplier) document.getElementById('supplier-name').value = supplier;
+        if (invoiceNo) document.getElementById('invoice-no').value = invoiceNo;
+        if (purchaseDate) document.getElementById('purchase-date').value = purchaseDate;
+        if (maxPrice > 0) {
+            document.getElementById('unit-price').value = maxPrice.toFixed(2);
+            document.getElementById('total-cost').value = maxPrice.toFixed(2);
+        }
     }
 
-    function saveData(e) {
+    function calculateTotal() {
+        const qty = parseFloat(document.getElementById('quantity').value) || 1;
+        const price = parseFloat(document.getElementById('unit-price').value) || 0;
+        document.getElementById('total-cost').value = (qty * price).toFixed(2);
+    }
+
+    function saveAsset(e) {
         e.preventDefault();
-        alert('Data berjaya disimpan!');
+        alert('✅ Aset berjaya disimpan ke Ledger Book!');
     }
+
+    // TETAPKAN TARIKH HARI INI SECARA DEFAULT
+    document.getElementById('purchase-date').value = new Date().toISOString().split('T')[0];
 </script>
 
 </body>
