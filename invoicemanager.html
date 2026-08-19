@@ -176,13 +176,20 @@
 
                     <div class="form-group col-6">
                         <label for="category">ASSET CLASSIFICATION CATEGORY</label>
-                        <select id="category">
-                            <option value="Furniture & Fittings">Furniture & Fittings</option>
+                        <select id="category" onchange="toggleOtherCategory(this.value)">
                             <option value="Office Equipment">Office Equipment</option>
-                            <option value="Computers & IT Equipment">Computers & IT Equipment</option>
+                            <option value="Furniture & Fittings">Furniture & Fittings</option>
+                            <option value="Computers & IT Hardware">Computers & IT Hardware</option>
                             <option value="Motor Vehicles">Motor Vehicles</option>
-                            <option value="Plant & Machinery">Plant & Machinery</option>
+                            <option value="Machinery & Plant">Machinery & Plant</option>
+                            <option value="Other Asset / Lain-lain">Other Asset / Lain-lain</option>
                         </select>
+                    </div>
+
+                    <!-- Dynamic Input Field for Other Asset -->
+                    <div class="form-group col-6" id="other_category_container" style="display: none;">
+                        <label for="other_category">SPECIFY OTHER ASSET TYPE <span class="req">*</span></label>
+                        <input type="text" id="other_category" placeholder="Type specific asset category..." onfocus="setTargetInput('other_category', 'Other Asset Type')">
                     </div>
 
                     <div class="form-group col-6">
@@ -269,6 +276,19 @@
                 el.classList.add('active-target');
                 currentTargetId = elementId;
                 document.getElementById('target-label').innerText = `Target: ${labelText}`;
+            }
+        }
+
+        function toggleOtherCategory(val) {
+            const container = document.getElementById('other_category_container');
+            const input = document.getElementById('other_category');
+            if (val === 'Other Asset / Lain-lain') {
+                container.style.display = 'block';
+                input.required = true;
+            } else {
+                container.style.display = 'none';
+                input.required = false;
+                input.value = '';
             }
         }
 
@@ -389,7 +409,7 @@
   "invoice_no": "Invoice, Receipt or Bill Number",
   "purchase_date": "Date formatted YYYY-MM-DD",
   "unit_price": "Price per unit as a string number e.g. 450.00",
-  "category": "Furniture & Fittings or Office Equipment or Computers & IT Equipment"
+  "category": "Office Equipment or Furniture & Fittings or Computers & IT Hardware or Motor Vehicles or Machinery & Plant or Other Asset / Lain-lain"
 }`;
 
             const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
@@ -511,6 +531,10 @@
                     setTimeout(() => el.classList.remove('auto-filled-highlight'), 2000);
                 }
             });
+
+            if (data.category) {
+                toggleOtherCategory(data.category);
+            }
 
             if (data.purchase_date) {
                 const ls = document.getElementById('last_service');
