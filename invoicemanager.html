@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Manager - Manual Asset Registration</title>
+    <title>Invoice Manager - OCR & Asset Registration</title>
+    <!-- Library Tesseract OCR & PDF.js -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -66,16 +69,26 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 0 16px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
         }
 
         .card {
             background: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 16px;
-            padding: 32px;
+            padding: 28px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
@@ -83,44 +96,92 @@
             display: flex;
             align-items: flex-start;
             gap: 12px;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
 
         .header-icon {
             background-color: #fee2e2;
             padding: 8px;
             border-radius: 10px;
-            font-size: 22px;
+            font-size: 20px;
             line-height: 1;
         }
 
         .header-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: #0f172a;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .header-subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748b;
         }
 
+        /* SEKSYEN OCR & UPLOAD */
+        .upload-zone {
+            border: 2px dashed #2563eb;
+            background-color: #eff6ff;
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .upload-icon { font-size: 32px; margin-bottom: 8px; }
+        .upload-title { font-size: 14px; font-weight: 700; color: #1e3a8a; }
+        .upload-hint { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 12px; }
+
+        .native-file-input {
+            width: 100%;
+            padding: 8px;
+            background: #ffffff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .preview-box {
+            margin-top: 16px;
+            width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            display: none;
+        }
+
+        .status-container {
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            display: none;
+        }
+        .status-loading { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .status-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .status-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        .progress-bar { width: 100%; background: #cbd5e1; height: 5px; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #2563eb; width: 0%; transition: width 0.3s ease; }
+
+        /* SEKSYEN BORANG */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
-            gap: 18px;
+            gap: 16px;
         }
 
         .col-12 { grid-column: span 12; }
         .col-6 { grid-column: span 6; }
         .col-4 { grid-column: span 4; }
         .col-3 { grid-column: span 3; }
+        .col-2 { grid-column: span 2; }
 
         @media (max-width: 768px) {
-            .col-6, .col-4, .col-3 {
-                grid-column: span 12;
-            }
+            .col-6, .col-4, .col-3, .col-2 { grid-column: span 12; }
         }
 
         .form-group {
@@ -137,16 +198,14 @@
             letter-spacing: 0.5px;
         }
 
-        label.field-label .required {
-            color: #dc2626;
-        }
+        label.field-label .required { color: #dc2626; }
 
         input, select {
             width: 100%;
-            padding: 10px 14px;
+            padding: 10px 12px;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: #0f172a;
             outline: none;
             background-color: #ffffff;
@@ -169,15 +228,15 @@
             background-color: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 20px;
-            margin-top: 6px;
+            padding: 18px;
+            margin-top: 4px;
         }
 
         .service-card-title {
             font-size: 13px;
             font-weight: 800;
             color: #0f172a;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -197,13 +256,12 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            margin-top: 10px;
+            margin-top: 8px;
             transition: background-color 0.2s ease;
         }
 
-        .btn-submit:hover {
-            background-color: #047857;
-        }
+        .btn-submit:hover { background-color: #047857; }
+        canvas { display: none; }
     </style>
 </head>
 <body>
@@ -221,6 +279,31 @@
     </header>
 
     <div class="container">
+        
+        <!-- KAD 1: SCANNER OCR & MUAT NAIK DOKUMEN -->
+        <div class="card">
+            <div class="header-box">
+                <div class="header-icon">📷</div>
+                <div>
+                    <div class="header-title">OCR Invoice Scanner</div>
+                    <div class="header-subtitle">Muat naik dokumen invois untuk imbasan automatik.</div>
+                </div>
+            </div>
+
+            <div class="upload-zone">
+                <div class="upload-icon">📄</div>
+                <div class="upload-title">Muat Naik Invois / Dokumen</div>
+                <div class="upload-hint">Sokongan: JPG, PNG, WEBP, PDF</div>
+                <input type="file" id="file-input" class="native-file-input" accept="image/*,.pdf" onchange="processFile(this.files[0])">
+            </div>
+
+            <img id="image-preview" class="preview-box" alt="Pratonton Dokumen">
+            <canvas id="processing-canvas"></canvas>
+
+            <div id="status-box" class="status-container"></div>
+        </div>
+
+        <!-- KAD 2: BORANG REGISTRATION ASSET -->
         <div class="card">
             <div class="header-box">
                 <div class="header-icon">📝</div>
@@ -339,10 +422,168 @@
                 </div>
             </form>
         </div>
+
     </div>
 
     <script>
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
         const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
+
+        function showStatus(msg, type, progress = null) {
+            const box = document.getElementById('status-box');
+            box.className = `status-container status-${type}`;
+            box.style.display = 'block';
+
+            let html = `<div>${msg}</div>`;
+            if (progress !== null) {
+                html += `<div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>`;
+            }
+            box.innerHTML = html;
+        }
+
+        async function processFile(file) {
+            if (!file) return;
+
+            showStatus('⌛ Membaca fail dokumen...', 'loading', 10);
+            const imgPreview = document.getElementById('image-preview');
+
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.getElementById('processing-canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+
+                        const processedDataUrl = canvas.toDataURL('image/png');
+                        imgPreview.src = processedDataUrl;
+                        imgPreview.style.display = 'block';
+
+                        runOCR(processedDataUrl);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            } else if (file.type === 'application/pdf') {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    const page = await pdf.getPage(1);
+
+                    const canvas = document.getElementById('processing-canvas');
+                    const ctx = canvas.getContext('2d');
+                    const viewport = page.getViewport({ scale: 2.0 });
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+                    const pdfDataUrl = canvas.toDataURL('image/png');
+
+                    imgPreview.src = pdfDataUrl;
+                    imgPreview.style.display = 'block';
+
+                    runOCR(pdfDataUrl);
+                } catch (err) {
+                    showStatus('⚠️ Gagal membaca PDF. Sila gunakan fail imej PNG/JPG/WEBP.', 'error');
+                }
+            }
+        }
+
+        async function runOCR(dataUrl) {
+            showStatus('🔍 Enjin Tesseract OCR sedang mengekstrak data...', 'loading', 30);
+
+            try {
+                if (typeof Tesseract === 'undefined') {
+                    throw new Error("Library Tesseract tidak ditemui.");
+                }
+
+                const worker = await Tesseract.createWorker('eng', 1, {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.round(m.progress * 100);
+                            showStatus(`🔍 Mengekstrak data invois... (${pct}%)`, 'loading', pct);
+                        }
+                    }
+                });
+
+                const result = await worker.recognize(dataUrl);
+                await worker.terminate();
+
+                parseAndFillForm(result.data.text);
+                showStatus('✅ OCR Berjaya! Maklumat telah dimasukkan ke dalam borang.', 'success');
+            } catch (err) {
+                console.error(err);
+                showStatus('⚠️ OCR gagal atau disekat. Sila isi borang secara manual.', 'error');
+            }
+        }
+
+        function parseAndFillForm(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            // 1. CARI PEMBEKAL / SUPPLIER
+            let supplier = '';
+            for (let line of lines) {
+                if (/(sdn\.?\s*bhd|enterprise|trading|services|store|co\.|ltd|corp|pvt)/i.test(line)) {
+                    supplier = line.replace(/^(invois|invoice|bil kepada|to:)\s*/ie, '').trim();
+                    break;
+                }
+            }
+            if (!supplier && lines.length > 0) supplier = lines[0];
+
+            // 2. CARI NO INVOIS
+            let invoiceNo = '';
+            const invMatch = text.match(/(?:INV|INVOICE|NO|BIL|REF)\s*[\:\.#]?\s*([A-Z0-9\-\/]{3,20})/i);
+            if (invMatch) invoiceNo = invMatch[1].trim();
+
+            // 3. CARI TARIKH BELIAN
+            let purchaseDate = '';
+            const dateMatch = text.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+            if (dateMatch) {
+                let day = dateMatch[1].padStart(2, '0');
+                let month = dateMatch[2].padStart(2, '0');
+                let year = dateMatch[3].length === 2 ? '20' + dateMatch[3] : dateMatch[3];
+                purchaseDate = `${year}-${month}-${day}`;
+            }
+
+            // 4. CARI NAMA ASET / ITEM
+            let assetName = '';
+            const keywords = ['chair', 'table', 'meja', 'kerusi', 'laptop', 'notebook', 'pc', 'desktop', 'printer', 'monitor', 'iphone', 'macbook', 'dell', 'hp', 'lenovo', 'asus'];
+            for (let line of lines) {
+                const lower = line.toLowerCase();
+                if (keywords.some(k => lower.includes(k))) {
+                    assetName = line;
+                    break;
+                }
+            }
+            if (!assetName && lines.length > 1) assetName = lines[1];
+
+            // 5. CARI HARGA (RM)
+            const amounts = [];
+            const priceRegex = /(?:RM|\$)?\s*(\d{1,3}(?:[,\s]\d{3})*(?:\.\d{2}))/gi;
+            let match;
+            while ((match = priceRegex.exec(text)) !== null) {
+                let val = parseFloat(match[1].replace(/[\s,]/g, ''));
+                if (!isNaN(val) && val > 0) amounts.push(val);
+            }
+
+            let maxPrice = amounts.length > 0 ? Math.max(...amounts) : 0;
+
+            // AUTo-FILL BORANG
+            if (assetName) document.getElementById('asset-name').value = assetName;
+            if (supplier) document.getElementById('supplier-name').value = supplier;
+            if (invoiceNo) document.getElementById('invoice-no').value = invoiceNo;
+            if (purchaseDate) document.getElementById('purchase-date').value = purchaseDate;
+            if (maxPrice > 0) {
+                document.getElementById('unit-price').value = maxPrice.toFixed(2);
+                calculateTotal();
+            }
+        }
 
         function calculateTotal() {
             const qty = parseFloat(document.getElementById('quantity').value) || 0;
@@ -377,7 +618,7 @@
             existingAssets.push(newAsset);
             localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(existingAssets));
 
-            alert('✅ Aset berjaya disimpan ke Asset Register!');
+            alert('✅ Aset berjaya disimpan ke Ledger Book!');
             window.location.href = 'assetregister.html';
         }
 
