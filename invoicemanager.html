@@ -104,20 +104,22 @@
             margin-bottom: 20px;
         }
 
-        /* ZON UPLOAD */
+        /* ZON UPLOAD NATIVE LABEL */
         .upload-zone {
-            border: 2px dashed #cbd5e1;
+            display: block;
+            border: 2px dashed #2563eb;
             border-radius: 12px;
             padding: 32px 16px;
             text-align: center;
-            background-color: #f8fafc;
+            background-color: #eff6ff;
             cursor: pointer;
             transition: all 0.2s ease;
+            user-select: none;
         }
 
         .upload-zone:hover, .upload-zone.dragover {
-            border-color: #2563eb;
-            background-color: #eff6ff;
+            border-color: #1d4ed8;
+            background-color: #dbeafe;
         }
 
         .upload-icon {
@@ -126,8 +128,8 @@
         }
 
         .upload-title {
-            font-size: 15px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 800;
             color: #0f172a;
             margin-bottom: 4px;
         }
@@ -135,18 +137,18 @@
         .upload-hint {
             font-size: 12px;
             color: #64748b;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         .btn-browse {
             display: inline-block;
             background-color: #2563eb;
             color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
+            font-weight: 700;
+            pointer-events: none; /* Mencegah gangguan klik */
         }
 
         #file-input {
@@ -237,7 +239,7 @@
             grid-column: span 2;
         }
 
-        label {
+        label.field-label {
             font-size: 11px;
             font-weight: 800;
             color: #334155;
@@ -245,7 +247,7 @@
             letter-spacing: 0.5px;
         }
 
-        label .required {
+        label.field-label .required {
             color: #dc2626;
         }
 
@@ -330,19 +332,22 @@
     <div class="container">
         <div class="grid-layout">
             
-            <!-- SEKSYEN SCANNER -->
+            <!-- SEKSYEN OCR SCANNER -->
             <div class="card">
                 <div class="card-title-box">
                     📷 Accurate High-Precision OCR Scanner
                 </div>
 
-                <div class="upload-zone" id="drop-zone">
+                <!-- LABEL NATIF DENGAN FOR ATTR: MEMATUHI SPESIFIKASI PELAYAR MODEN -->
+                <label for="file-input" class="upload-zone" id="drop-zone">
                     <div class="upload-icon">📄</div>
                     <div class="upload-title">Klik atau Drag & Drop Invois Di Sini</div>
                     <div class="upload-hint">Format yang disokong: JPG, PNG, WEBP, PDF</div>
                     <div class="btn-browse">📂 Pilih Fail Dokumen</div>
-                    <input type="file" id="file-input" accept="image/*,.pdf">
-                </div>
+                </label>
+                
+                <!-- INPUT FAIL DIKELUARKAN DARI KOTAK SUPAYA TIADA CONFLIK CLICK -->
+                <input type="file" id="file-input" accept="image/*,.pdf">
 
                 <div class="preview-container" id="preview-container">
                     <img id="image-preview" class="preview-img" alt="Invoice Preview">
@@ -352,7 +357,7 @@
                 <canvas id="ocr-canvas"></canvas>
 
                 <div class="tips-box">
-                    💡 <strong>Nota Ujian Localhost:</strong> Jika membuka fail HTML secara terus dari PC tanpa internet, ciri imbasan automatik mungkin disekat oleh keselamatan pelayar. Anda masih boleh mengisi borang di sebelah kanan secara manual.
+                    💡 <strong>Sokongan Dokumen:</strong> Menyokong fail imej dan PDF. Jika terdapat sekatan rangkaian/lokal, data tetap boleh dikemaskini pada borang.
                 </div>
             </div>
 
@@ -365,22 +370,22 @@
                 <form id="asset-form" onsubmit="saveAsset(event)">
                     <div class="form-grid">
                         <div class="form-group full-width">
-                            <label for="asset-name">ASSET NAME / DESCRIPTION <span class="required">*</span></label>
+                            <label class="field-label" for="asset-name">ASSET NAME / DESCRIPTION <span class="required">*</span></label>
                             <input type="text" id="asset-name" placeholder="Cth: Laptop Dell XPS / Meja Pejabat" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="supplier-name">SUPPLIER / VENDOR <span class="required">*</span></label>
+                            <label class="field-label" for="supplier-name">SUPPLIER / VENDOR <span class="required">*</span></label>
                             <input type="text" id="supplier-name" placeholder="Cth: Jonas Enterprise Sdn Bhd" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="invoice-no">REF / INVOICE NO. <span class="required">*</span></label>
+                            <label class="field-label" for="invoice-no">REF / INVOICE NO. <span class="required">*</span></label>
                             <input type="text" id="invoice-no" placeholder="Cth: INV-2024-001" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="category">CATEGORY</label>
+                            <label class="field-label" for="category">CATEGORY</label>
                             <select id="category">
                                 <option value="Furniture & Fittings">Furniture & Fittings</option>
                                 <option value="Computers & IT Equipment">Computers & IT Equipment</option>
@@ -391,42 +396,42 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="purchase-date">PURCHASE DATE</label>
+                            <label class="field-label" for="purchase-date">PURCHASE DATE</label>
                             <input type="date" id="purchase-date" onchange="syncServiceDate(this.value)">
                         </div>
 
                         <div class="form-group">
-                            <label for="location">LOCATION / DEPT <span class="required">*</span></label>
+                            <label class="field-label" for="location">LOCATION / DEPT <span class="required">*</span></label>
                             <input type="text" id="location" value="Main Office HQ" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="quantity">QUANTITY / UNIT</label>
+                            <label class="field-label" for="quantity">QUANTITY / UNIT</label>
                             <input type="number" id="quantity" value="1" min="1" oninput="calculateTotal()">
                         </div>
 
                         <div class="form-group">
-                            <label for="unit-price">UNIT PRICE (RM)</label>
+                            <label class="field-label" for="unit-price">UNIT PRICE (RM)</label>
                             <input type="number" step="0.01" id="unit-price" placeholder="0.00" oninput="calculateTotal()">
                         </div>
 
                         <div class="form-group">
-                            <label for="total-cost">TOTAL COST (RM)</label>
+                            <label class="field-label" for="total-cost">TOTAL COST (RM)</label>
                             <input type="number" step="0.01" id="total-cost" placeholder="0.00">
                         </div>
 
                         <div class="form-group">
-                            <label for="salvage-value">ESTIMATED SALVAGE (RM)</label>
+                            <label class="field-label" for="salvage-value">ESTIMATED SALVAGE (RM)</label>
                             <input type="number" step="0.01" id="salvage-value" value="0.00">
                         </div>
 
                         <div class="form-group">
-                            <label for="useful-life">USEFUL LIFE (YRS)</label>
+                            <label class="field-label" for="useful-life">USEFUL LIFE (YRS)</label>
                             <input type="number" id="useful-life" value="5" min="1">
                         </div>
 
                         <div class="form-group full-width">
-                            <label for="amortization-method">AMORTIZATION METHOD</label>
+                            <label class="field-label" for="amortization-method">AMORTIZATION METHOD</label>
                             <select id="amortization-method">
                                 <option value="Straight Line (Equal Amortization)">Straight Line (Equal Amortization)</option>
                                 <option value="Reducing Balance">Reducing Balance</option>
@@ -439,11 +444,11 @@
                             </div>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="last-service-date">LAST SERVICE DATE</label>
+                                    <label class="field-label" for="last-service-date">LAST SERVICE DATE</label>
                                     <input type="date" id="last-service-date">
                                 </div>
                                 <div class="form-group">
-                                    <label for="service-interval">SERVICE INTERVAL (MONTHS)</label>
+                                    <label class="field-label" for="service-interval">SERVICE INTERVAL (MONTHS)</label>
                                     <input type="number" id="service-interval" placeholder="e.g. 6" min="1">
                                 </div>
                             </div>
@@ -496,12 +501,7 @@
             }
         }
 
-        // TRIGGER KLIK PADA FILE INPUT
-        dropZone.addEventListener('click', (e) => {
-            fileInput.click();
-        });
-
-        // PENGENDALIAN DRAG & DROP
+        // AKSI DRAG & DROP
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
             dropZone.addEventListener(evt, (e) => {
                 e.preventDefault();
@@ -519,15 +519,15 @@
             }
         });
 
+        // AKSI PILIH FAIL MELALUI EVENT CHANGE NATIF
         fileInput.addEventListener('change', (e) => {
             if (e.target.files && e.target.files[0]) {
                 handleSelectedFile(e.target.files[0]);
             }
         });
 
-        // BACA FAIL SECARA DIRECT DAN PAPARKAN PREVIEW TERUS
         async function handleSelectedFile(file) {
-            showStatus('⌛ Membaca fail yang dimuat naik...', 'loading', 10);
+            showStatus('⌛ Membaca fail dokumen...', 'loading', 15);
 
             if (file.type === 'application/pdf') {
                 try {
@@ -550,7 +550,7 @@
                     runOCR(imgUrl);
                 } catch (err) {
                     console.error("PDF Parsing Error:", err);
-                    showStatus('⚠️ Tidak dapat membaca fail PDF. Sila guna imej JPG/PNG atau isi borang secara manual.', 'error');
+                    showStatus('⚠️ Fail PDF tidak dapat diproses. Sila guna fail imej JPG/PNG.', 'error');
                 }
             } else if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
@@ -561,26 +561,25 @@
                 };
                 reader.readAsDataURL(file);
             } else {
-                showStatus('⚠️ Sila muat naik fail imej (JPG, PNG) atau dokumen PDF sahaja.', 'error');
+                showStatus('⚠️ Format tidak disokong. Sila guna imej (JPG, PNG) atau PDF.', 'error');
             }
 
             fileInput.value = '';
         }
 
-        // LAKSANA IMBASAN OCR
         async function runOCR(imageSource) {
-            showStatus('🔍 Enjin OCR sedang membaca teks pada dokumen...', 'loading', 30);
+            showStatus('🔍 Enjin OCR sedang imbas teks dokumen...', 'loading', 35);
 
             try {
                 if (typeof Tesseract === 'undefined') {
-                    throw new Error("Pustaka Tesseract tidak ditemui/disekat oleh talian internet.");
+                    throw new Error("Tesseract CDN tidak dimuatkan.");
                 }
 
                 const worker = await Tesseract.createWorker('eng', 1, {
                     logger: m => {
                         if (m.status === 'recognizing text') {
                             const pct = Math.round(m.progress * 100);
-                            showStatus(`🔍 Mengekstrak maklumat dokumen... (${pct}%)`, 'loading', pct);
+                            showStatus(`🔍 Membaca data dokumen... (${pct}%)`, 'loading', pct);
                         }
                     }
                 });
@@ -591,10 +590,10 @@
                 const extracted = parseInvoiceText(ret.data.text);
                 populateForm(extracted);
 
-                showStatus('✅ Berjaya! Maklumat dokumen telah diekstrak secara automatik.', 'success');
+                showStatus('✅ Berjaya! Maklumat dokumen telah diisi secara automatik.', 'success');
             } catch (err) {
-                console.error("OCR Execution Error:", err);
-                showStatus('⚠️ OCR disekat oleh pelayar/pangkaian. Sila isi maklumat borang secara manual.', 'error');
+                console.error("OCR Error:", err);
+                showStatus('⚠️ Pengesanan imbasan disekat/gagal. Sila isi maklumat borang secara manual.', 'error');
             }
         }
 
