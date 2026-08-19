@@ -157,7 +157,7 @@
                 </div>
             </div>
 
-            <form id="asset-form" onsubmit="event.preventDefault(); alert('✅ Asset successfully saved to Ledger!');">
+            <form id="asset-form" onsubmit="saveAssetToLedger(event)">
                 <div class="form-grid">
                     <div class="form-group col-12">
                         <label for="asset_name">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
@@ -186,7 +186,6 @@
                         </select>
                     </div>
 
-                    <!-- Dynamic Input Field for Other Asset -->
                     <div class="form-group col-6" id="other_category_container" style="display: none;">
                         <label for="other_category">SPECIFY OTHER ASSET TYPE <span class="req">*</span></label>
                         <input type="text" id="other_category" placeholder="Type specific asset category..." onfocus="setTargetInput('other_category', 'Other Asset Type')">
@@ -290,6 +289,46 @@
                 input.required = false;
                 input.value = '';
             }
+        }
+
+        // --- FUNGSI SIMPAN ASET KE LEDGER (PERSISTENCE) ---
+        function saveAssetToLedger(event) {
+            event.preventDefault();
+
+            const catSelect = document.getElementById('category').value;
+            const catOther = document.getElementById('other_category').value;
+            const finalCategory = (catSelect === 'Other Asset / Lain-lain' && catOther) ? catOther : catSelect;
+
+            const newAsset = {
+                id: 'AST-' + Math.floor(10000 + Math.random() * 90000),
+                asset_name: document.getElementById('asset_name').value,
+                supplier_name: document.getElementById('supplier_name').value,
+                invoice_no: document.getElementById('invoice_no').value,
+                category: finalCategory,
+                purchase_date: document.getElementById('purchase_date').value || new Date().toISOString().split('T')[0],
+                location: document.getElementById('location').value,
+                unit: parseInt(document.getElementById('unit').value) || 1,
+                unit_price: parseFloat(document.getElementById('unit_price').value) || 0,
+                total: parseFloat(document.getElementById('total').value) || 0,
+                salvage: parseFloat(document.getElementById('salvage').value) || 0,
+                useful_life: parseInt(document.getElementById('useful_life').value) || 5,
+                amortization: document.getElementById('amortization').value,
+                last_service: document.getElementById('last_service').value || '',
+                service_interval: parseInt(document.getElementById('service_interval').value) || 6,
+                created_at: new Date().toISOString()
+            };
+
+            // Simpan ke localStorage supaya Asset Register & Depreciation Schedule boleh baca
+            let registeredAssets = JSON.parse(localStorage.getItem('app_registered_assets') || '[]');
+            registeredAssets.push(newAsset);
+            localStorage.setItem('app_registered_assets', JSON.stringify(registeredAssets));
+
+            alert(`✅ Aset [${newAsset.asset_name}] berjaya disimpan ke Ledger!\n\nData telah disinkronkan ke Asset Register & Depreciation Schedule.`);
+
+            // Reset borang
+            document.getElementById('asset-form').reset();
+            toggleOtherCategory('');
+            recalcTotal();
         }
 
         async function processSmartScan(input) {
