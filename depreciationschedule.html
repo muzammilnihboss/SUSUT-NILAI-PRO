@@ -283,10 +283,23 @@
     </div>
 
     <script>
-        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
+        const KEY_PRIMARY = 'susut_nilai_assets';
+        const KEY_INVOICE = 'app_registered_assets';
 
+        // GABUNGKAN DATA DARIPADA DUA-DUA KUNCI PENYIMPANAN (INVOICE MANAGER + ASSET REGISTER)
         function getAssets() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+            const primaryList = JSON.parse(localStorage.getItem(KEY_PRIMARY)) || [];
+            const invoiceList = JSON.parse(localStorage.getItem(KEY_INVOICE)) || [];
+
+            const combined = [...primaryList];
+
+            invoiceList.forEach(item => {
+                if (!combined.some(a => String(a.id) === String(item.id))) {
+                    combined.push(item);
+                }
+            });
+
+            return combined;
         }
 
         // POPULATE YEAR SELECTOR (2000 - 2050)
@@ -316,7 +329,7 @@
             if (assets.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px;">
-                        No assets registered yet. Add assets via "<strong>+ Register New Asset</strong>" to view depreciation calculations.
+                        No assets registered yet. Add assets via "<strong>+ Register New Asset</strong>" or <strong>Invoice Manager</strong> to view depreciation calculations.
                     </div>
                 `;
                 return;
@@ -343,13 +356,13 @@
                 let tableRowsHtml = '';
 
                 catAssets.forEach((asset, idx) => {
-                    const cost = parseFloat(asset.cost || asset.totalAmount || asset.unitPrice) || 0;
-                    const salvageValue = parseFloat(asset.salvage || asset.salvageValue || asset.estimatedSalvage) || 0;
-                    const usefulLife = parseFloat(asset.usefulLife) || 10;
+                    const cost = parseFloat(asset.cost || asset.total || asset.totalAmount || asset.unitPrice) || 0;
+                    const salvageValue = parseFloat(asset.salvage || asset.salvageValue || asset.salvage_value || asset.estimatedSalvage) || 0;
+                    const usefulLife = parseFloat(asset.usefulLife || asset.useful_life) || 10;
                     const depRate = asset.depRate ? parseFloat(asset.depRate) : (100 / usefulLife);
 
-                    const purchaseDate = asset.purchaseDate || asset.datePurchased || `${selectedYear}-01-01`;
-                    const purchaseYear = new Date(purchaseDate).getFullYear();
+                    const purchaseDate = asset.purchaseDate || asset.purchase_date || asset.datePurchased || `${selectedYear}-01-01`;
+                    const purchaseYear = new Date(purchaseDate).getFullYear() || selectedYear;
 
                     let openingCost = 0, additionCost = 0, disposalCost = 0, closingCost = 0;
                     let openingDep = 0, depAddition = 0, disposalDep = 0, closingDep = 0;
@@ -405,11 +418,13 @@
 
                     totNetBookValue += netBookValue;
 
+                    const itemName = (asset.name || asset.assetName || asset.asset_name || 'UNNAMED ASSET').toUpperCase();
+
                     tableRowsHtml += `
                         <tr>
                             <td class="text-center">${idx + 1}</td>
                             <td class="text-center">${purchaseDate}</td>
-                            <td class="text-left"><strong>${(asset.name || asset.assetName || '').toUpperCase()}</strong></td>
+                            <td class="text-left"><strong>${itemName}</strong></td>
                             <td class="text-right">${openingCost.toFixed(2)}</td>
                             <td class="text-right">${additionCost.toFixed(2)}</td>
                             <td class="text-right">${disposalCost.toFixed(2)}</td>
