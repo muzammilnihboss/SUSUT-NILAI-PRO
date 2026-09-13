@@ -9,51 +9,110 @@
 <body class="bg-slate-50 min-h-screen text-slate-800">
     <div class="max-w-3xl mx-auto p-8 space-y-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Pendaftaran Aset Baharu (Manual)</h1>
+            <h1 class="text-2xl font-bold">Pendaftaran Hartanah, Loji dan Peralatan</h1>
             <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
         </div>
 
-        <form action="assetregister.html" method="GET" class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-            <div>
-                <label class="block text-sm font-semibold mb-1">Nama Aset / Perkara</label>
-                <input type="text" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="cth: Meja Pejabat Kayu Jati">
-            </div>
+        <form id="assetForm" class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold mb-1">Kategori Aset</label>
-                    <select class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none">
-                        <option>Perabot</option>
-                        <option>Peralatan Pejabat</option>
-                        <option>Pemasangan Elektrik</option>
-                        <option>Komputer</option>
-                        <option>Kenderaan</option>
+                    <label class="block text-sm font-semibold mb-1">Jenis Aset</label>
+                    <select id="kategori" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600">
+                        <option value="Perabot">Perabot</option>
+                        <option value="Peralatan Pejabat">Peralatan Pejabat</option>
+                        <option value="Pemasangan Elektrik">Pemasangan Elektrik</option>
+                        <option value="Komputer">Komputer</option>
+                        <option value="Kenderaan">Kenderaan</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold mb-1">Tarikh Pembelian</label>
-                    <input type="date" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    <label class="block text-sm font-semibold mb-1">Perkara (Nama Aset)</label>
+                    <input type="text" id="perkara" required class="w-full px-4 py-2 border rounded-lg" placeholder="cth: Meja Eksekutif Jati">
                 </div>
             </div>
+
             <div class="grid grid-cols-3 gap-4">
                 <div>
-                    <label class="block text-sm font-semibold mb-1">Kos Pembelian (RM)</label>
-                    <input type="number" step="0.01" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="0.00">
+                    <label class="block text-sm font-semibold mb-1">No. Rujukan Invois/PO</label>
+                    <input type="text" id="noRuj" class="w-full px-4 py-2 border rounded-lg" placeholder="INV-2026-001">
                 </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Model / Jenama</label>
+                    <input type="text" id="model" class="w-full px-4 py-2 border rounded-lg" placeholder="Model X-200">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Tarikh Beli</label>
+                    <input type="date" id="tarikhBeli" required class="w-full px-4 py-2 border rounded-lg">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Bil. Unit</label>
+                    <input type="number" id="unit" value="1" min="1" oninput="kiraJumlah()" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Harga Seunit (RM)</label>
+                    <input type="number" step="0.01" id="hargaSeunit" required oninput="kiraJumlah()" class="w-full px-4 py-2 border rounded-lg" placeholder="0.00">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Jumlah Kos (RM)</label>
+                    <input type="number" step="0.01" id="jumlah" readonly class="w-full px-4 py-2 border rounded-lg bg-slate-100 font-bold" placeholder="0.00">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm font-semibold mb-1">Jangka Hayat (Tahun)</label>
-                    <input type="number" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="5">
+                    <input type="number" id="jangkaHayat" value="5" min="1" required class="w-full px-4 py-2 border rounded-lg">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold mb-1">Nilai Sisa / Salvage (RM)</label>
-                    <input type="number" step="0.01" value="0.00" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    <label class="block text-sm font-semibold mb-1">Nilai Sisa (RM)</label>
+                    <input type="number" step="0.01" id="nilaiSisa" value="0.00" class="w-full px-4 py-2 border rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Lokasi Aset</label>
+                    <input type="text" id="lokasi" class="w-full px-4 py-2 border rounded-lg" placeholder="Tingkat 2, Pejabat Pentadbiran">
                 </div>
             </div>
+
             <div>
-                <label class="block text-sm font-semibold mb-1">Nombor Siri / Tag Aset / No. Rujukan</label>
-                <input type="text" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="cth: AST-2026-001">
+                <label class="block text-sm font-semibold mb-1">Dikemaskini Oleh</label>
+                <input type="text" id="dikemaskiniOleh" required class="w-full px-4 py-2 border rounded-lg" placeholder="Nama Pegawai / Akauntan">
             </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors">Daftar Aset Baharu</button>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors">Simpan Rekod Aset</button>
         </form>
     </div>
+
+    <script src="app.js"></script>
+    <script>
+        function kiraJumlah() {
+            const unit = parseFloat(document.getElementById('unit').value) || 0;
+            const harga = parseFloat(document.getElementById('hargaSeunit').value) || 0;
+            document.getElementById('jumlah').value = (unit * harga).toFixed(2);
+        }
+
+        document.getElementById('assetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const assetData = {
+                kategori: document.getElementById('kategori').value,
+                perkara: document.getElementById('perkara').value,
+                noRuj: document.getElementById('noRuj').value,
+                model: document.getElementById('model').value,
+                tarikhBeli: document.getElementById('tarikhBeli').value,
+                unit: document.getElementById('unit').value,
+                hargaSeunit: document.getElementById('hargaSeunit').value,
+                jumlah: document.getElementById('jumlah').value,
+                jangkaHayat: document.getElementById('jangkaHayat').value,
+                nilaiSisa: document.getElementById('nilaiSisa').value,
+                lokasi: document.getElementById('lokasi').value,
+                dikemaskiniOleh: document.getElementById('dikemaskiniOleh').value
+            };
+            AppStore.saveAsset(assetData);
+            alert('Aset berjaya didaftarkan!');
+            window.location.href = 'assetregister.html';
+        });
+    </script>
 </body>
 </html>
