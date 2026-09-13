@@ -1,460 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register New Asset - Susut Nilai Pro</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f8fafc;
-            color: #0f172a;
-            min-height: 100vh;
-            padding-bottom: 60px;
-        }
-
-        /* HEADER NAVIGATION */
-        header {
-            background-color: #ffffff;
-            padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f1f5f9;
-            margin-bottom: 24px;
-        }
-
-        .brand-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .top-nav {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .nav-btn {
-            padding: 9px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            background-color: #f1f5f9;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn:hover {
-            background-color: #e2e8f0;
-            color: #0f172a;
-        }
-
-        .nav-btn.active {
-            background-color: #2563eb;
-            color: #ffffff;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        /* CARD STYLING */
-        .card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-            margin-bottom: 24px;
-        }
-
-        .card-header-flex {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .icon-badge {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            background-color: #e0f2fe;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .card-subtitle {
-            font-size: 13px;
-            color: #64748b;
-            margin-top: 2px;
-        }
-
-        /* FORM STYLING */
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 11px;
-            font-weight: 800;
-            color: #475569;
-            margin-bottom: 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-label span.req {
-            color: #ef4444;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 14px;
-            border-radius: 10px;
-            border: 1.5px solid #cbd5e1;
-            font-size: 14px;
-            outline: none;
-            background-color: #ffffff;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-
-        .form-control:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-control[readonly] {
-            background-color: #f8fafc;
-            color: #475569;
-            font-weight: 700;
-        }
-
-        /* GRID LAYOUTS */
-        .form-row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .form-row-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 18px;
-        }
-
-        .form-row-4 {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 18px;
-        }
-
-        /* SUB-SECTION BOX */
-        .sub-section-box {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 10px;
-            margin-bottom: 24px;
-        }
-
-        .sub-section-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        /* SAVE BUTTON */
-        .btn-save-green {
-            width: 100%;
-            background-color: #059669;
-            color: #ffffff;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: background 0.2s ease;
-            box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);
-        }
-
-        .btn-save-green:hover {
-            background-color: #047857;
-        }
-
-        /* DYNAMIC CATEGORY ANIMATION */
-        #custom-category-group {
-            animation: fadeIn 0.25s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
-            .form-row-2, .form-row-3, .form-row-4 {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <title>SusutNilai Pro - Register New Asset</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-
-    <!-- HYPERLINK TOP NAVIGATION -->
-    <header>
-        <div class="brand-title">Susut Nilai Pro</div>
-        <div class="top-nav">
-            <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
-            <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
-            <a href="registernew.html" class="nav-btn active">+ Register New Asset</a>
-            <a href="invoicemanager.html" class="nav-btn">📄 Invoice Manager</a>
-            <a href="depreciationschedule.html" class="nav-btn">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
-            <a href="index.html" class="nav-btn">Log Out</a>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+    <div class="max-w-3xl mx-auto p-8 space-y-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Pendaftaran Aset Baharu (Manual)</h1>
+            <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
         </div>
-    </header>
 
-    <div class="container">
-        <div class="card">
-            <div class="card-header-flex">
-                <div class="icon-badge">📝</div>
+        <form action="assetregister.html" method="GET" class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
+            <div>
+                <label class="block text-sm font-semibold mb-1">Nama Aset / Perkara</label>
+                <input type="text" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="cth: Meja Pejabat Kayu Jati">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <div class="card-title">Manual Asset Registration Protocol</div>
-                    <div class="card-subtitle">Configure parameters accurately to execute general ledger amortization plans.</div>
+                    <label class="block text-sm font-semibold mb-1">Kategori Aset</label>
+                    <select class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                        <option>Perabot</option>
+                        <option>Peralatan Pejabat</option>
+                        <option>Pemasangan Elektrik</option>
+                        <option>Komputer</option>
+                        <option>Kenderaan</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Tarikh Pembelian</label>
+                    <input type="date" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none">
                 </div>
             </div>
-
-            <form id="asset-registration-form" onsubmit="handleSaveAsset(event)">
-                
-                <!-- ASSET NAME / DESCRIPTION -->
-                <div class="form-group">
-                    <label class="form-label">ASSET NAME / DESCRIPTION <span class="req">*</span></label>
-                    <input type="text" id="asset-name" class="form-control" placeholder="e.g. Ergonomic Office Chair" required>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Kos Pembelian (RM)</label>
+                    <input type="number" step="0.01" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="0.00">
                 </div>
-
-                <!-- SUPPLIER NAME & INVOICE NUMBER -->
-                <div class="form-row-2">
-                    <div class="form-group">
-                        <label class="form-label">SUPPLIER NAME <span class="req">*</span></label>
-                        <input type="text" id="supplier-name" class="form-control" placeholder="e.g. Apex Furniture Sdn Bhd" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">INVOICE NUMBER <span class="req">*</span></label>
-                        <input type="text" id="invoice-number" class="form-control" placeholder="e.g. INV/2026/0912" required>
-                    </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Jangka Hayat (Tahun)</label>
+                    <input type="number" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="5">
                 </div>
-
-                <!-- ASSET CLASSIFICATION CATEGORY & PURCHASE DATE -->
-                <div class="form-row-2">
-                    <div class="form-group">
-                        <label class="form-label">ASSET CLASSIFICATION CATEGORY</label>
-                        <select id="asset-category" class="form-control" onchange="toggleCustomCategory()">
-                            <option value="Office Equipment">Office Equipment</option>
-                            <option value="Furniture & Fittings">Furniture & Fittings</option>
-                            <option value="Computers & IT">Computers & IT Hardware</option>
-                            <option value="Motor Vehicles">Motor Vehicles</option>
-                            <option value="Machinery & Plant">Machinery & Plant</option>
-                            <option value="Other Asset">Other Asset / Lain-lain</option>
-                        </select>
-
-                        <!-- DYNAMIC CUSTOM CATEGORY INPUT FIELD -->
-                        <div id="custom-category-group" style="display: none; margin-top: 10px;">
-                            <label class="form-label">SPECIFY OTHER CATEGORY <span class="req">*</span></label>
-                            <input type="text" id="custom-category-input" class="form-control" placeholder="e.g. Laboratory Specialized Tool">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">PURCHASE DATE</label>
-                        <input type="date" id="purchase-date" class="form-control">
-                    </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Nilai Sisa / Salvage (RM)</label>
+                    <input type="number" step="0.01" value="0.00" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none">
                 </div>
-
-                <!-- DEPLOYMENT DEPT, UNIT, UNIT PRICE, TOTAL -->
-                <div class="form-row-4">
-                    <div class="form-group">
-                        <label class="form-label">DEPLOYMENT DEPARTMENT <span class="req">*</span></label>
-                        <input type="text" id="deployment-dept" class="form-control" placeholder="e.g. Administrative Office HQ" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">UNIT</label>
-                        <input type="number" id="unit-qty" class="form-control" value="1" min="1" oninput="calculateTotalCost()">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">UNIT PRICE</label>
-                        <input type="number" step="0.01" id="unit-price" class="form-control" value="0.00" oninput="calculateTotalCost()">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">TOTAL</label>
-                        <input type="text" id="total-cost" class="form-control" value="0.00" readonly>
-                    </div>
-                </div>
-
-                <!-- SALVAGE, USEFUL LIFE, AMORTIZATION METHOD -->
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label class="form-label">ESTIMATED SALVAGE (RM)</label>
-                        <input type="number" step="0.01" id="salvage-value" class="form-control" value="0.00">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">ESTIMATED USEFUL LIFE (YRS)</label>
-                        <input type="number" id="useful-life" class="form-control" value="5" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">AMORTIZATION METHOD</label>
-                        <select id="amortization-method" class="form-control">
-                            <option value="Straight Line">Straight Line (Equal Amortization)</option>
-                            <option value="Reducing Balance">Reducing Balance Method</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- PREVENTIVE SERVICING INTERVALS -->
-                <div class="sub-section-box">
-                    <div class="sub-section-title">
-                        <span>🔧</span>
-                        <span>Preventive Servicing Intervals</span>
-                    </div>
-                    <div class="form-row-2">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label">LAST SERVICE DATE</label>
-                            <input type="date" id="last-service-date" class="form-control">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label">SERVICE INTERVAL (MONTHS)</label>
-                            <input type="number" id="service-interval" class="form-control" placeholder="e.g. 6" min="1">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SAVE BUTTON -->
-                <button type="submit" class="btn-save-green">
-                    💾 Save Asset to Ledger Book
-                </button>
-            </form>
-        </div>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1">Nombor Siri / Tag Aset / No. Rujukan</label>
+                <input type="text" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="cth: AST-2026-001">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors">Daftar Aset Baharu</button>
+        </form>
     </div>
-
-    <script>
-        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
-
-        // TOGGLE CUSTOM CATEGORY FIELD
-        function toggleCustomCategory() {
-            const categorySelect = document.getElementById('asset-category');
-            const customGroup = document.getElementById('custom-category-group');
-            const customInput = document.getElementById('custom-category-input');
-
-            if (categorySelect.value === 'Other Asset') {
-                customGroup.style.display = 'block';
-                customInput.required = true;
-                customInput.focus();
-            } else {
-                customGroup.style.display = 'none';
-                customInput.required = false;
-                customInput.value = '';
-            }
-        }
-
-        // CALCULATE TOTAL COST
-        function calculateTotalCost() {
-            const qty = parseFloat(document.getElementById('unit-qty').value) || 0;
-            const price = parseFloat(document.getElementById('unit-price').value) || 0;
-            const total = qty * price;
-            document.getElementById('total-cost').value = total.toFixed(2);
-        }
-
-        // GET EXISTING ASSETS FROM LOCALSTORAGE
-        function getAssets() {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
-        }
-
-        // SAVE ASSET TO LOCALSTORAGE
-        function handleSaveAsset(e) {
-            e.preventDefault();
-
-            const categorySelectValue = document.getElementById('asset-category').value;
-            const customCategoryValue = document.getElementById('custom-category-input').value.trim();
-
-            // Determine final category (Custom or Selected)
-            const finalCategory = (categorySelectValue === 'Other Asset' && customCategoryValue !== '')
-                ? customCategoryValue
-                : categorySelectValue;
-
-            const serviceIntervalVal = document.getElementById('service-interval').value;
-
-            const newAsset = {
-                id: Date.now(),
-                name: document.getElementById('asset-name').value.trim(),
-                supplier: document.getElementById('supplier-name').value.trim(),
-                invoiceNo: document.getElementById('invoice-number').value.trim(),
-                category: finalCategory,
-                purchaseDate: document.getElementById('purchase-date').value,
-                location: document.getElementById('deployment-dept').value.trim(),
-                quantity: parseInt(document.getElementById('unit-qty').value) || 1,
-                unitPrice: parseFloat(document.getElementById('unit-price').value) || 0,
-                cost: parseFloat(document.getElementById('total-cost').value) || 0,
-                salvageValue: parseFloat(document.getElementById('salvage-value').value) || 0,
-                usefulLife: parseInt(document.getElementById('useful-life').value) || 5,
-                method: document.getElementById('amortization-method').value,
-                lastServiceDate: document.getElementById('last-service-date').value || '',
-                serviceIntervalMonths: serviceIntervalVal ? parseInt(serviceIntervalVal) : '',
-                createdAt: new Date().toISOString()
-            };
-
-            const assets = getAssets();
-            assets.push(newAsset);
-            localStorage.setItem(STORAGE_KEY_ASSETS, JSON.stringify(assets));
-
-            alert(`✅ Asset "${newAsset.name}" registered successfully under category "${finalCategory}"!`);
-
-            // Reset Form & Redirect to Asset Register Page
-            document.getElementById('asset-registration-form').reset();
-            toggleCustomCategory();
-            window.location.href = 'assetregister.html';
-        }
-
-        // INITIALIZE DEFAULT DATES
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('purchase-date').value = today;
-            // Last Service Date and Interval left blank intentionally
-        });
-    </script>
 </body>
 </html>
