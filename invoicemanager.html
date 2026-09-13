@@ -3,52 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusutNilai Pro - Invoice Manager (OCR)</title>
+    <title>SusutNilai Pro - Invoice Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
     <div class="max-w-5xl mx-auto p-8 space-y-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Invoice Manager (OCR Imbasan Resit)</h1>
+            <h1 class="text-2xl font-bold">Invoice Manager (Imbasan OCR Invois)</h1>
             <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
         </div>
 
-        <div class="bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center">
-            <p class="text-sm text-slate-600 mb-4">Muat naik invois atau resit pembelian (Format: PNG, JPG, PDF)</p>
-            <input type="file" class="hidden" id="fileUpload">
-            <label for="fileUpload" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer text-sm font-medium inline-block">Muat Naik & Imbas Dokumen</label>
+        <div class="bg-white p-8 rounded-2xl border border-dashed border-slate-300 text-center space-y-4">
+            <p class="text-sm text-slate-600">Muat naik invois/resit (Format: PNG, JPG, PDF) untuk imbasan data automatik</p>
+            <input type="file" id="fileInput" class="hidden" onchange="prosesOCR()">
+            <label for="fileInput" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg cursor-pointer text-sm font-medium inline-block">Muat Naik Dokumen</label>
         </div>
 
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-            <h2 class="font-bold text-lg">Hasil Imbasan OCR (Pengesahan Data)</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm border-collapse">
-                    <thead class="bg-slate-100 text-slate-700">
-                        <tr>
-                            <th class="p-3 border">Nama Aset</th>
-                            <th class="p-3 border">Pembekal</th>
-                            <th class="p-3 border">No. Invois</th>
-                            <th class="p-3 border">Tarikh Beli</th>
-                            <th class="p-3 border">Kos (RM)</th>
-                            <th class="p-3 border">No. Siri</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="p-3 border"><input type="text" value="Dell Latitude 5420" class="w-full bg-slate-50 border p-1 rounded"></td>
-                            <td class="p-3 border"><input type="text" value="Dell Malaysia Sdn Bhd" class="w-full bg-slate-50 border p-1 rounded"></td>
-                            <td class="p-3 border"><input type="text" value="INV-2026-009" class="w-full bg-slate-50 border p-1 rounded"></td>
-                            <td class="p-3 border"><input type="date" value="2026-01-15" class="w-full bg-slate-50 border p-1 rounded"></td>
-                            <td class="p-3 border"><input type="number" value="4500.00" class="w-full bg-slate-50 border p-1 rounded"></td>
-                            <td class="p-3 border"><input type="text" value="SN-9812401" class="w-full bg-slate-50 border p-1 rounded"></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div id="ocrResult" class="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 hidden">
+            <h2 class="font-bold text-lg text-emerald-600">Ekstraksi OCR Berjaya</h2>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+                <div><label class="font-semibold block mb-1">Jenis / Kategori</label><input type="text" id="ocrKategori" value="Komputer" class="w-full p-2 border rounded"></div>
+                <div><label class="font-semibold block mb-1">Perkara (Nama Aset)</label><input type="text" id="ocrPerkara" value="Laptop Dell Latitude 5420" class="w-full p-2 border rounded"></div>
+                <div><label class="font-semibold block mb-1">No. Rujukan Invois</label><input type="text" id="ocrNoRuj" value="INV-2026-99" class="w-full p-2 border rounded"></div>
+                <div><label class="font-semibold block mb-1">Model</label><input type="text" id="ocrModel" value="Latitude 5420" class="w-full p-2 border rounded"></div>
+                <div><label class="font-semibold block mb-1">Tarikh Beli</label><input type="date" id="ocrTarikh" value="2026-01-15" class="w-full p-2 border rounded"></div>
+                <div><label class="font-semibold block mb-1">Harga Seunit (RM)</label><input type="number" id="ocrHarga" value="4500.00" class="w-full p-2 border rounded"></div>
             </div>
-            <div class="flex justify-end">
-                <button onclick="alert('Maklumat disahkan & dimasukkan ke Asset Register!')" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium">Sahkan & Masuk Ke Daftar Aset</button>
-            </div>
+            <button onclick="simpanDataOCR()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded-lg font-medium">Sahkan & Masukkan Ke Asset Register</button>
         </div>
     </div>
+
+    <script src="app.js"></script>
+    <script>
+        function prosesOCR() {
+            document.getElementById('ocrResult').classList.remove('hidden');
+        }
+        function simpanDataOCR() {
+            const assetData = {
+                kategori: document.getElementById('ocrKategori').value,
+                perkara: document.getElementById('ocrPerkara').value,
+                noRuj: document.getElementById('ocrNoRuj').value,
+                model: document.getElementById('ocrModel').value,
+                tarikhBeli: document.getElementById('ocrTarikh').value,
+                unit: 1,
+                hargaSeunit: document.getElementById('ocrHarga').value,
+                jumlah: document.getElementById('ocrHarga').value,
+                jangkaHayat: 3,
+                nilaiSisa: 0,
+                lokasi: 'Bilik IT Utama',
+                dikemaskiniOleh: 'OCR System'
+            };
+            AppStore.saveAsset(assetData);
+            alert('Aset berjaya didaftarkan secara automatik!');
+            window.location.href = 'assetregister.html';
+        }
+    </script>
 </body>
 </html>
