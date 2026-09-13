@@ -1,231 +1,206 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusutNilai Pro - Invoice Manager (OCR Penuh)</title>
+    <title>SusutNilai.My - Invoice Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Pustaka Tesseract.js untuk Pengecaman Teks OCR Automatik -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
-</head>
-<body class="bg-slate-50 min-h-screen text-slate-800">
-    <div class="max-w-6xl mx-auto p-8 space-y-6">
-        <div class="flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900">Invoice Manager (Pengimbas OCR Automatik)</h1>
-                <p class="text-xs text-slate-500 mt-1">Muat naik invois untuk mengekstrak keseluruhan teks dan data aset secara automatik.</p>
-            </div>
-            <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
-        </div>
-
-        <!-- Bahagian Muat Naik & Pratonton -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                <h2 class="font-bold text-slate-800 text-sm uppercase tracking-wide">1. Muat Naik Dokumen Invois</h2>
-                <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 text-center hover:border-blue-500 transition cursor-pointer" onclick="document.getElementById('fileInput').click()">
-                    <svg class="w-12 h-12 text-slate-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-                    <p class="text-sm font-medium text-slate-700">Klik untuk pilih gambar invois / resit</p>
-                    <p class="text-xs text-slate-400 mt-1">Format disokong: PNG, JPG, JPEG, WEBP</p>
-                    <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="kemaskiniPratonton(event)">
-                </div>
-
-                <!-- Status Imbasan OCR -->
-                <div id="statusOCR" class="hidden space-y-2">
-                    <div class="flex justify-between text-xs font-semibold text-slate-600">
-                        <span id="labelStatus">Menganalisis dokumen...</span>
-                        <span id="peratusStatus">0%</span>
-                    </div>
-                    <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                        <div id="barKemajuan" class="bg-blue-600 h-2 w-0 transition-all duration-300"></div>
-                    </div>
-                </div>
-
-                <!-- Pratonton Gambar -->
-                <div id="kotakPratonton" class="hidden border rounded-xl overflow-hidden bg-slate-100 max-h-80 flex items-center justify-center">
-                    <img id="imejPratonton" src="" class="max-h-80 object-contain" alt="Pratonton Invois">
-                </div>
-            </div>
-
-            <!-- Paparan Teks Penuh OCR -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3 flex flex-col">
-                <h2 class="font-bold text-slate-800 text-sm uppercase tracking-wide">2. Hasil Teks OCR Penuh</h2>
-                <p class="text-xs text-slate-500">Keseluruhan teks yang dibaca oleh enjin OCR daripada imej invois:</p>
-                <textarea id="rawOcrText" readonly class="w-full flex-1 p-3 border border-slate-200 rounded-xl text-xs font-mono bg-slate-50 focus:outline-none resize-none" placeholder="Teks penuh invois akan dipaparkan di sini selepas proses imbasan selesai..."></textarea>
-            </div>
-        </div>
-
-        <!-- Form Pengesahan Data Aset -->
-        <form id="formOCR" onsubmit="simpanAsetOCR(event)" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <h2 class="font-bold text-slate-900 border-b pb-2">3. Pengesahan & Pemetaan Data Aset</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Jenis / Kategori Aset</label>
-                    <select id="ocrKategori" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-blue-600">
-                        <option value="Komputer">Komputer</option>
-                        <option value="Peralatan Pejabat">Peralatan Pejabat</option>
-                        <option value="Perabot">Perabot</option>
-                        <option value="Pemasangan Elektrik">Pemasangan Elektrik</option>
-                        <option value="Kenderaan">Kenderaan</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Perkara (Nama Aset)</label>
-                    <input type="text" id="ocrPerkara" required class="w-full p-2.5 border rounded-lg" placeholder="Dikesan daripada invois...">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">No. Rujukan Invois / PO</label>
-                    <input type="text" id="ocrNoRuj" class="w-full p-2.5 border rounded-lg" placeholder="No. Invois">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Model / Jenama</label>
-                    <input type="text" id="ocrModel" class="w-full p-2.5 border rounded-lg" placeholder="Model">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Tarikh Beli</label>
-                    <input type="date" id="ocrTarikh" required class="w-full p-2.5 border rounded-lg">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Bil. Unit</label>
-                    <input type="number" id="ocrUnit" value="1" min="1" oninput="kiraTotal()" class="w-full p-2.5 border rounded-lg">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Harga Seunit (RM)</label>
-                    <input type="number" step="0.01" id="ocrHarga" required oninput="kiraTotal()" class="w-full p-2.5 border rounded-lg" placeholder="0.00">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Jumlah Kos (RM)</label>
-                    <input type="number" step="0.01" id="ocrJumlah" readonly class="w-full p-2.5 border rounded-lg bg-slate-100 font-bold" placeholder="0.00">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Jangka Hayat (Tahun)</label>
-                    <input type="number" id="ocrJangkaHayat" value="5" min="1" required class="w-full p-2.5 border rounded-lg">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Nilai Sisa (RM)</label>
-                    <input type="number" step="0.01" id="ocrNilaiSisa" value="0.00" class="w-full p-2.5 border rounded-lg">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Lokasi Penempatan</label>
-                    <input type="text" id="ocrLokasi" class="w-full p-2.5 border rounded-lg" value="Pejabat Utama">
-                </div>
-                <div>
-                    <label class="font-semibold block mb-1 text-slate-700">Dikemaskini Oleh</label>
-                    <input type="text" id="ocrPegawai" required class="w-full p-2.5 border rounded-lg" value="Sistem OCR Automatik">
-                </div>
-            </div>
-
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-medium transition shadow-sm">
-                Sahkan & Masukkan Rekod Ke Asset Register
-            </button>
-        </form>
-    </div>
-
-    <script src="app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        function kemaskiniPratonton(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                document.getElementById('imejPratonton').src = evt.target.result;
-                document.getElementById('kotakPratonton').classList.remove('hidden');
-                jalankanOCR(evt.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
-
-        async function jalankanOCR(imageSource) {
-            const statusDiv = document.getElementById('statusOCR');
-            const labelStatus = document.getElementById('labelStatus');
-            const peratusStatus = document.getElementById('peratusStatus');
-            const barKemajuan = document.getElementById('barKemajuan');
-            const txtArea = document.getElementById('rawOcrText');
-
-            statusDiv.classList.remove('hidden');
-            txtArea.value = "Imbasan sedang berjalan...";
-
-            try {
-                const worker = await Tesseract.createWorker('eng');
-                
-                const ret = await worker.recognize(imageSource);
-                const fullText = ret.data.text;
-
-                txtArea.value = fullText;
-                labelStatus.innerText = "Imbasan Selesai!";
-                peratusStatus.innerText = "100%";
-                barKemajuan.style.width = "100%";
-
-                ekstrakMaklumatInvois(fullText);
-                await worker.terminate();
-
-            } catch (err) {
-                console.error(err);
-                labelStatus.innerText = "Ralat semasa imbasan OCR.";
-                txtArea.value = "Gagal membaca imej. Sila pastikan gambar jelas dan cuba lagi.";
-            }
-        }
-
-        function ekstrakMaklumatInvois(text) {
-            // Pengesanan Nombor Invois / Rujukan
-            const matchNoRuj = text.match(/(?:inv|invois|invoice|no|ruj|ref)[:#\s]*([a-z0-9\-\/]+)/i);
-            if (matchNoRuj) document.getElementById('ocrNoRuj').value = matchNoRuj[1];
-
-            // Pengesanan Tarikh (Format: YYYY-MM-DD / DD-MM-YYYY / DD/MM/YYYY)
-            const matchTarikh = text.match(/\b(\d{4}[\/\.-]\d{1,2}[\/\.-]\d{1,2}|\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})\b/);
-            if (matchTarikh) {
-                let d = matchTarikh[1].replace(/[\.-]/g, '/');
-                let parts = d.split('/');
-                if (parts[0].length === 4) {
-                    document.getElementById('ocrTarikh').value = `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
-                } else if (parts[2].length === 4) {
-                    document.getElementById('ocrTarikh').value = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
+                        colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' } }
+                    }
                 }
-            } else {
-                document.getElementById('ocrTarikh').value = new Date().toISOString().split('T')[0];
             }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc]">
 
-            // Pengesanan Jumlah Kos / RM
-            const matchJumlah = text.match(/(?:total|jumlah|grand total|rm)[:\s]*([\d,]+\.\d{2})/i);
-            if (matchJumlah) {
-                const harga = parseFloat(matchJumlah[1].replace(/,/g, ''));
-                document.getElementById('ocrHarga').value = harga.toFixed(2);
-                kiraTotal();
-            }
+    <header class="glass-header text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-premium">
+        <a href="dashboard.html" class="flex items-center space-x-3.5">
+            <div class="bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-lg"><i class="fa-solid fa-vault text-lg"></i></div>
+            <div>
+                <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
+                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart SMB Asset Hub</span>
+            </div>
+        </a>
+        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
+            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Dashboard</a>
+            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
+            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Invoice Manager</a>
+            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Register New</a>
+            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Asset Register</a>
+            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
+        </nav>
+        <div class="flex items-center space-x-3">
+            <div class="hidden sm:flex items-center space-x-2 bg-slate-900/80 px-3.5 py-2 rounded-xl border border-slate-800/80">
+                <i class="fa-solid fa-user-shield text-emerald-400 text-xs"></i>
+                <span id="user-display-id" class="text-[10px] font-bold text-white block max-w-[80px] truncate">Guest</span>
+            </div>
+            <button onclick="lockSystem()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20"><i class="fa-solid fa-power-off text-base"></i></button>
+        </div>
+    </header>
 
-            // Pengesanan Nama Aset daripada Baris Teks Pertama yang Bernilai
-            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 3);
-            if (lines.length > 0) {
-                document.getElementById('ocrPerkara').value = lines[0].substring(0, 50);
+    <main class="flex-grow p-4 sm:p-8 pb-24 md:pb-8">
+        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-premium">
+            <div class="flex items-center space-x-3.5 mb-6 border-b border-slate-100 pb-4">
+                <div class="bg-brand-50 text-brand-600 p-3 rounded-2xl border border-brand-100/50"><i class="fa-solid fa-camera text-xl"></i></div>
+                <div>
+                    <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">AI Invoice &amp; Receipt Manager</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Upload purchase receipts or take a photo. Smart OCR scanner automatically parses metadata!</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-5 space-y-5">
+                    <div class="border-2 border-dashed border-slate-200 hover:border-brand-500 bg-slate-50/50 hover:bg-white rounded-3xl p-8 text-center cursor-pointer relative transition-all group" id="scan-dropzone" onclick="triggerFileInput()">
+                        <input type="file" id="scan-file-input" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(event)">
+                        <div id="scan-placeholder" class="py-12 space-y-4">
+                            <div class="bg-white shadow-md inline-flex p-4 rounded-2xl text-slate-400 border border-slate-100/50"><i class="fa-solid fa-cloud-arrow-up text-3xl text-brand-500"></i></div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">Click to Upload Document File</p>
+                                <p class="text-[10px] text-slate-400 mt-1">Supports PNG, JPG, or PDF formats up to 5MB</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100/80">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5 text-center">Or evaluate quickly with mock receipt databases</p>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="testPresetScan('espresso')" class="flex items-center space-x-3 p-2 bg-slate-100 rounded-xl text-left hover:scale-[1.02] transition">
+                                <div class="bg-amber-50 w-9 h-9 rounded-xl flex items-center justify-center text-amber-700 flex-shrink-0"><i class="fa-solid fa-mug-hot"></i></div>
+                                <div class="overflow-hidden"><p class="text-[11px] font-bold truncate text-slate-800">Espresso Machine</p></div>
+                            </button>
+                            <button onclick="testPresetScan('van')" class="flex items-center space-x-3 p-2 bg-slate-100 rounded-xl text-left hover:scale-[1.02] transition">
+                                <div class="bg-blue-50 w-9 h-9 rounded-xl flex items-center justify-center text-blue-600 flex-shrink-0"><i class="fa-solid fa-truck"></i></div>
+                                <div class="overflow-hidden"><p class="text-[11px] font-bold truncate text-slate-800">Delivery Van</p></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 bg-slate-50 border border-slate-200 p-6 rounded-3xl relative">
+                    <div id="scan-unloaded-prompt" class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-slate-50 rounded-3xl z-10">
+                        <i class="fa-solid fa-microchip text-slate-300 text-5xl mb-4"></i>
+                        <p class="text-sm font-bold text-slate-600">Awaiting Invoice Scanning Sequence</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Asset Description</label><input type="text" id="scan-res-name" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Category Suggested</label>
+                                <select id="scan-res-category" class="w-full bg-white border rounded-xl p-2.5 text-xs">
+                                    <option value="Office Equipment">Office Equipment</option>
+                                    <option value="Computer & Hardware">Computer &amp; Hardware</option>
+                                    <option value="Furniture & Fittings">Furniture &amp; Fittings</option>
+                                    <option value="Motor Vehicle">Motor Vehicle</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Supplier Name</label><input type="text" id="scan-res-pembekal" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Invoice Number</label><input type="text" id="scan-res-invois" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Location</label><input type="text" id="scan-res-lokasi" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Total Cost (RM)</label><input type="number" id="scan-res-cost" step="0.01" class="w-full bg-white border rounded-xl p-2.5 text-xs font-bold"></div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-3">
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Purchase Date</label><input type="date" id="scan-res-date" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Salvage Value</label><input type="number" id="scan-res-salvage" value="1" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Useful Life (Yrs)</label><input type="number" id="scan-res-life" value="5" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                        </div>
+                        <div class="pt-4 flex justify-end">
+                            <button onclick="saveScannedAsset()" class="bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-xs"><i class="fa-solid fa-circle-check mr-2"></i>Approve &amp; Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let activeVaultUser = localStorage.getItem('activeVaultUser') || 'guest_vault';
+
+        window.onload = function() {
+            if (!localStorage.getItem('activeVaultUser')) { window.location.href = 'index.html'; return; }
+            document.getElementById('user-display-id').innerText = activeVaultUser;
+        };
+
+        function lockSystem() { localStorage.removeItem('activeVaultUser'); window.location.href = 'index.html'; }
+
+        function triggerFileInput() { document.getElementById('scan-file-input').click(); }
+
+        function handleImageSelection(e) {
+            if (e.target.files && e.target.files[0]) {
+                document.getElementById('scan-unloaded-prompt').classList.add('hidden');
+                document.getElementById('scan-res-name').value = "Scanned Asset Record";
+                document.getElementById('scan-res-pembekal').value = "Vendor Inc";
+                document.getElementById('scan-res-invois').value = "INV-" + Math.floor(Math.random()*10000);
+                document.getElementById('scan-res-lokasi').value = "HQ Office";
+                document.getElementById('scan-res-cost').value = "2500.00";
+                document.getElementById('scan-res-date').value = new Date().toISOString().split('T')[0];
             }
         }
 
-        function kiraTotal() {
-            const unit = parseFloat(document.getElementById('ocrUnit').value) || 1;
-            const harga = parseFloat(document.getElementById('ocrHarga').value) || 0;
-            document.getElementById('ocrJumlah').value = (unit * harga).toFixed(2);
+        function testPresetScan(preset) {
+            document.getElementById('scan-unloaded-prompt').classList.add('hidden');
+            if (preset === 'espresso') {
+                document.getElementById('scan-res-name').value = "Commercial Espresso Machine";
+                document.getElementById('scan-res-category').value = "Office Equipment";
+                document.getElementById('scan-res-pembekal').value = "CoffeeTech Solutions";
+                document.getElementById('scan-res-invois').value = "INV-88392";
+                document.getElementById('scan-res-lokasi').value = "Main Cafe Bar";
+                document.getElementById('scan-res-cost').value = "14500.00";
+                document.getElementById('scan-res-date').value = "2024-03-15";
+            } else if (preset === 'van') {
+                document.getElementById('scan-res-name').value = "Toyota Hiace Delivery Van";
+                document.getElementById('scan-res-category').value = "Motor Vehicle";
+                document.getElementById('scan-res-pembekal').value = "Toyota Capital";
+                document.getElementById('scan-res-invois').value = "INV-7721";
+                document.getElementById('scan-res-lokasi').value = "Logistics Center";
+                document.getElementById('scan-res-cost').value = "98000.00";
+                document.getElementById('scan-res-date').value = "2023-08-10";
+            }
         }
 
-        function simpanAsetOCR(e) {
-            e.preventDefault();
-            const assetData = {
-                kategori: document.getElementById('ocrKategori').value,
-                perkara: document.getElementById('ocrPerkara').value,
-                noRuj: document.getElementById('ocrNoRuj').value,
-                model: document.getElementById('ocrModel').value,
-                tarikhBeli: document.getElementById('ocrTarikh').value,
-                unit: document.getElementById('ocrUnit').value,
-                hargaSeunit: document.getElementById('ocrHarga').value,
-                jumlah: document.getElementById('ocrJumlah').value,
-                jangkaHayat: document.getElementById('ocrJangkaHayat').value,
-                nilaiSisa: document.getElementById('ocrNilaiSisa').value,
-                lokasi: document.getElementById('ocrLokasi').value,
-                dikemaskiniOleh: document.getElementById('ocrPegawai').value
-            };
+        function saveScannedAsset() {
+            const name = document.getElementById('scan-res-name').value;
+            const cost = document.getElementById('scan-res-cost').value;
+            if (!name || !cost) { alert("Please complete required asset fields"); return; }
 
-            AppStore.saveAsset(assetData);
-            alert('Aset berjaya disahkan dan disimpan ke Asset Register & Depreciation Schedule!');
+            let assets = JSON.parse(localStorage.getItem(`assets_${activeVaultUser}`) || '[]');
+            assets.push({
+                id: 'AST-' + Date.now(),
+                name: name,
+                category: document.getElementById('scan-res-category').value,
+                pembekal: document.getElementById('scan-res-pembekal').value,
+                invois: document.getElementById('scan-res-invois').value,
+                lokasi: document.getElementById('scan-res-lokasi').value,
+                cost: parseFloat(cost),
+                salvage: parseFloat(document.getElementById('scan-res-salvage').value || 1),
+                life: parseInt(document.getElementById('scan-res-life').value || 5),
+                purchaseDate: document.getElementById('scan-res-date').value,
+                method: "Straight Line",
+                unit: 1,
+                hargaSeunit: parseFloat(cost),
+                serviceInterval: 6,
+                lastServiceDate: document.getElementById('scan-res-date').value
+            });
+
+            localStorage.setItem(`assets_${activeVaultUser}`, JSON.stringify(assets));
+            alert("Asset Saved to Ledger!");
             window.location.href = 'assetregister.html';
         }
     </script>
