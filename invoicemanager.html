@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusutNilai.My - Invoice Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         if (typeof tailwind !== 'undefined') {
             tailwind.config = {
                 theme: {
                     extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
-                        colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' } }
+                        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                        colors: { brand: { 50: '#f0fdf4', 500: '#10b981', 600: '#059669', 700: '#047857' } }
                     }
                 }
             }
@@ -28,81 +28,105 @@
             </div>
             <div>
                 <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
-                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart SMB Asset Hub</span>
+                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart Asset Hub</span>
             </div>
         </a>
-        
-        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
-            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Dashboard</a>
-            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Service Report</a>
-            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white shadow-sm">Invoice Manager</a>
-            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Register New</a>
-            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Asset Register</a>
-            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Depreciation Schedule</a>
+        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Dashboard</a>
+            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
+            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Invoice Manager</a>
+            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Register New</a>
+            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Asset Register</a>
+            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
         </nav>
-
-        <div class="flex items-center space-x-3">
-            <a href="index.html" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20 transition-all duration-200" title="Lock Session">
-                <i class="fa-solid fa-power-off text-base"></i>
-            </a>
-        </div>
+        <a href="index.html" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20"><i class="fa-solid fa-power-off text-base"></i></a>
     </header>
 
     <main class="flex-grow p-4 sm:p-8">
         <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-lg">
             <div class="flex items-center space-x-3.5 mb-6 border-b border-slate-100 pb-4">
-                <div class="bg-brand-50 text-brand-600 p-3 rounded-2xl border border-brand-100/50">
-                    <i class="fa-solid fa-camera text-xl"></i>
-                </div>
+                <div class="bg-brand-50 text-brand-600 p-3 rounded-2xl"><i class="fa-solid fa-camera text-xl"></i></div>
                 <div>
-                    <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">AI Invoice & Receipt Manager</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Upload purchase receipts or take a photo. Our neural OCR scanner automatically parses metadata, cost values, and recommends useful lifespans!</p>
+                    <h2 class="text-lg font-extrabold text-slate-900">AI Invoice & Receipt OCR Scanner</h2>
+                    <p class="text-xs text-slate-400">Muat naik resit/invois untuk ekstrak data aset secara automatik.</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-5 space-y-5">
-                    <div class="border-2 border-dashed border-slate-200 hover:border-brand-500 bg-slate-50/50 hover:bg-white rounded-3xl p-8 text-center cursor-pointer relative transition-all duration-300 group shadow-inner">
-                        <input type="file" accept="image/*" class="hidden" id="scan-file-input">
-                        <div class="py-12 space-y-4">
-                            <div class="bg-white shadow-md inline-flex p-4 rounded-2xl text-slate-400 border border-slate-100/50 group-hover:scale-105 transition-transform">
-                                <i class="fa-solid fa-cloud-arrow-up text-3xl text-brand-500"></i>
-                            </div>
-                            <div>
-                                <p class="text-xs font-bold text-slate-800">Click to Upload Document File</p>
-                                <p class="text-[10px] text-slate-400 mt-1">Supports PNG, JPG, or PDF formats up to 5MB</p>
-                            </div>
-                        </div>
+                    <div onclick="document.getElementById('file-input').click()" class="border-2 border-dashed border-slate-300 hover:border-brand-500 bg-slate-50 hover:bg-emerald-50/30 rounded-3xl p-8 text-center cursor-pointer transition">
+                        <input type="file" id="file-input" onchange="simulateOCR()" accept="image/*" class="hidden">
+                        <i class="fa-solid fa-cloud-arrow-up text-4xl text-brand-500 mb-3"></i>
+                        <p class="text-xs font-bold text-slate-800">Klik Untuk Muat Naik Resit/Invois</p>
+                        <p class="text-[10px] text-slate-400 mt-1">PNG, JPG, PDF (Maksimum 5MB)</p>
                     </div>
                 </div>
 
-                <div class="lg:col-span-7 bg-slate-50 border border-slate-200 p-6 rounded-3xl relative">
-                    <div class="space-y-5">
-                        <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-2">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">AI Confidence Core Extraction</h3>
-                            <span class="bg-brand-100 text-brand-700 text-xs font-extrabold px-3 py-1 rounded-full border border-brand-200">98% Match</span>
+                <div class="lg:col-span-7 bg-slate-50 border border-slate-200 p-6 rounded-3xl">
+                    <form onsubmit="saveExtractedAsset(event)" class="space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Hasil Imbasan AI OCR</h3>
+                            <span id="ocr-badge" class="bg-slate-200 text-slate-600 text-[10px] font-bold px-2.5 py-0.5 rounded-full">Menunggu Fail...</span>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Detected Asset Description</label>
-                                <input type="text" placeholder="Description" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs">
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Nama / Deskripsi Aset</label>
+                                <input type="text" id="ocr-name" required placeholder="Contoh: MacBook Pro 16 M3" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs">
                             </div>
                             <div>
-                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Category Suggested</label>
-                                <select class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs">
-                                    <option>Office Equipment</option>
-                                    <option>Computer & Hardware</option>
-                                    <option>Furniture & Fittings</option>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Kategori</label>
+                                <select id="ocr-category" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs">
+                                    <option value="Computer & IT">Computer & IT Hardware</option>
+                                    <option value="Office Equipment">Office Equipment</option>
+                                    <option value="Furniture">Furniture & Fittings</option>
+                                    <option value="Vehicle">Motor Vehicle</option>
                                 </select>
                             </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Kos Pembelian (RM)</label>
+                                <input type="number" step="0.01" id="ocr-cost" required placeholder="11999.00" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 mb-1">Tarikh Pembelian</label>
+                                <input type="date" id="ocr-date" required class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs">
+                            </div>
                         </div>
-                    </div>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-plus-circle"></i><span>Daftarkan Aset Ke Buku Panduan</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </main>
-    <footer class="bg-white border-t border-slate-200 p-5 text-center text-xs text-slate-400 mt-auto">
-        &copy; 2026 SusutNilai.My.
-    </footer>
+
+    <script>
+        function simulateOCR() {
+            document.getElementById('ocr-badge').innerText = 'AI Match: 98%';
+            document.getElementById('ocr-badge').className = 'bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2.5 py-0.5 rounded-full';
+            document.getElementById('ocr-name').value = 'MacBook Pro 16 M3 Max';
+            document.getElementById('ocr-cost').value = '14590.00';
+            document.getElementById('ocr-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        function saveExtractedAsset(e) {
+            e.preventDefault();
+            const assets = JSON.parse(localStorage.getItem('susutnilai_assets_db') || '[]');
+            const newAsset = {
+                id: 'AST-' + Math.floor(1000 + Math.random() * 9000),
+                name: document.getElementById('ocr-name').value,
+                category: document.getElementById('ocr-category').value,
+                cost: parseFloat(document.getElementById('ocr-cost').value),
+                salvage: 0,
+                life: 3,
+                date: document.getElementById('ocr-date').value,
+                serviceInterval: 6
+            };
+            assets.push(newAsset);
+            localStorage.setItem('susutnilai_assets_db', JSON.stringify(assets));
+            alert('Aset berjaya dicam dan didaftarkan!');
+            window.location.href = 'assetregister.html';
+        }
+    </script>
 </body>
 </html>
