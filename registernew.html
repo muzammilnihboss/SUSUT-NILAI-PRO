@@ -7,180 +7,72 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
-                        colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' } }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; background-color: #f8fafc; }
-        .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); }
-    </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc]">
-
-    <header class="glass-header text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-premium">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc] font-sans">
+    <header class="bg-slate-900 text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-lg">
         <a href="dashboard.html" class="flex items-center space-x-3.5">
-            <div class="bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-lg"><i class="fa-solid fa-vault text-lg"></i></div>
+            <div class="bg-gradient-to-br from-emerald-500 to-brand-600 text-white p-2.5 rounded-2xl shadow-lg">
+                <i class="fa-solid fa-vault text-lg"></i>
+            </div>
             <div>
                 <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
                 <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart SMB Asset Hub</span>
             </div>
         </a>
+        
         <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
-            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Dashboard</a>
-            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
-            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Invoice Manager</a>
-            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Register New</a>
-            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Asset Register</a>
-            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
+            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Dashboard</a>
+            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Service Report</a>
+            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Invoice Manager</a>
+            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white shadow-sm">Register New</a>
+            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Asset Register</a>
+            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Depreciation Schedule</a>
         </nav>
+
         <div class="flex items-center space-x-3">
-            <div class="hidden sm:flex items-center space-x-2 bg-slate-900/80 px-3.5 py-2 rounded-xl border border-slate-800/80">
-                <i class="fa-solid fa-user-shield text-emerald-400 text-xs"></i>
-                <span id="user-display-id" class="text-[10px] font-bold text-white block max-w-[80px] truncate">Guest</span>
-            </div>
-            <button onclick="lockSystem()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20"><i class="fa-solid fa-power-off text-base"></i></button>
+            <a href="index.html" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20 transition-all duration-200" title="Lock Session">
+                <i class="fa-solid fa-power-off text-base"></i>
+            </a>
         </div>
     </header>
 
-    <main class="flex-grow p-4 sm:p-8 pb-24 md:pb-8">
+    <main class="flex-grow p-4 sm:p-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-premium space-y-5">
+            <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-lg space-y-5">
                 <div class="flex items-center space-x-3.5 border-b border-slate-100 pb-4">
-                    <div class="bg-brand-50 text-brand-600 w-11 h-11 rounded-2xl flex items-center justify-center border border-brand-100/50"><i class="fa-solid fa-file-pen text-lg"></i></div>
+                    <div class="bg-brand-50 text-brand-600 w-11 h-11 rounded-2xl flex items-center justify-center border border-brand-100/50 shadow-sm">
+                        <i class="fa-solid fa-file-pen text-lg"></i>
+                    </div>
                     <div>
                         <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Manual Asset Registration Protocol</h3>
                         <p class="text-xs text-slate-400">Configure parameters accurately to execute general ledger amortization plans.</p>
                     </div>
                 </div>
 
-                <form id="manual-asset-form" class="space-y-4" onsubmit="event.preventDefault(); submitManualForm();">
+                <form class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Asset Name / Description <span class="text-red-500">*</span></label>
-                        <input type="text" id="manual-name" required placeholder="e.g. Ergonomic Office Chair" oninput="updateLivePreview()" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
+                        <input type="text" required placeholder="e.g. Ergonomic Office Chair" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Supplier Name <span class="text-red-500">*</span></label>
-                            <input type="text" id="manual-pembekal" required placeholder="e.g. Apex Furniture Sdn Bhd" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Supplier Name</label>
+                            <input type="text" placeholder="Apex Furniture" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Invoice Number <span class="text-red-500">*</span></label>
-                            <input type="text" id="manual-invois" required placeholder="e.g. INV/2026/0912" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Invoice Number</label>
+                            <input type="text" placeholder="INV/2026/0912" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Asset Classification</label>
-                            <select id="manual-category" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold">
-                                <option value="Office Equipment">Office Equipment</option>
-                                <option value="Computer & Hardware">Computer &amp; Hardware</option>
-                                <option value="Furniture & Fittings">Furniture &amp; Fittings</option>
-                                <option value="Motor Vehicle">Motor Vehicle</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Purchase Date</label>
-                            <input type="date" id="manual-purchase-date" required class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Deployment Location</label>
-                            <input type="text" id="manual-lokasi" required placeholder="Administrative Office HQ" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Total Cost (RM)</label>
-                            <input type="number" id="manual-cost" required step="0.01" placeholder="0.00" oninput="updateLivePreview()" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold">
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Estimated Salvage (RM)</label>
-                            <input type="number" id="manual-salvage" value="0.00" step="0.01" oninput="updateLivePreview()" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Useful Life (Yrs)</label>
-                            <input type="number" id="manual-life" value="5" min="1" max="100" oninput="updateLivePreview()" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Service Interval (Mths)</label>
-                            <input type="number" id="manual-service-interval" value="6" class="w-full border border-slate-200 rounded-xl px-4 py-3 text-xs">
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold py-4 rounded-xl text-xs"><i class="fa-solid fa-floppy-disk mr-2"></i>Save Asset to Ledger Book</button>
+                    <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold py-4 rounded-xl text-xs transition duration-200 flex items-center justify-center space-x-2 shadow-md">
+                        <i class="fa-solid fa-floppy-disk"></i><span>Save Asset to Ledger Book</span>
+                    </button>
                 </form>
-            </div>
-
-            <div class="lg:col-span-5 space-y-6">
-                <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-8 rounded-3xl border border-slate-800 shadow-xl space-y-5">
-                    <h4 class="text-xs font-bold uppercase tracking-widest text-brand-400 flex items-center"><i class="fa-solid fa-glasses mr-2.5"></i>Interactive Simulation Preview</h4>
-                    <div class="space-y-4 border-b border-slate-800 pb-5">
-                        <div><span class="text-[9px] text-slate-500 uppercase font-bold">Asset Description</span><p id="preview-name" class="text-sm font-bold mt-1">Ergonomic Office Chair</p></div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div><span class="text-[9px] text-slate-500 uppercase font-bold">Initial Cost</span><p id="preview-cost" class="text-sm font-bold mt-1 font-mono">RM 0.00</p></div>
-                            <div><span class="text-[9px] text-slate-500 uppercase font-bold">First Year Dep.</span><p id="preview-year-one" class="text-sm font-bold text-rose-400 mt-1 font-mono">RM 0.00</p></div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </main>
-
-    <script>
-        let activeVaultUser = localStorage.getItem('activeVaultUser') || 'guest_vault';
-
-        window.onload = function() {
-            if (!localStorage.getItem('activeVaultUser')) { window.location.href = 'index.html'; return; }
-            document.getElementById('user-display-id').innerText = activeVaultUser;
-            document.getElementById('manual-purchase-date').value = new Date().toISOString().split('T')[0];
-        };
-
-        function lockSystem() { localStorage.removeItem('activeVaultUser'); window.location.href = 'index.html'; }
-
-        function updateLivePreview() {
-            const name = document.getElementById('manual-name').value || "Ergonomic Office Chair";
-            const cost = parseFloat(document.getElementById('manual-cost').value) || 0;
-            const salvage = parseFloat(document.getElementById('manual-salvage').value) || 0;
-            const life = parseInt(document.getElementById('manual-life').value) || 1;
-            const annualDep = Math.max(0, (cost - salvage) / life);
-
-            document.getElementById('preview-name').innerText = name;
-            document.getElementById('preview-cost').innerText = `RM ${cost.toFixed(2)}`;
-            document.getElementById('preview-year-one').innerText = `RM ${annualDep.toFixed(2)}`;
-        }
-
-        function submitManualForm() {
-            let assets = JSON.parse(localStorage.getItem(`assets_${activeVaultUser}`) || '[]');
-            assets.push({
-                id: 'AST-' + Date.now(),
-                name: document.getElementById('manual-name').value,
-                pembekal: document.getElementById('manual-pembekal').value,
-                invois: document.getElementById('manual-invois').value,
-                category: document.getElementById('manual-category').value,
-                purchaseDate: document.getElementById('manual-purchase-date').value,
-                lokasi: document.getElementById('manual-lokasi').value,
-                cost: parseFloat(document.getElementById('manual-cost').value),
-                salvage: parseFloat(document.getElementById('manual-salvage').value || 0),
-                life: parseInt(document.getElementById('manual-life').value || 5),
-                method: "Straight Line",
-                unit: 1,
-                serviceInterval: parseInt(document.getElementById('manual-service-interval').value || 6),
-                lastServiceDate: document.getElementById('manual-purchase-date').value
-            });
-
-            localStorage.setItem(`assets_${activeVaultUser}`, JSON.stringify(assets));
-            alert("Asset Successfully Registered!");
-            window.location.href = 'assetregister.html';
-        }
-    </script>
+    <footer class="bg-white border-t border-slate-200 p-5 text-center text-xs text-slate-400 mt-auto">
+        &copy; 2026 SusutNilai.My.
+    </footer>
 </body>
 </html>
