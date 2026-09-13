@@ -7,36 +7,64 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
-    <div class="max-w-6xl mx-auto p-8 space-y-6">
+    <div class="max-w-7xl mx-auto p-8 space-y-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Daftar Hartanah, Loji dan Peralatan (Asset Register)</h1>
+            <h1 class="text-2xl font-bold">Daftar Hartanah, Loji dan Peralatan</h1>
             <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-            <table class="w-full text-left text-sm border-collapse">
-                <thead class="bg-slate-100 text-slate-700 border-b border-slate-200">
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead class="bg-slate-100 text-slate-700 border-b">
                     <tr>
-                        <th class="p-4 border-r">ID Aset</th>
-                        <th class="p-4 border-r">Nama Aset</th>
-                        <th class="p-4 border-r">Kategori</th>
-                        <th class="p-4 border-r">Tarikh Beli</th>
-                        <th class="p-4 border-r">Kos (RM)</th>
-                        <th class="p-4">Status Aset</th>
+                        <th class="p-3 border">Bil / ID</th>
+                        <th class="p-3 border">Tarikh Beli</th>
+                        <th class="p-3 border">Jenis / Perkara</th>
+                        <th class="p-3 border">No. Ruj.</th>
+                        <th class="p-3 border">Model</th>
+                        <th class="p-3 border">Jangka Hayat</th>
+                        <th class="p-3 border">Unit</th>
+                        <th class="p-3 border">Harga Seunit (RM)</th>
+                        <th class="p-3 border">Jumlah (RM)</th>
+                        <th class="p-3 border">Lokasi</th>
+                        <th class="p-3 border">Tarikh Kemaskini</th>
+                        <th class="p-3 border">Dikemaskini Oleh</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200">
-                    <tr>
-                        <td class="p-4 font-mono text-xs">AST-2026-001</td>
-                        <td class="p-4 font-semibold">Dell Latitude 5420</td>
-                        <td class="p-4">Komputer</td>
-                        <td class="p-4">15/01/2026</td>
-                        <td class="p-4 font-mono">RM 4,500.00</td>
-                        <td class="p-4"><span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-semibold">Aktif</span></td>
-                    </tr>
+                <tbody id="assetTableBody" class="divide-y divide-slate-200">
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const assets = AppStore.getAssets();
+            const tbody = document.getElementById('assetTableBody');
+            
+            if (assets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" class="text-center p-4 text-slate-400">Tiada rekod aset didaftarkan.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = assets.map(a => `
+                <tr>
+                    <td class="p-3 border font-mono">${a.id}</td>
+                    <td class="p-3 border">${a.tarikhBeli}</td>
+                    <td class="p-3 border font-bold">${a.perkara} <span class="text-slate-400 font-normal">(${a.kategori})</span></td>
+                    <td class="p-3 border">${a.noRuj || '-'}</td>
+                    <td class="p-3 border">${a.model || '-'}</td>
+                    <td class="p-3 border text-center">${a.jangkaHayat} Thn</td>
+                    <td class="p-3 border text-center">${a.unit}</td>
+                    <td class="p-3 border font-mono">RM ${parseFloat(a.hargaSeunit).toFixed(2)}</td>
+                    <td class="p-3 border font-mono font-bold">RM ${parseFloat(a.jumlah).toFixed(2)}</td>
+                    <td class="p-3 border">${a.lokasi || '-'}</td>
+                    <td class="p-3 border">${a.tarikhKemaskini}</td>
+                    <td class="p-3 border">${a.dikemaskiniOleh}</td>
+                </tr>
+            `).join('');
+        });
+    </script>
 </body>
 </html>
