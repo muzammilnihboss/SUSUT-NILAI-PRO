@@ -1,70 +1,166 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusutNilai Pro - Asset Register</title>
+    <title>SusutNilai.My - Asset Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-50 min-h-screen text-slate-800">
-    <div class="max-w-7xl mx-auto p-8 space-y-6">
-        <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Daftar Hartanah, Loji dan Peralatan</h1>
-            <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm">
-            <table class="w-full text-left text-xs border-collapse">
-                <thead class="bg-slate-100 text-slate-700 border-b">
-                    <tr>
-                        <th class="p-3 border">Bil / ID</th>
-                        <th class="p-3 border">Tarikh Beli</th>
-                        <th class="p-3 border">Jenis / Perkara</th>
-                        <th class="p-3 border">No. Ruj.</th>
-                        <th class="p-3 border">Model</th>
-                        <th class="p-3 border">Jangka Hayat</th>
-                        <th class="p-3 border">Unit</th>
-                        <th class="p-3 border">Harga Seunit (RM)</th>
-                        <th class="p-3 border">Jumlah (RM)</th>
-                        <th class="p-3 border">Lokasi</th>
-                        <th class="p-3 border">Tarikh Kemaskini</th>
-                        <th class="p-3 border">Dikemaskini Oleh</th>
-                    </tr>
-                </thead>
-                <tbody id="assetTableBody" class="divide-y divide-slate-200">
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const assets = AppStore.getAssets();
-            const tbody = document.getElementById('assetTableBody');
-            
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
+                        colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' } }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc]">
+
+    <header class="glass-header text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-premium">
+        <a href="dashboard.html" class="flex items-center space-x-3.5">
+            <div class="bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-lg"><i class="fa-solid fa-vault text-lg"></i></div>
+            <div>
+                <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
+                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart SMB Asset Hub</span>
+            </div>
+        </a>
+        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
+            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Dashboard</a>
+            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
+            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Invoice Manager</a>
+            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Register New</a>
+            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Asset Register</a>
+            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
+        </nav>
+        <div class="flex items-center space-x-3">
+            <div class="hidden sm:flex items-center space-x-2 bg-slate-900/80 px-3.5 py-2 rounded-xl border border-slate-800/80">
+                <i class="fa-solid fa-user-shield text-emerald-400 text-xs"></i>
+                <span id="user-display-id" class="text-[10px] font-bold text-white block max-w-[80px] truncate">Guest</span>
+            </div>
+            <button onclick="lockSystem()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20"><i class="fa-solid fa-power-off text-base"></i></button>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 sm:p-8 pb-24 md:pb-8 space-y-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-premium space-y-5">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Consolidated Asset Registry Ledger</h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Review remaining asset useful lifespans according to standard property, plant, and equipment registry layouts.</p>
+                </div>
+                <div class="flex items-center gap-2.5">
+                    <button onclick="downloadCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center space-x-1.5 border border-slate-200">
+                        <i class="fa-solid fa-file-excel text-emerald-600 text-sm"></i><span>Export CSV</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input type="text" id="ledger-search" oninput="renderAssetLedger()" placeholder="Search registry catalog..." class="w-full px-4 py-2.5 border rounded-2xl text-xs bg-slate-50">
+                <select id="ledger-filter-category" onchange="renderAssetLedger()" class="w-full px-4 py-2.5 border rounded-2xl text-xs bg-slate-50 font-semibold">
+                    <option value="All">All Categories Listed</option>
+                    <option value="Office Equipment">Office Equipment</option>
+                    <option value="Computer & Hardware">Computer &amp; Hardware</option>
+                    <option value="Furniture & Fittings">Furniture &amp; Fittings</option>
+                    <option value="Motor Vehicle">Motor Vehicle</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="formal-ledger-container" class="space-y-6"></div>
+    </main>
+
+    <script>
+        let activeVaultUser = localStorage.getItem('activeVaultUser') || 'guest_vault';
+
+        window.onload = function() {
+            if (!localStorage.getItem('activeVaultUser')) { window.location.href = 'index.html'; return; }
+            document.getElementById('user-display-id').innerText = activeVaultUser;
+            renderAssetLedger();
+        };
+
+        function lockSystem() { localStorage.removeItem('activeVaultUser'); window.location.href = 'index.html'; }
+
+        function renderAssetLedger() {
+            const container = document.getElementById('formal-ledger-container');
+            let assets = JSON.parse(localStorage.getItem(`assets_${activeVaultUser}`) || '[]');
+            const search = document.getElementById('ledger-search').value.toLowerCase();
+            const category = document.getElementById('ledger-filter-category').value;
+
+            assets = assets.filter(a => {
+                const matchSearch = a.name.toLowerCase().includes(search) || (a.pembekal && a.pembekal.toLowerCase().includes(search));
+                const matchCat = category === 'All' || a.category === category;
+                return matchSearch && matchCat;
+            });
+
             if (assets.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="12" class="text-center p-4 text-slate-400">Tiada rekod aset didaftarkan.</td></tr>`;
+                container.innerHTML = `<div class="text-center py-12 text-slate-400 text-xs bg-white rounded-3xl border">No assets found in register ledger.</div>`;
                 return;
             }
 
-            tbody.innerHTML = assets.map(a => `
-                <tr>
-                    <td class="p-3 border font-mono">${a.id}</td>
-                    <td class="p-3 border">${a.tarikhBeli}</td>
-                    <td class="p-3 border font-bold">${a.perkara} <span class="text-slate-400 font-normal">(${a.kategori})</span></td>
-                    <td class="p-3 border">${a.noRuj || '-'}</td>
-                    <td class="p-3 border">${a.model || '-'}</td>
-                    <td class="p-3 border text-center">${a.jangkaHayat} Thn</td>
-                    <td class="p-3 border text-center">${a.unit}</td>
-                    <td class="p-3 border font-mono">RM ${parseFloat(a.hargaSeunit).toFixed(2)}</td>
-                    <td class="p-3 border font-mono font-bold">RM ${parseFloat(a.jumlah).toFixed(2)}</td>
-                    <td class="p-3 border">${a.lokasi || '-'}</td>
-                    <td class="p-3 border">${a.tarikhKemaskini}</td>
-                    <td class="p-3 border">${a.dikemaskiniOleh}</td>
-                </tr>
-            `).join('');
-        });
+            let html = `
+                <div class="overflow-x-auto rounded-2xl border bg-white shadow-sm">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 border-b text-slate-500 uppercase">
+                                <th class="p-3.5">Asset Description</th>
+                                <th class="p-3.5">Category</th>
+                                <th class="p-3.5">Supplier / Invoice</th>
+                                <th class="p-3.5 text-right">Cost (RM)</th>
+                                <th class="p-3.5 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">`;
+
+            assets.forEach(a => {
+                html += `
+                    <tr>
+                        <td class="p-3.5 font-bold">${a.name}<br><span class="text-[10px] font-normal text-slate-400">${a.lokasi || ''}</span></td>
+                        <td class="p-3.5">${a.category}</td>
+                        <td class="p-3.5">${a.pembekal || '-'}<br><span class="text-[10px] text-slate-400">${a.invois || ''}</span></td>
+                        <td class="p-3.5 text-right font-mono font-bold">RM ${parseFloat(a.cost).toFixed(2)}</td>
+                        <td class="p-3.5 text-center">
+                            <button onclick="deleteAsset('${a.id}')" class="text-red-500 hover:text-red-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        function deleteAsset(id) {
+            if (!confirm("Are you sure you want to delete this asset record?")) return;
+            let assets = JSON.parse(localStorage.getItem(`assets_${activeVaultUser}`) || '[]');
+            assets = assets.filter(a => a.id !== id);
+            localStorage.setItem(`assets_${activeVaultUser}`, JSON.stringify(assets));
+            renderAssetLedger();
+        }
+
+        function downloadCSV() {
+            let assets = JSON.parse(localStorage.getItem(`assets_${activeVaultUser}`) || '[]');
+            if (assets.length === 0) { alert("No data to export"); return; }
+            let csv = "ID,Name,Category,Supplier,Invoice,Cost,PurchaseDate\n";
+            assets.forEach(a => {
+                csv += `"${a.id}","${a.name}","${a.category}","${a.pembekal}","${a.invois}",${a.cost},"${a.purchaseDate}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `Asset_Register_${activeVaultUser}.csv`);
+            a.click();
+        }
     </script>
 </body>
 </html>
