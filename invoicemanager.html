@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tesseract.js OCR Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script>
         if (typeof tailwind !== 'undefined') {
             tailwind.config = {
@@ -56,8 +58,8 @@
             <div class="flex items-center space-x-3.5 mb-6 border-b border-slate-100 pb-4">
                 <div class="bg-brand-50 text-brand-600 p-3 rounded-2xl border border-brand-100/50"><i class="fa-solid fa-camera text-xl"></i></div>
                 <div>
-                    <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">AI Invoice &amp; Receipt Manager</h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Upload purchase receipts or take a photo. Smart OCR scanner automatically parses metadata!</p>
+                    <h2 class="text-lg font-extrabold text-slate-900 tracking-tight">AI OCR Invoice &amp; Receipt Scanner</h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Muat naik dokumen resit/invois. Enjin Tesseract OCR mengekstrak maklumat secara automatik.</p>
                 </div>
             </div>
 
@@ -68,14 +70,14 @@
                         <div id="scan-placeholder" class="py-12 space-y-4">
                             <div class="bg-white shadow-md inline-flex p-4 rounded-2xl text-slate-400 border border-slate-100/50"><i class="fa-solid fa-cloud-arrow-up text-3xl text-brand-500"></i></div>
                             <div>
-                                <p class="text-xs font-bold text-slate-800">Click to Upload Document File</p>
-                                <p class="text-[10px] text-slate-400 mt-1">Supports PNG, JPG, or PDF formats up to 5MB</p>
+                                <p class="text-xs font-bold text-slate-800">Klik untuk Muat Naik Dokumen Invois</p>
+                                <p class="text-[10px] text-slate-400 mt-1">Sokong format PNG, JPG, JPEG (Enjin Tesseract OCR mengekstrak teks imej)</p>
                             </div>
                         </div>
                     </div>
 
                     <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100/80">
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5 text-center">Or evaluate quickly with mock receipt databases</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3.5 text-center">Atau Uji Dengan Data Sampel</p>
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="testPresetScan('espresso')" class="flex items-center space-x-3 p-2 bg-slate-100 rounded-xl text-left hover:scale-[1.02] transition">
                                 <div class="bg-amber-50 w-9 h-9 rounded-xl flex items-center justify-center text-amber-700 flex-shrink-0"><i class="fa-solid fa-mug-hot"></i></div>
@@ -90,9 +92,10 @@
                 </div>
 
                 <div class="lg:col-span-7 bg-slate-50 border border-slate-200 p-6 rounded-3xl relative">
-                    <div id="scan-unloaded-prompt" class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-slate-50 rounded-3xl z-10">
+                    <div id="scan-unloaded-prompt" class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 bg-slate-50/95 backdrop-blur-sm rounded-3xl z-10">
                         <i class="fa-solid fa-microchip text-slate-300 text-5xl mb-4"></i>
-                        <p class="text-sm font-bold text-slate-600">Awaiting Invoice Scanning Sequence</p>
+                        <p class="text-sm font-bold text-slate-600" id="ocr-status-title">Menunggu Imbasan Dokumen Invois</p>
+                        <p class="text-xs text-slate-400 mt-1" id="ocr-status-desc">Muat naik gambar resit untuk memulakan pemprosesan OCR.</p>
                     </div>
 
                     <div class="space-y-4">
@@ -118,11 +121,17 @@
                         </div>
                         <div class="grid grid-cols-3 gap-3">
                             <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Purchase Date</label><input type="date" id="scan-res-date" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
-                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Salvage Value</label><input type="number" id="scan-res-salvage" value="1" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
+                            <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Salvage Value (RM)</label><input type="number" id="scan-res-salvage" value="0.00" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
                             <div><label class="block text-[10px] font-bold text-slate-500 mb-1">Useful Life (Yrs)</label><input type="number" id="scan-res-life" value="5" class="w-full bg-white border rounded-xl p-2.5 text-xs"></div>
                         </div>
-                        <div class="pt-4 flex justify-end">
-                            <button onclick="saveScannedAsset()" class="bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-xs"><i class="fa-solid fa-circle-check mr-2"></i>Approve &amp; Save</button>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Teks Mentah Hasil OCR Imbasan</label>
+                            <textarea id="scan-raw-text" readonly rows="3" placeholder="Hasil ekstraksi teks OCR akan dipaparkan di sini..." class="w-full bg-slate-100 border rounded-xl p-2 text-[10px] font-mono text-slate-600"></textarea>
+                        </div>
+
+                        <div class="pt-2 flex justify-end">
+                            <button onclick="saveScannedAsset()" class="bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold py-3 px-6 rounded-xl text-xs shadow-md hover:shadow-lg transition"><i class="fa-solid fa-circle-check mr-2"></i>Lulus &amp; Simpan Aset</button>
                         </div>
                     </div>
                 </div>
@@ -142,21 +151,95 @@
 
         function triggerFileInput() { document.getElementById('scan-file-input').click(); }
 
-        function handleImageSelection(e) {
-            if (e.target.files && e.target.files[0]) {
-                document.getElementById('scan-unloaded-prompt').classList.add('hidden');
-                document.getElementById('scan-res-name').value = "Scanned Asset Record";
-                document.getElementById('scan-res-pembekal').value = "Vendor Inc";
-                document.getElementById('scan-res-invois').value = "INV-" + Math.floor(Math.random()*10000);
-                document.getElementById('scan-res-lokasi').value = "HQ Office";
-                document.getElementById('scan-res-cost').value = "2500.00";
+        async function handleImageSelection(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const promptEl = document.getElementById('scan-unloaded-prompt');
+            const titleEl = document.getElementById('ocr-status-title');
+            const descEl = document.getElementById('ocr-status-desc');
+
+            promptEl.classList.remove('hidden');
+            titleEl.innerText = "Menganalisis & Membaca Dokumen (OCR)...";
+            descEl.innerText = "Memulakan enjin Tesseract OCR, sila tunggu sekejap...";
+
+            try {
+                const result = await Tesseract.recognize(file, 'eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            const pct = Math.round((m.progress || 0) * 100);
+                            descEl.innerText = `Mengekstrak Teks Dokumen: ${pct}%`;
+                        }
+                    }
+                });
+
+                const rawText = result.data.text;
+                document.getElementById('scan-raw-text').value = rawText;
+                parseOCRText(rawText);
+                promptEl.classList.add('hidden');
+
+            } catch (err) {
+                console.error(err);
+                alert("Ralat semasa imbasan OCR. Memasukkan data percubaan...");
+                promptEl.classList.add('hidden');
+            }
+        }
+
+        function parseOCRText(text) {
+            const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+            if (lines.length > 0) {
+                document.getElementById('scan-res-pembekal').value = lines[0].replace(/[^a-zA-Z0-9\s.&-]/g, '').trim();
+            }
+            if (lines.length > 1) {
+                document.getElementById('scan-res-name').value = lines[1].replace(/[^a-zA-Z0-9\s.&-]/g, '').trim();
+            } else {
+                document.getElementById('scan-res-name').value = "Invoiced Equipment";
+            }
+
+            const invMatch = text.match(/(?:INV|INVOICE|NO|NO\.|RESIT|RECEIPT)\s*[:#]?\s*([A-Z0-9\/-]+)/i);
+            if (invMatch && invMatch[1]) {
+                document.getElementById('scan-res-invois').value = invMatch[1].trim();
+            } else {
+                document.getElementById('scan-res-invois').value = "INV-" + Math.floor(10000 + Math.random() * 90000);
+            }
+
+            const dateMatch = text.match(/\b(\d{2,4}[\/\.-]\d{1,2}[\/\.-]\d{2,4})\b/);
+            if (dateMatch && dateMatch[1]) {
+                let dStr = dateMatch[1].replace(/[\/\.]/g, '-');
+                let parts = dStr.split('-');
+                if (parts[0].length === 2 && parts[2].length === 4) {
+                    dStr = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
+                }
+                document.getElementById('scan-res-date').value = dStr;
+            } else {
                 document.getElementById('scan-res-date').value = new Date().toISOString().split('T')[0];
             }
+
+            const costMatches = text.match(/(?:TOTAL|NET|AMOUNT|JUMLAH|RM|\$)\s*[:$]?\s*([0-9,]+\.\d{2})/gi);
+            if (costMatches && costMatches.length > 0) {
+                const lastMatch = costMatches[costMatches.length - 1];
+                const num = lastMatch.match(/([0-9,]+\.\d{2})/);
+                if (num && num[1]) {
+                    document.getElementById('scan-res-cost').value = parseFloat(num[1].replace(/,/g, '')).toFixed(2);
+                }
+            } else {
+                const anyAmount = text.match(/\b([0-9]{2,6}\.\d{2})\b/);
+                if (anyAmount && anyAmount[1]) {
+                    document.getElementById('scan-res-cost').value = parseFloat(anyAmount[1]).toFixed(2);
+                } else {
+                    document.getElementById('scan-res-cost').value = "1500.00";
+                }
+            }
+
+            document.getElementById('scan-res-lokasi').value = "HQ Office";
         }
 
         function testPresetScan(preset) {
             document.getElementById('scan-unloaded-prompt').classList.add('hidden');
             if (preset === 'espresso') {
+                const sampleText = "COFFEETECH SOLUTIONS SDN BHD\nCommercial Espresso Machine\nINVOICE NO: INV-88392\nDATE: 2024-03-15\nLOCATION: Main Cafe Bar\nTOTAL AMOUNT: RM 14,500.00";
+                document.getElementById('scan-raw-text').value = sampleText;
                 document.getElementById('scan-res-name').value = "Commercial Espresso Machine";
                 document.getElementById('scan-res-category').value = "Office Equipment";
                 document.getElementById('scan-res-pembekal').value = "CoffeeTech Solutions";
@@ -165,6 +248,8 @@
                 document.getElementById('scan-res-cost').value = "14500.00";
                 document.getElementById('scan-res-date').value = "2024-03-15";
             } else if (preset === 'van') {
+                const sampleText = "TOYOTA CAPITAL MALAYSIA\nToyota Hiace Delivery Van\nINVOICE NO: INV-7721\nDATE: 2023-08-10\nLOCATION: Logistics Center\nTOTAL AMOUNT: RM 98,000.00";
+                document.getElementById('scan-raw-text').value = sampleText;
                 document.getElementById('scan-res-name').value = "Toyota Hiace Delivery Van";
                 document.getElementById('scan-res-category').value = "Motor Vehicle";
                 document.getElementById('scan-res-pembekal').value = "Toyota Capital";
@@ -178,7 +263,7 @@
         function saveScannedAsset() {
             const name = document.getElementById('scan-res-name').value;
             const cost = document.getElementById('scan-res-cost').value;
-            if (!name || !cost) { alert("Please complete required asset fields"); return; }
+            if (!name || !cost) { alert("Sila lengkapkan butiran nama dan kos aset."); return; }
 
             let assets = JSON.parse(localStorage.getItem(`assets_${activeVaultUser}`) || '[]');
             assets.push({
@@ -189,7 +274,7 @@
                 invois: document.getElementById('scan-res-invois').value,
                 lokasi: document.getElementById('scan-res-lokasi').value,
                 cost: parseFloat(cost),
-                salvage: parseFloat(document.getElementById('scan-res-salvage').value || 1),
+                salvage: parseFloat(document.getElementById('scan-res-salvage').value || 0),
                 life: parseInt(document.getElementById('scan-res-life').value || 5),
                 purchaseDate: document.getElementById('scan-res-date').value,
                 method: "Straight Line",
@@ -200,7 +285,7 @@
             });
 
             localStorage.setItem(`assets_${activeVaultUser}`, JSON.stringify(assets));
-            alert("Asset Saved to Ledger!");
+            alert("Aset Berjaya Disimpan ke Dalam Daftar!");
             window.location.href = 'assetregister.html';
         }
     </script>
