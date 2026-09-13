@@ -1,540 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Depreciation Schedule - Susut Nilai Pro</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f8fafc;
-            color: #0f172a;
-            min-height: 100vh;
-            padding-bottom: 60px;
-        }
-
-        /* HEADER NAVIGATION */
-        header {
-            background-color: #ffffff;
-            padding: 16px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #f1f5f9;
-            margin-bottom: 24px;
-        }
-
-        .brand-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-        }
-
-        .top-nav {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .nav-btn {
-            padding: 9px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-            background-color: #f1f5f9;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-btn:hover {
-            background-color: #e2e8f0;
-            color: #0f172a;
-        }
-
-        .nav-btn.active {
-            background-color: #2563eb;
-            color: #ffffff;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-
-        /* CARD STYLING */
-        .card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-            margin-bottom: 24px;
-        }
-
-        .card-header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #f1f5f9;
-            padding-bottom: 16px;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-subtitle {
-            font-size: 13px;
-            color: #64748b;
-            margin-top: 2px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .year-select-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #334155;
-        }
-
-        .year-select {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            font-weight: 700;
-            background-color: #ffffff;
-            color: #0f172a;
-            cursor: pointer;
-        }
-
-        .btn-black {
-            background-color: #0f172a;
-            color: #ffffff;
-            border: none;
-            padding: 9px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .category-header-title {
-            font-size: 14px;
-            font-weight: 800;
-            color: #0f172a;
-            text-transform: uppercase;
-            margin-top: 20px;
-            margin-bottom: 12px;
-        }
-
-        /* SCHEDULE TABLE STYLING */
-        table.schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
-
-        table.schedule-table th, table.schedule-table td {
-            padding: 10px 12px;
-            border: 1px solid #cbd5e1;
-            vertical-align: middle;
-        }
-
-        table.schedule-table th {
-            background-color: #f8fafc;
-            color: #0f172a;
-            font-weight: 800;
-            text-align: center;
-            font-size: 11px;
-        }
-
-        .row-total {
-            background-color: #f8fafc;
-            font-weight: 800;
-        }
-
-        .text-right { text-align: right !important; }
-        .text-left { text-align: left !important; }
-        .text-center { text-align: center !important; }
-        .text-green { color: #059669 !important; font-weight: 800; }
-        .text-red { color: #dc2626 !important; font-weight: 800; }
-
-        /* GENERAL JOURNAL BOX STYLING */
-        .journal-box {
-            border: 1px solid #0f172a;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 24px;
-            margin-bottom: 36px;
-            background-color: #ffffff;
-        }
-
-        .journal-title {
-            font-size: 14px;
-            font-weight: 800;
-            text-transform: uppercase;
-            text-decoration: underline;
-            margin-bottom: 16px;
-            color: #0f172a;
-        }
-
-        table.journal-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        table.journal-table th, table.journal-table td {
-            padding: 8px 12px;
-        }
-
-        table.journal-table th {
-            border-bottom: 2px solid #0f172a;
-            font-weight: 800;
-            text-transform: uppercase;
-            font-size: 11px;
-        }
-
-        table.journal-table td {
-            border-bottom: 1px dashed #e2e8f0;
-        }
-
-        .journal-narrative {
-            font-size: 11px;
-            font-style: italic;
-            color: #64748b;
-            margin-top: 12px;
-        }
-
-        @media print {
-            header, .no-print { display: none !important; }
-            body { background: #fff; padding: 0; }
-            .card { border: none; box-shadow: none; padding: 0; }
-            table.schedule-table th, table.schedule-table td { border: 1px solid #000; }
-            .journal-box { border: 1px solid #000; }
-        }
-    </style>
+    <title>SusutNilai Pro - Depreciation Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-
-    <!-- TOP NAVIGATION -->
-    <header class="no-print">
-        <div class="brand-title">Susut Nilai Pro</div>
-        <div class="top-nav">
-            <a href="dashboard.html" class="nav-btn">🏠 Dashboard</a>
-            <a href="assetregister.html" class="nav-btn">📋 Asset Register</a>
-            <a href="registernew.html" class="nav-btn">+ Register New Asset</a>
-            <a href="invoicemanager.html" class="nav-btn">📄 Invoice Manager</a>
-            <a href="depreciationschedule.html" class="nav-btn active">📊 Depreciation Schedule</a>
-            <a href="servicereport.html" class="nav-btn">🛠️ Service Report</a>
-            <a href="index.html" class="nav-btn">Log Out</a>
-        </div>
-    </header>
-
-    <div class="container">
-
-        <div class="card">
-            <!-- HEADER SECTION -->
-            <div class="card-header-flex">
-                <div>
-                    <div class="card-title">DEPRECIATION SCHEDULE</div>
-                    <div class="card-subtitle" id="subtitle-year">FINANCIAL YEAR ENDED 31 DECEMBER 2026</div>
-                </div>
-                <div class="no-print" style="display: flex; gap: 16px; align-items: center;">
-                    <div class="year-select-group">
-                        <label for="year-select">SELECT FINANCIAL YEAR:</label>
-                        <select id="year-select" class="year-select" onchange="renderSchedule()">
-                            <!-- Generated dynamically -->
-                        </select>
-                    </div>
-                    <button onclick="window.print()" class="btn-black">🖨️ Print Schedule</button>
-                </div>
+<body class="bg-slate-50 min-h-screen text-slate-800">
+    <div class="max-w-6xl mx-auto p-8 space-y-6">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Jadual Susut Nilai (Straight Line Method)</h1>
+                <p class="text-sm text-slate-500">Formula: (Kos Pembelian - Nilai Sisa) / Jangka Hayat</p>
             </div>
-
-            <!-- DYNAMIC SCHEDULE & JOURNAL CONTAINER -->
-            <div id="schedule-container">
-                <!-- Grouped Depreciation Tables & Journal Entries generated dynamically -->
-            </div>
+            <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
         </div>
 
-    </div>
-
-    <script>
-        const KEY_PRIMARY = 'susut_nilai_assets';
-        const KEY_INVOICE = 'app_registered_assets';
-
-        // GABUNGKAN DATA DARIPADA DUA-DUA KUNCI PENYIMPANAN (INVOICE MANAGER + ASSET REGISTER)
-        function getAssets() {
-            const primaryList = JSON.parse(localStorage.getItem(KEY_PRIMARY)) || [];
-            const invoiceList = JSON.parse(localStorage.getItem(KEY_INVOICE)) || [];
-
-            const combined = [...primaryList];
-
-            invoiceList.forEach(item => {
-                if (!combined.some(a => String(a.id) === String(item.id))) {
-                    combined.push(item);
-                }
-            });
-
-            return combined;
-        }
-
-        // POPULATE YEAR SELECTOR (2000 - 2050)
-        function populateYearSelect() {
-            const select = document.getElementById('year-select');
-            const currentYear = new Date().getFullYear();
-            select.innerHTML = '';
-            
-            for (let y = 2000; y <= 2050; y++) {
-                const opt = document.createElement('option');
-                opt.value = y;
-                opt.textContent = y;
-                if (y === currentYear) opt.selected = true;
-                select.appendChild(opt);
-            }
-        }
-
-        // RENDER DEPRECIATION SCHEDULE & GENERAL JOURNAL
-        function renderSchedule() {
-            const selectedYear = parseInt(document.getElementById('year-select').value) || new Date().getFullYear();
-            document.getElementById('subtitle-year').textContent = `FINANCIAL YEAR ENDED 31 DECEMBER ${selectedYear}`;
-
-            const assets = getAssets();
-            const container = document.getElementById('schedule-container');
-            container.innerHTML = '';
-
-            if (assets.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #64748b; font-size: 14px;">
-                        No assets registered yet. Add assets via "<strong>+ Register New Asset</strong>" or <strong>Invoice Manager</strong> to view depreciation calculations.
-                    </div>
-                `;
-                return;
-            }
-
-            // Group assets by Category
-            const grouped = {};
-            assets.forEach(asset => {
-                const cat = (asset.category && asset.category.trim() !== '') ? asset.category.trim().toUpperCase() : 'UNCATEGORIZED';
-                if (!grouped[cat]) grouped[cat] = [];
-                grouped[cat].push(asset);
-            });
-
-            let grandTotalDepAddition = 0;
-            let journalCreditRowsHtml = '';
-
-            Object.keys(grouped).forEach(category => {
-                const catAssets = grouped[category];
-
-                let totOpeningCost = 0, totAdditionCost = 0, totDisposalCost = 0, totClosingCost = 0;
-                let totOpeningDep = 0, totDepAddition = 0, totDisposalDep = 0, totClosingDep = 0;
-                let totNetBookValue = 0;
-
-                let tableRowsHtml = '';
-
-                catAssets.forEach((asset, idx) => {
-                    const cost = parseFloat(asset.cost || asset.total || asset.totalAmount || asset.unitPrice) || 0;
-                    const salvageValue = parseFloat(asset.salvage || asset.salvageValue || asset.salvage_value || asset.estimatedSalvage) || 0;
-                    const usefulLife = parseFloat(asset.usefulLife || asset.useful_life) || 10;
-                    const depRate = asset.depRate ? parseFloat(asset.depRate) : (100 / usefulLife);
-
-                    const purchaseDate = asset.purchaseDate || asset.purchase_date || asset.datePurchased || `${selectedYear}-01-01`;
-                    const purchaseYear = new Date(purchaseDate).getFullYear() || selectedYear;
-
-                    let openingCost = 0, additionCost = 0, disposalCost = 0, closingCost = 0;
-                    let openingDep = 0, depAddition = 0, disposalDep = 0, closingDep = 0;
-
-                    if (purchaseYear === selectedYear) {
-                        openingCost = 0;
-                        additionCost = cost;
-                        disposalCost = 0;
-                        closingCost = cost;
-                    } else if (purchaseYear < selectedYear) {
-                        openingCost = cost;
-                        additionCost = 0;
-                        disposalCost = 0;
-                        closingCost = cost;
-                    } else {
-                        // Purchased in a future year relative to selectedYear
-                        return;
-                    }
-
-                    // HAD MAKSIMUM SUSUT NILAI BAGI MEMELIHARA SALVAGE VALUE
-                    const maxDepreciableAmount = Math.max(0, closingCost - salvageValue);
-                    const standardDepAddition = closingCost * (depRate / 100);
-
-                    if (purchaseYear === selectedYear) {
-                        openingDep = 0;
-                        // Depreciation Addition = Closing Cost x Depreciation Rate %
-                        depAddition = Math.min(standardDepAddition, maxDepreciableAmount);
-                    } else {
-                        const yearsPassed = selectedYear - purchaseYear;
-                        openingDep = Math.min(maxDepreciableAmount, standardDepAddition * yearsPassed);
-                        const remainingDepreciable = Math.max(0, maxDepreciableAmount - openingDep);
-                        
-                        // Depreciation Addition = Closing Cost x Depreciation Rate %
-                        depAddition = Math.min(standardDepAddition, remainingDepreciable);
-                    }
-
-                    // Closing Depreciation = Opening Depreciation + Depreciation Addition
-                    closingDep = openingDep + depAddition;
-
-                    // Net Book Value (RM) = Closing Cost - Closing Depreciation
-                    const netBookValue = closingCost - closingDep;
-
-                    // Accumulate Totals
-                    totOpeningCost += openingCost;
-                    totAdditionCost += additionCost;
-                    totDisposalCost += disposalCost;
-                    totClosingCost += closingCost;
-
-                    totOpeningDep += openingDep;
-                    totDepAddition += depAddition;
-                    totDisposalDep += disposalDep;
-                    totClosingDep += closingDep;
-
-                    totNetBookValue += netBookValue;
-
-                    const itemName = (asset.name || asset.assetName || asset.asset_name || 'UNNAMED ASSET').toUpperCase();
-
-                    tableRowsHtml += `
-                        <tr>
-                            <td class="text-center">${idx + 1}</td>
-                            <td class="text-center">${purchaseDate}</td>
-                            <td class="text-left"><strong>${itemName}</strong></td>
-                            <td class="text-right">${openingCost.toFixed(2)}</td>
-                            <td class="text-right">${additionCost.toFixed(2)}</td>
-                            <td class="text-right">${disposalCost.toFixed(2)}</td>
-                            <td class="text-right" style="font-weight: 700;">${closingCost.toFixed(2)}</td>
-                            <td class="text-center">${depRate.toFixed(2)}%</td>
-                            <td class="text-right">${openingDep.toFixed(2)}</td>
-                            <td class="text-right text-red">${depAddition.toFixed(2)}</td>
-                            <td class="text-right">${disposalDep.toFixed(2)}</td>
-                            <td class="text-right text-red">${closingDep.toFixed(2)}</td>
-                            <td class="text-right text-green">${netBookValue.toFixed(2)}</td>
-                        </tr>
-                    `;
-                });
-
-                if (tableRowsHtml === '') return; // Skip category if no assets apply to selected year
-
-                // Kumpul susut nilai untuk Jurnal Am Gabungan
-                grandTotalDepAddition += totDepAddition;
-                journalCreditRowsHtml += `
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6 space-y-4">
+            <h2 class="font-bold text-lg border-b pb-2">Aset: Dell Latitude 5420 (Kos: RM 4,500 | Hayat: 3 Tahun)</h2>
+            <table class="w-full text-left text-sm border-collapse">
+                <thead class="bg-slate-100 text-slate-700">
                     <tr>
-                        <td class="text-left" style="padding-left: 30px;">KT ACCUMULATED DEPRECIATION - ${category}</td>
-                        <td class="text-right">-</td>
-                        <td class="text-right" style="font-weight: 700;">${totDepAddition.toFixed(2)}</td>
+                        <th class="p-3 border">Tahun</th>
+                        <th class="p-3 border">Nilai Buku Awal Tahun (RM)</th>
+                        <th class="p-3 border">Susut Nilai Tahunan (RM)</th>
+                        <th class="p-3 border">Akumulasi Susut Nilai (RM)</th>
+                        <th class="p-3 border">Nilai Buku Akhir Tahun (RM)</th>
                     </tr>
-                `;
-
-                let categoryBlockHtml = `
-                    <div class="category-header-title">ASSET CATEGORY: ${category}</div>
-                    
-                    <div style="overflow-x: auto;">
-                        <table class="schedule-table">
-                            <thead>
-                                <tr>
-                                    <th rowspan="2" style="width: 35px;">No.</th>
-                                    <th rowspan="2" style="width: 90px;">Purchase Date</th>
-                                    <th rowspan="2">Asset Description</th>
-                                    <th colspan="4">Asset Cost (RM)</th>
-                                    <th rowspan="2" style="width: 80px;">Dep. Rate (%)</th>
-                                    <th colspan="4">Accumulated Depreciation (RM)</th>
-                                    <th rowspan="2" style="width: 110px;">Net Book Value (RM)</th>
-                                </tr>
-                                <tr>
-                                    <th style="width: 80px;">Opening Cost</th>
-                                    <th style="width: 80px;">Addition Cost</th>
-                                    <th style="width: 80px;">Disposal Cost</th>
-                                    <th style="width: 80px;">Closing Cost</th>
-                                    <th style="width: 80px;">Opening Dep.</th>
-                                    <th style="width: 80px;">Dep. Addition</th>
-                                    <th style="width: 80px;">Disposal Dep.</th>
-                                    <th style="width: 80px;">Closing Dep.</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${tableRowsHtml}
-                                <tr class="row-total">
-                                    <td colspan="3" class="text-left">TOTAL ${category}</td>
-                                    <td class="text-right">${totOpeningCost.toFixed(2)}</td>
-                                    <td class="text-right">${totAdditionCost.toFixed(2)}</td>
-                                    <td class="text-right">${totDisposalCost.toFixed(2)}</td>
-                                    <td class="text-right">${totClosingCost.toFixed(2)}</td>
-                                    <td class="text-center">-</td>
-                                    <td class="text-right">${totOpeningDep.toFixed(2)}</td>
-                                    <td class="text-right text-red">${totDepAddition.toFixed(2)}</td>
-                                    <td class="text-right">${totDisposalDep.toFixed(2)}</td>
-                                    <td class="text-right text-red">${totClosingDep.toFixed(2)}</td>
-                                    <td class="text-right text-green">${totNetBookValue.toFixed(2)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-
-                container.innerHTML += categoryBlockHtml;
-            });
-
-            // SIKAP SATU JURNAL AM GABUNGAN UNTUK SEMUA KATEGORI ASET
-            if (journalCreditRowsHtml !== '') {
-                let combinedJournalHtml = `
-                    <div class="journal-box">
-                        <div class="journal-title">GENERAL JOURNAL - DEPRECIATION ENTRIES</div>
-                        <table class="journal-table">
-                            <thead>
-                                <tr>
-                                    <th class="text-left">PARTICULARS</th>
-                                    <th class="text-right" style="width: 140px;">DEBIT (RM)</th>
-                                    <th class="text-right" style="width: 140px;">CREDIT (RM)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-left"><strong>DT DEPRECIATION EXPENSE</strong></td>
-                                    <td class="text-right" style="font-weight: 700;">${grandTotalDepAddition.toFixed(2)}</td>
-                                    <td class="text-right">-</td>
-                                </tr>
-                                ${journalCreditRowsHtml}
-                            </tbody>
-                        </table>
-                        <div class="journal-narrative">(Being annual depreciation provision charged for the financial year ended 31 December ${selectedYear})</div>
-                    </div>
-                `;
-                container.innerHTML += combinedJournalHtml;
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            populateYearSelect();
-            renderSchedule();
-        });
-
-        window.addEventListener('storage', renderSchedule);
-    </script>
+                </thead>
+                <tbody class="font-mono">
+                    <tr>
+                        <td class="p-3 border font-sans font-semibold">Tahun 1 (2026)</td>
+                        <td class="p-3 border">4,500.00</td>
+                        <td class="p-3 border text-rose-600">1,500.00</td>
+                        <td class="p-3 border">1,500.00</td>
+                        <td class="p-3 border font-semibold">3,000.00</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 border font-sans font-semibold">Tahun 2 (2027)</td>
+                        <td class="p-3 border">3,000.00</td>
+                        <td class="p-3 border text-rose-600">1,500.00</td>
+                        <td class="p-3 border">3,000.00</td>
+                        <td class="p-3 border font-semibold">1,500.00</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 border font-sans font-semibold">Tahun 3 (2028)</td>
+                        <td class="p-3 border">1,500.00</td>
+                        <td class="p-3 border text-rose-600">1,500.00</td>
+                        <td class="p-3 border">4,500.00</td>
+                        <td class="p-3 border font-semibold">0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
