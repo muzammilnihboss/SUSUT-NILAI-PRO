@@ -1,129 +1,113 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusutNilai.My - Register New Asset</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                        colors: { brand: { 50: '#f0fdf4', 500: '#10b981', 600: '#059669', 700: '#047857' } }
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SusutNilai.My - Register New Asset</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc] font-sans">
-    <header class="bg-slate-900 text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-lg">
-        <a href="dashboard.html" class="flex items-center space-x-3.5">
-            <div class="bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-lg">
-                <i class="fa-solid fa-vault text-lg"></i>
-            </div>
-            <div>
-                <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
-                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart Asset Hub</span>
-            </div>
-        </a>
-        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
-            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Dashboard</a>
-            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
-            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Invoice Manager</a>
-            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Register New</a>
-            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Asset Register</a>
-            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
-        </nav>
-        <a href="index.html" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20"><i class="fa-solid fa-power-off text-base"></i></a>
-    </header>
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen">
 
-    <main class="flex-grow p-4 sm:p-8 max-w-4xl mx-auto w-full">
-        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/60 shadow-lg space-y-6">
-            <div class="flex items-center space-x-3.5 border-b border-slate-100 pb-4">
-                <div class="bg-brand-50 text-brand-600 w-11 h-11 rounded-2xl flex items-center justify-center border border-brand-100">
-                    <i class="fa-solid fa-pen-to-square text-lg"></i>
-                </div>
-                <div>
-                    <h3 class="text-base font-extrabold text-slate-900">Pendaftaran Aset Manual</h3>
-                    <p class="text-xs text-slate-400">Masukkan maklumat aset perniagaan untuk menjana kiraan susut nilai automatik.</p>
-                </div>
-            </div>
+  <!-- NAVBAR -->
+  <nav class="bg-[#0b1329] text-white px-6 py-3 flex items-center justify-between border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-[#00b074] rounded-xl flex items-center justify-center font-bold text-white shadow-md">📷</div>
+      <div>
+        <h1 class="font-black text-sm tracking-tight">Susut<span class="text-[#00b074]">Nilai.My</span></h1>
+        <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest">SMART SMB ASSET HUB</p>
+      </div>
+    </div>
+    <div class="bg-[#020617] p-1 rounded-2xl flex items-center gap-1 border border-slate-800/80">
+      <a href="dashboard.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Dashboard</a>
+      <a href="service-report.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Service Report</a>
+      <a href="#" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Invoice Manager</a>
+      <a href="register-asset.html" class="px-3.5 py-1.5 bg-[#00b074] text-white text-xs font-bold rounded-xl">Register New</a>
+      <a href="asset-register.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Asset Register</a>
+      <a href="depreciation-schedule.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Depreciation Schedule</a>
+      <a href="#" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">AI Tax Advisor</a>
+    </div>
+    <div class="bg-[#1e293b] px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+      <span class="text-xs font-bold text-slate-200">mil</span>
+    </div>
+  </nav>
 
-            <form onsubmit="registerManualAsset(event)" class="space-y-4">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nama Aset / Deskripsi <span class="text-red-500">*</span></label>
-                    <input type="text" id="reg-name" required placeholder="Contoh: Mesin Espresso Commercial" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kategori Aset</label>
-                        <select id="reg-category" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                            <option value="Machinery">Mesin & Jentera</option>
-                            <option value="Office Equipment">Peralatan Pejabat</option>
-                            <option value="Computer & IT">Komputer & Hardware</option>
-                            <option value="Furniture">Perabot & Kelengkapan</option>
-                            <option value="Vehicle">Kenderaan Syarikat</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Kos Pembelian (RM) <span class="text-red-500">*</span></label>
-                        <input type="number" step="0.01" id="reg-cost" required placeholder="18500.00" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Nilai Sisa / Salvage (RM)</label>
-                        <input type="number" step="0.01" id="reg-salvage" value="0" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Invois Tarikh Pembelian</label>
-                        <input type="date" id="reg-date" required class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Jangka Hayat (Tahun)</label>
-                        <input type="number" id="reg-life" value="5" min="1" max="30" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2">Sela Masa Servis (Bulan)</label>
-                        <input type="number" id="reg-service-interval" value="6" min="1" class="w-full border border-slate-200 bg-slate-50/50 rounded-xl px-4 py-3 text-xs">
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold py-4 rounded-xl text-xs shadow-md hover:from-brand-500 hover:to-emerald-500 flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-floppy-disk"></i><span>Simpan Aset Ke Dalam Ledger</span>
-                </button>
-            </form>
+  <main class="max-w-7xl mx-auto p-6">
+    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm space-y-6">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold">📝</div>
+        <div>
+          <h2 class="text-lg font-black text-slate-900">Manual Asset Registration Protocol</h2>
+          <p class="text-xs text-slate-400">Configure parameters accurately to execute general ledger amortization plans.</p>
         </div>
-    </main>
+      </div>
 
-    <script>
-        document.getElementById('reg-date').value = new Date().toISOString().split('T')[0];
+      <div class="space-y-4">
+        <div>
+          <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">ASSET NAME / DESCRIPTION <span class="text-rose-500">*</span></label>
+          <input type="text" placeholder="e.g. Ergonomic Office Chair" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-700 focus:bg-white focus:outline-none focus:border-emerald-500">
+        </div>
 
-        function registerManualAsset(e) {
-            e.preventDefault();
-            const assets = JSON.parse(localStorage.getItem('susutnilai_assets_db') || '[]');
-            const newAsset = {
-                id: 'AST-' + Math.floor(1000 + Math.random() * 9000),
-                name: document.getElementById('reg-name').value,
-                category: document.getElementById('reg-category').value,
-                cost: parseFloat(document.getElementById('reg-cost').value),
-                salvage: parseFloat(document.getElementById('reg-salvage').value) || 0,
-                life: parseInt(document.getElementById('reg-life').value) || 5,
-                date: document.getElementById('reg-date').value,
-                serviceInterval: parseInt(document.getElementById('reg-service-interval').value) || 6
-            };
-            assets.push(newAsset);
-            localStorage.setItem('susutnilai_assets_db', JSON.stringify(assets));
-            alert('Aset berjaya disimpan!');
-            window.location.href = 'assetregister.html';
-        }
-    </script>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">SUPPLIER NAME <span class="text-rose-500">*</span></label>
+            <input type="text" placeholder="e.g. Apex Furniture Sdn Bhd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-700 focus:bg-white focus:outline-none focus:border-emerald-500">
+          </div>
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">INVOICE NUMBER <span class="text-rose-500">*</span></label>
+            <input type="text" placeholder="e.g. INV/2026/0912" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-700 focus:bg-white focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">ASSET CLASSIFICATION CATEGORY</label>
+            <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none focus:border-emerald-500">
+              <option>Office Equipment</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">PURCHASE DATE</label>
+            <input type="date" value="2026-07-27" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700 focus:bg-white focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="md:col-span-2">
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">DEPLOYMENT DEPARTMENT <span class="text-rose-500">*</span></label>
+            <input type="text" placeholder="e.g. Administrative Office HQ" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-700 focus:bg-white">
+          </div>
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">UNIT</label>
+            <input type="number" value="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+          </div>
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">UNIT PRICE</label>
+            <input type="text" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">ESTIMATED SALVAGE (RM)</label>
+            <input type="text" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+          </div>
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">ESTIMATED USEFUL LIFE (YRS)</label>
+            <input type="number" value="5" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-700">
+          </div>
+          <div>
+            <label class="text-[10px] font-extrabold text-slate-500 uppercase block mb-1">AMORTIZATION METHOD</label>
+            <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-700">
+              <option>Straight Line (Equal Amortization)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
 </body>
 </html>
