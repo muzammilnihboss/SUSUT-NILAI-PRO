@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusutNilai.My - Asset Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                        colors: { brand: { 50: '#f0fdf4', 500: '#10b981', 600: '#059669', 700: '#047857' } }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc] font-sans">
     <header class="bg-slate-900 text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-lg">
@@ -16,41 +28,103 @@
             </div>
             <div>
                 <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
-                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart SMB Asset Hub</span>
+                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart Asset Hub</span>
             </div>
         </a>
-        
-        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
-            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Dashboard</a>
-            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Service Report</a>
-            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Invoice Manager</a>
-            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Register New</a>
-            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white shadow-sm">Asset Register</a>
-            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-900/80">Depreciation Schedule</a>
+        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Dashboard</a>
+            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
+            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Invoice Manager</a>
+            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Register New</a>
+            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Asset Register</a>
+            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
         </nav>
-
-        <div class="flex items-center space-x-3">
-            <a href="index.html" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20 transition-all duration-200" title="Lock Session">
-                <i class="fa-solid fa-power-off text-base"></i>
-            </a>
-        </div>
+        <a href="index.html" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20"><i class="fa-solid fa-power-off text-base"></i></a>
     </header>
 
-    <main class="flex-grow p-4 sm:p-8">
-        <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-lg space-y-5">
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                    <h3 class="text-base font-extrabold text-slate-900 tracking-tight">Consolidated Asset Registry Ledger</h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Review remaining asset useful lifespans according to standard property layouts.</p>
-                </div>
+    <main class="flex-grow p-4 sm:p-8 space-y-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200/60 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Senarai Penuh Aset Berdaftar</h3>
+                <p class="text-xs text-slate-400">Pengurusan ledger aset lengkap dan status nilai terkini.</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <input type="text" placeholder="Search registry catalog..." class="w-full px-4 py-2.5 border border-slate-200 rounded-2xl text-xs bg-slate-50">
+            <input type="text" id="search-bar" onkeyup="renderAssetTable()" placeholder="Cari nama aset..." class="px-4 py-2.5 border border-slate-200 rounded-2xl text-xs bg-slate-50 w-full md:w-64">
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-200/60 shadow-lg overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50 uppercase text-[10px] font-bold text-slate-400 tracking-wider border-b border-slate-100">
+                        <tr>
+                            <th class="p-4">Kod Aset</th>
+                            <th class="p-4">Nama Aset</th>
+                            <th class="p-4">Kategori</th>
+                            <th class="p-4">Kos Pembelian (RM)</th>
+                            <th class="p-4">Susut Nilai Terkumpul</th>
+                            <th class="p-4">Nilai Buku Semasa</th>
+                            <th class="p-4 text-center">Tindakan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="asset-table-body" class="divide-y divide-slate-100 font-medium">
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>
-    <footer class="bg-white border-t border-slate-200 p-5 text-center text-xs text-slate-400 mt-auto">
-        &copy; 2026 SusutNilai.My.
-    </footer>
+
+    <script>
+        function renderAssetTable() {
+            const assets = JSON.parse(localStorage.getItem('susutnilai_assets_db') || '[]');
+            const search = document.getElementById('search-bar').value.toLowerCase();
+            const tbody = document.getElementById('asset-table-body');
+            tbody.innerHTML = '';
+
+            const currentYear = new Date().getFullYear();
+
+            const filtered = assets.filter(a => a.name.toLowerCase().includes(search));
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-400">Tiada aset dijumpai dalam sistem.</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((asset, idx) => {
+                const cost = parseFloat(asset.cost) || 0;
+                const salvage = parseFloat(asset.salvage) || 0;
+                const life = parseInt(asset.life) || 1;
+                const purchaseYear = new Date(asset.date || Date.now()).getFullYear();
+                const yearsPassed = Math.max(0, currentYear - purchaseYear);
+                
+                let annualDep = (cost - salvage) / life;
+                let accDep = Math.min(cost - salvage, annualDep * yearsPassed);
+                let bookVal = Math.max(salvage, cost - accDep);
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="p-4 font-mono font-bold text-slate-900">${asset.id}</td>
+                        <td class="p-4 font-bold text-slate-800">${asset.name}</td>
+                        <td class="p-4"><span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold">${asset.category}</span></td>
+                        <td class="p-4 font-mono">${cost.toFixed(2)}</td>
+                        <td class="p-4 font-mono text-rose-600">${accDep.toFixed(2)}</td>
+                        <td class="p-4 font-mono font-bold text-brand-600">${bookVal.toFixed(2)}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="deleteAsset('${asset.id}')" class="text-rose-500 hover:text-rose-700 p-1.5"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteAsset(id) {
+            if(confirm('Adakah anda pasti untuk memadam aset ini?')) {
+                let assets = JSON.parse(localStorage.getItem('susutnilai_assets_db') || '[]');
+                assets = assets.filter(a => a.id !== id);
+                localStorage.setItem('susutnilai_assets_db', JSON.stringify(assets));
+                renderAssetTable();
+            }
+        }
+
+        window.onload = renderAssetTable;
+    </script>
 </body>
 </html>
