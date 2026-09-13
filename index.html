@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusutNilai.My - Login Vault</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         if (typeof tailwind !== 'undefined') {
             tailwind.config = {
                 theme: {
                     extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
-                        colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' } }
+                        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                        colors: { brand: { 50: '#f0fdf4', 500: '#10b981', 600: '#059669', 700: '#047857' } }
                     }
                 }
             }
@@ -21,74 +21,61 @@
     </script>
 </head>
 <body class="bg-[#070a13] font-sans antialiased text-slate-800">
-    <div id="login-screen" class="fixed inset-0 z-50 bg-[#070a13] flex flex-col items-center justify-center p-4">
+    <div class="fixed inset-0 z-50 bg-[#070a13] flex flex-col items-center justify-center p-4">
         <div class="absolute inset-0 bg-[radial-gradient(#1e293b_1.5px,transparent_1px)] [background-size:24px_24px] opacity-35 pointer-events-none"></div>
-        <div class="absolute w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-[120px] -top-40 -left-40 pointer-events-none"></div>
-        <div class="absolute w-[500px] h-[500px] rounded-full bg-indigo-600/10 blur-[120px] -bottom-40 -right-40 pointer-events-none"></div>
-        
         <div class="w-full max-w-md bg-slate-900/90 border border-slate-800/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl relative z-10">
             <div class="text-center mb-8">
-                <div class="inline-flex bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-4 rounded-2xl shadow-xl shadow-brand-500/20 mb-4 items-center justify-center transition-transform hover:rotate-6">
+                <div class="inline-flex bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-4 rounded-2xl shadow-xl shadow-brand-500/20 mb-4 items-center justify-center">
                     <i class="fa-solid fa-vault text-2xl"></i>
                 </div>
                 <h1 class="text-2xl font-extrabold text-white tracking-tight">SusutNilai.My <span class="text-brand-500">Secure Vault</span></h1>
-                <p class="text-xs text-slate-400 mt-2">Enterprise-Grade Asset & Encryption Ledger for SMBs</p>
+                <p class="text-xs text-slate-400 mt-2">Enterprise-Grade Asset & Encryption Ledger</p>
             </div>
 
             <div class="flex bg-slate-950 p-1 rounded-2xl mb-6 border border-slate-800/60">
-                <button onclick="switchLoginTab('signin')" id="tab-signin-btn" class="flex-1 py-2.5 text-xs font-bold rounded-lg text-white bg-slate-900 shadow transition-all duration-200">Unlock Vault</button>
-                <button onclick="switchLoginTab('signup')" id="tab-signup-btn" class="flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400 hover:text-white transition-all duration-200">Register New Vault</button>
+                <button onclick="switchTab('signin')" id="tab-signin" class="flex-1 py-2.5 text-xs font-bold rounded-lg text-white bg-slate-900 shadow">Unlock Vault</button>
+                <button onclick="switchTab('signup')" id="tab-signup" class="flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400">Register New Vault</button>
             </div>
 
-            <div id="signin-container" class="space-y-5">
+            <form id="vault-form" onsubmit="handleAuth(event)" class="space-y-5">
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Vault ID / Email Address</label>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Vault ID / Email</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500"><i class="fa-regular fa-user text-sm"></i></span>
-                        <input type="text" id="signin-vault-id" placeholder="Enter your Vault ID or Business Email" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-brand-500 transition-all">
+                        <input type="text" id="vault-id" required placeholder="demo@susutnilai.my" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Secret PIN (6-Digit)</label>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">PIN Rahsia (6-Digit)</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-slate-500"><i class="fa-solid fa-key text-sm"></i></span>
-                        <input type="password" id="signin-pin" maxlength="6" placeholder="******" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder-slate-600 text-center tracking-widest text-sm focus:outline-none focus:border-brand-500 transition-all">
+                        <input type="password" id="vault-pin" maxlength="6" required placeholder="123456" class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder-slate-600 text-center tracking-widest text-sm focus:outline-none focus:border-brand-500">
                     </div>
                 </div>
-                <button onclick="authenticateVault()" class="w-full mt-2 bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-4 px-4 rounded-xl text-xs transition duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-brand-500/15 active:scale-[0.98]">
-                    <i class="fa-solid fa-lock-open"></i><span>Unlock Secure Vault</span>
+                <button type="submit" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-4 px-4 rounded-xl text-xs transition duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-brand-500/15">
+                    <i class="fa-solid fa-lock-open"></i><span id="btn-text">Buka Vault</span>
                 </button>
-            </div>
-
-            <div id="signup-container" class="space-y-5 hidden">
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 text-[10px] text-slate-400 leading-relaxed flex items-start gap-2.5">
-                    <i class="fa-solid fa-shield-halved text-brand-500 mt-0.5 flex-shrink-0 text-sm"></i>
-                    <span>Your identity is fully anonymized. All ledger data is safely isolated and encrypted within your secure sandbox workspace.</span>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Create Vault ID / Business Email</label>
-                    <input type="text" id="signup-vault-id" placeholder="e.g., baker_store or email@domain.com" class="w-full px-4 py-3.5 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder-slate-600 text-xs focus:outline-none focus:border-brand-500 transition-all">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Create Security PIN (6-Digit)</label>
-                    <input type="password" id="signup-pin" maxlength="6" placeholder="Must be exactly 6 digits" class="w-full px-4 py-3.5 rounded-xl border border-slate-800 bg-slate-950 text-white placeholder-slate-600 text-center tracking-widest text-sm focus:outline-none focus:border-brand-500 transition-all">
-                </div>
-                <button onclick="authenticateVault()" class="w-full bg-gradient-to-r from-emerald-600 to-brand-600 hover:from-emerald-500 hover:to-brand-500 text-white font-bold py-4 px-4 rounded-xl text-xs transition duration-200 flex items-center justify-center space-x-2 shadow-lg shadow-brand-500/15 active:scale-[0.98]">
-                    <i class="fa-solid fa-circle-check"></i><span>Create Vault & Start Ledger</span>
-                </button>
-            </div>
+            </form>
         </div>
     </div>
 
     <script>
-        function switchLoginTab(tab) {
-            document.getElementById('signin-container').classList.toggle('hidden', tab !== 'signin');
-            document.getElementById('signup-container').classList.toggle('hidden', tab !== 'signup');
-            document.getElementById('tab-signin-btn').className = tab === 'signin' ? "flex-1 py-2.5 text-xs font-bold rounded-lg text-white bg-slate-900 shadow" : "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400";
-            document.getElementById('tab-signup-btn').className = tab === 'signup' ? "flex-1 py-2.5 text-xs font-bold rounded-lg text-white bg-slate-900 shadow" : "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400";
+        function switchTab(tab) {
+            const isSignin = tab === 'signin';
+            document.getElementById('tab-signin').className = isSignin ? "flex-1 py-2.5 text-xs font-bold rounded-lg text-white bg-slate-900 shadow" : "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400";
+            document.getElementById('tab-signup').className = !isSignin ? "flex-1 py-2.5 text-xs font-bold rounded-lg text-white bg-slate-900 shadow" : "flex-1 py-2.5 text-xs font-bold rounded-lg text-slate-400";
+            document.getElementById('btn-text').innerText = isSignin ? 'Buka Vault' : 'Cipta Vault Baru';
         }
-        function authenticateVault() {
-            window.location.href = 'dashboard.html';
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const pin = document.getElementById('vault-pin').value;
+            if(pin.length === 6) {
+                localStorage.setItem('susutnilai_auth', 'true');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Sila masukkan PIN 6-digit yang sah!');
+            }
         }
     </script>
 </body>
