@@ -1,150 +1,100 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusutNilai.My - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                        colors: { brand: { 50: '#f0fdf4', 500: '#10b981', 600: '#059669', 700: '#047857' } }
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SusutNilai.My - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Plus Jakarta Sans', sans-serif; } </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc] font-sans">
-    <header class="bg-slate-900 text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-lg">
-        <a href="dashboard.html" class="flex items-center space-x-3.5">
-            <div class="bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-lg">
-                <i class="fa-solid fa-vault text-lg"></i>
-            </div>
-            <div>
-                <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
-                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart Asset Hub</span>
-            </div>
-        </a>
-        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
-            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Dashboard</a>
-            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
-            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Invoice Manager</a>
-            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Register New</a>
-            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Asset Register</a>
-            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
-        </nav>
-        <a href="index.html" onclick="localStorage.removeItem('susutnilai_auth')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20" title="Keluar">
-            <i class="fa-solid fa-power-off text-base"></i>
-        </a>
-    </header>
+<body class="bg-[#f8fafc] text-slate-800 min-h-screen">
 
-    <main class="flex-grow p-4 sm:p-8 space-y-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase">Jumlah Kos Aset</p>
-                    <h3 id="dash-total-cost" class="text-2xl font-extrabold text-slate-900 mt-2 font-mono">RM 0.00</h3>
-                </div>
-                <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-2xl"><i class="fa-solid fa-coins text-xl"></i></div>
-            </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase">Nilai Buku Semasa</p>
-                    <h3 id="dash-book-val" class="text-2xl font-extrabold text-brand-600 mt-2 font-mono">RM 0.00</h3>
-                </div>
-                <div class="bg-brand-50 text-brand-600 p-3.5 rounded-2xl"><i class="fa-solid fa-wallet text-xl"></i></div>
-            </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase">Terkumpul Susut Nilai</p>
-                    <h3 id="dash-acc-dep" class="text-2xl font-extrabold text-rose-600 mt-2 font-mono">RM 0.00</h3>
-                </div>
-                <div class="bg-rose-50 text-rose-600 p-3.5 rounded-2xl"><i class="fa-solid fa-arrow-trend-down text-xl"></i></div>
-            </div>
-            <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase">Jumlah Aset Berdaftar</p>
-                    <h3 id="dash-count" class="text-2xl font-extrabold text-slate-900 mt-2">0</h3>
-                </div>
-                <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-2xl"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
-            </div>
+  <!-- NAVBAR -->
+  <nav class="bg-[#0b1329] text-white px-6 py-3 flex items-center justify-between border-b border-slate-800">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-[#00b074] rounded-xl flex items-center justify-center font-bold text-white shadow-md">📷</div>
+      <div>
+        <h1 class="font-black text-sm tracking-tight">Susut<span class="text-[#00b074]">Nilai.My</span></h1>
+        <p class="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest">SMART SMB ASSET HUB</p>
+      </div>
+    </div>
+    <div class="bg-[#020617] p-1 rounded-2xl flex items-center gap-1 border border-slate-800/80">
+      <a href="dashboard.html" class="px-3.5 py-1.5 bg-[#00b074] text-white text-xs font-bold rounded-xl">Dashboard</a>
+      <a href="service-report.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Service Report</a>
+      <a href="#" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Invoice Manager</a>
+      <a href="register-asset.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Register New</a>
+      <a href="asset-register.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Asset Register</a>
+      <a href="depreciation-schedule.html" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">Depreciation Schedule</a>
+      <a href="#" class="px-3 py-1.5 text-slate-300 hover:text-white text-xs font-semibold rounded-xl">AI Tax Advisor</a>
+    </div>
+    <div class="bg-[#1e293b] px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+      <span class="text-xs font-bold text-slate-200">mil</span>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="max-w-7xl mx-auto p-6 space-y-6">
+
+    <!-- KPI STATS GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">TOTAL ASSET COST</p>
+          <h3 class="text-2xl font-black text-slate-900 mt-2">RM 0.00</h3>
         </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 bg-white p-6 rounded-3xl border border-slate-200/70 shadow-sm">
-                <h3 class="text-base font-bold text-slate-900 mb-4"><i class="fa-solid fa-chart-line text-brand-500 mr-2"></i>Analisis Susut Nilai Portfolio</h3>
-                <div class="h-64"><canvas id="analyticsChart"></canvas></div>
-            </div>
-
-            <div class="bg-white p-6 rounded-3xl border border-slate-200/70 shadow-sm flex flex-col justify-between">
-                <div>
-                    <h3 class="text-base font-bold text-slate-900 mb-2"><i class="fa-solid fa-bolt text-amber-500 mr-2"></i>Pilihan Pantas</h3>
-                    <p class="text-xs text-slate-400 mb-6">Akses terus ke modul utama pengurusan kewangan aset anda.</p>
-                    <div class="space-y-3">
-                        <a href="invoicemanager.html" class="flex items-center p-3 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-brand-600 rounded-2xl font-bold text-xs transition"><i class="fa-solid fa-file-invoice w-8"></i>Imbas Resit / Invois OCR</a>
-                        <a href="registernew.html" class="flex items-center p-3 bg-slate-50 hover:bg-indigo-50 text-slate-700 hover:text-indigo-600 rounded-2xl font-bold text-xs transition"><i class="fa-solid fa-plus w-8"></i>Daftar Aset Manual</a>
-                        <a href="depreciationschedule.html" class="flex items-center p-3 bg-slate-50 hover:bg-amber-50 text-slate-700 hover:text-amber-600 rounded-2xl font-bold text-xs transition"><i class="fa-solid fa-table w-8"></i>Jadual Susut Nilai</a>
-                    </div>
-                </div>
-            </div>
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold">🍃</div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">CURRENT BOOK VALUE</p>
+          <h3 class="text-2xl font-black text-[#00b074] mt-2">RM 0.00</h3>
         </div>
-    </main>
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold">📗</div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">ACCUMULATED DEP.</p>
+          <h3 class="text-2xl font-black text-rose-500 mt-2">RM 0.00</h3>
+        </div>
+        <div class="w-10 h-10 bg-rose-50 text-rose-500 rounded-xl flex items-center justify-center font-bold">📈</div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-start">
+        <div>
+          <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">REGISTERED ASSETS</p>
+          <h3 class="text-2xl font-black text-slate-900 mt-2">0</h3>
+        </div>
+        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold">📦</div>
+      </div>
+    </div>
 
-    <script>
-        function loadDashboardData() {
-            const assets = JSON.parse(localStorage.getItem('susutnilai_assets_db') || '[]');
-            let totalCost = 0, totalBookValue = 0, totalAccDep = 0;
-            const currentYear = new Date().getFullYear();
+    <!-- HERO BANNER -->
+    <div class="bg-[#0b1329] text-white p-8 rounded-3xl shadow-xl relative overflow-hidden space-y-3">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-extrabold border border-emerald-500/20">
+        🛡️ ENCRYPTED VAULT ACTIVE
+      </span>
+      <h2 class="text-3xl font-black tracking-tight">Enterprise Asset Depreciation & Compliance Hub</h2>
+      <p class="text-slate-400 text-xs max-w-2xl">Your smart financial workspace is online. Process invoice parameters, audit property ledgers, or simulate future depreciation portfolios seamlessly.</p>
+    </div>
 
-            assets.forEach(asset => {
-                const cost = parseFloat(asset.cost) || 0;
-                const salvage = parseFloat(asset.salvage) || 0;
-                const life = parseInt(asset.life) || 1;
-                const purchaseYear = new Date(asset.date || Date.now()).getFullYear();
-                const yearsPassed = Math.max(0, currentYear - purchaseYear);
-                
-                let annualDep = (cost - salvage) / life;
-                let accDep = Math.min(cost - salvage, annualDep * yearsPassed);
-                let bookVal = Math.max(salvage, cost - accDep);
+    <!-- HUB CARDS GRID -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center font-bold">📄</div>
+        <h3 class="text-base font-bold text-slate-900">Invoice Manager</h3>
+        <p class="text-xs text-slate-400">Upload purchase receipts or invoices. Our smart AI scanner automatically extracts values, dates, and suggests classifications!</p>
+        <a href="#" class="inline-flex items-center gap-1 text-xs font-bold text-[#00b074]">Manage Invoices &rarr;</a>
+      </div>
 
-                totalCost += cost;
-                totalAccDep += accDep;
-                totalBookValue += bookVal;
-            });
+      <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+        <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold">🧮</div>
+        <h3 class="text-base font-bold text-slate-900">Register New Asset</h3>
+        <p class="text-xs text-slate-400">No receipt? Safely log any business asset manually by entering purchase costs, dates, and useful lifespans in seconds.</p>
+        <a href="register-asset.html" class="inline-flex items-center gap-1 text-xs font-bold text-indigo-600">Register Asset &rarr;</a>
+      </div>
+    </div>
 
-            document.getElementById('dash-total-cost').innerText = 'RM ' + totalCost.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('dash-book-val').innerText = 'RM ' + totalBookValue.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('dash-acc-dep').innerText = 'RM ' + totalAccDep.toLocaleString('en-MY', {minimumFractionDigits: 2});
-            document.getElementById('dash-count').innerText = assets.length;
-
-            renderChart(totalCost, totalBookValue, totalAccDep);
-        }
-
-        function renderChart(cost, book, dep) {
-            const ctx = document.getElementById('analyticsChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Kos Asal', 'Nilai Buku Semasa', 'Susut Nilai Terkumpul'],
-                    datasets: [{
-                        label: 'Nilai (RM)',
-                        data: [cost, book, dep],
-                        backgroundColor: ['#059669', '#10b981', '#f43f5e'],
-                        borderRadius: 12
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        window.onload = loadDashboardData;
-    </script>
+  </main>
 </body>
 </html>
