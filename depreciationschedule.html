@@ -7,52 +7,89 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800">
-    <div class="max-w-6xl mx-auto p-8 space-y-6">
+    <div class="max-w-7xl mx-auto p-8 space-y-6">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Jadual Susut Nilai (Straight Line Method)</h1>
-                <p class="text-sm text-slate-500">Formula: (Kos Pembelian - Nilai Sisa) / Jangka Hayat</p>
+                <h1 class="text-2xl font-bold">Jadual Susut Nilai Aset</h1>
+                <p class="text-xs text-slate-500">Kaedah Garis Lurus (Straight Line Method)</p>
             </div>
             <a href="dashboard.html" class="text-sm font-semibold text-blue-600 hover:underline">← Kembali ke Dashboard</a>
         </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6 space-y-4">
-            <h2 class="font-bold text-lg border-b pb-2">Aset: Dell Latitude 5420 (Kos: RM 4,500 | Hayat: 3 Tahun)</h2>
-            <table class="w-full text-left text-sm border-collapse">
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-sm p-6 space-y-6">
+            <table class="w-full text-left text-xs border-collapse">
                 <thead class="bg-slate-100 text-slate-700">
                     <tr>
-                        <th class="p-3 border">Tahun</th>
-                        <th class="p-3 border">Nilai Buku Awal Tahun (RM)</th>
-                        <th class="p-3 border">Susut Nilai Tahunan (RM)</th>
-                        <th class="p-3 border">Akumulasi Susut Nilai (RM)</th>
-                        <th class="p-3 border">Nilai Buku Akhir Tahun (RM)</th>
+                        <th class="p-3 border" rowspan="2">Bil / Perkara</th>
+                        <th class="p-3 border text-center" colspan="4">KOS ASET (RM)</th>
+                        <th class="p-3 border text-center" colspan="5">PERUNTUKAN SUSUT NILAI (RM)</th>
+                        <th class="p-3 border" rowspan="2">NILAI BUKU BERSIH (RM)</th>
+                    </tr>
+                    <tr>
+                        <th class="p-2 border">Baki Awal</th>
+                        <th class="p-2 border">Kos Tambahan</th>
+                        <th class="p-2 border">Pelupusan</th>
+                        <th class="p-2 border">Baki Akhir</th>
+                        <th class="p-2 border">Kadar (%)</th>
+                        <th class="p-2 border">Baki Awal</th>
+                        <th class="p-2 border">Susut Tambahan</th>
+                        <th class="p-2 border">Nilai Pelupusan</th>
+                        <th class="p-2 border">Baki Akhir</th>
                     </tr>
                 </thead>
-                <tbody class="font-mono">
-                    <tr>
-                        <td class="p-3 border font-sans font-semibold">Tahun 1 (2026)</td>
-                        <td class="p-3 border">4,500.00</td>
-                        <td class="p-3 border text-rose-600">1,500.00</td>
-                        <td class="p-3 border">1,500.00</td>
-                        <td class="p-3 border font-semibold">3,000.00</td>
-                    </tr>
-                    <tr>
-                        <td class="p-3 border font-sans font-semibold">Tahun 2 (2027)</td>
-                        <td class="p-3 border">3,000.00</td>
-                        <td class="p-3 border text-rose-600">1,500.00</td>
-                        <td class="p-3 border">3,000.00</td>
-                        <td class="p-3 border font-semibold">1,500.00</td>
-                    </tr>
-                    <tr>
-                        <td class="p-3 border font-sans font-semibold">Tahun 3 (2028)</td>
-                        <td class="p-3 border">1,500.00</td>
-                        <td class="p-3 border text-rose-600">1,500.00</td>
-                        <td class="p-3 border">4,500.00</td>
-                        <td class="p-3 border font-semibold">0.00</td>
-                    </tr>
+                <tbody id="depreciationBody" class="font-mono">
                 </tbody>
             </table>
         </div>
     </div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const assets = AppStore.getAssets();
+            const tbody = document.getElementById('depreciationBody');
+            const currentYear = new Date().getFullYear();
+
+            if (assets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="11" class="text-center p-4 text-slate-400 font-sans">Tiada data aset untuk dikira. Sila tambah aset baharu.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = assets.map(a => {
+                const kos = parseFloat(a.jumlah) || 0;
+                const hayat = parseInt(a.jangkaHayat) || 1;
+                const nilaiSisa = parseFloat(a.nilaiSisa) || 0;
+                const kadar = (100 / hayat).toFixed(1);
+                
+                const buyYear = new Date(a.tarikhBeli).getFullYear();
+                const yearsPassed = Math.max(1, currentYear - buyYear + 1);
+                
+                const susutTahunan = (kos - nilaiSisa) / hayat;
+                const bakiAwalSusut = Math.min(kos - nilaiSisa, susutTahunan * (yearsPassed - 1));
+                const susutTambahan = (bakiAwalSusut + susutTahunan > kos - nilaiSisa) ? (kos - nilaiSisa - bakiAwalSusut) : susutTahunan;
+                const bakiAkhirSusut = bakiAwalSusut + susutTambahan;
+                const nilaiBukuBersih = Math.max(nilaiSisa, kos - bakiAkhirSusut);
+
+                return `
+                    <tr>
+                        <td class="p-3 border font-sans">
+                            <div class="font-bold">${a.perkara}</div>
+                            <div class="text-xs text-slate-400">${a.kategori} (${a.tarikhBeli})</div>
+                        </td>
+                        <td class="p-3 border">0.00</td>
+                        <td class="p-3 border">${kos.toFixed(2)}</td>
+                        <td class="p-3 border">0.00</td>
+                        <td class="p-3 border font-bold">${kos.toFixed(2)}</td>
+                        <td class="p-3 border font-sans text-center">${kadar}%</td>
+                        <td class="p-3 border">${bakiAwalSusut.toFixed(2)}</td>
+                        <td class="p-3 border text-rose-600 font-bold">${susutTambahan.toFixed(2)}</td>
+                        <td class="p-3 border">0.00</td>
+                        <td class="p-3 border font-bold">${bakiAkhirSusut.toFixed(2)}</td>
+                        <td class="p-3 border text-emerald-600 font-bold">${nilaiBukuBersih.toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('');
+        });
+    </script>
 </body>
 </html>
