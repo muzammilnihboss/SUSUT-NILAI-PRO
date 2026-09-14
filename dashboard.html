@@ -1,169 +1,352 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusutNilai.My - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] },
-                        colors: { brand: { 50: '#f0fdf4', 100: '#dcfce7', 500: '#10b981', 600: '#059669', 700: '#047857', 900: '#064e3b' } },
-                        boxShadow: { 'premium': '0 10px 30px -3px rgba(0, 0, 0, 0.04), 0 4px 15px -2px rgba(0, 0, 0, 0.02)' }
-                    }
-                }
+    <title>Dashboard - Susut Nilai Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: #0f172a;
+            min-height: 100vh;
+        }
+
+        /* HEADER / NAV */
+        header {
+            background-color: #ffffff;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+        }
+
+        .top-nav {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 9px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            background-color: #f1f5f9;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #e2e8f0;
+            color: #0f172a;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        /* TOP METRIC CARDS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
+
+        .stat-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* BOTTOM NAVIGATION CARDS GRID */
+        .nav-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        .action-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 28px 24px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .action-card.highlight {
+            border: 1.5px solid #6366f1;
+            box-shadow: 0 0 0 1px #6366f1;
+        }
+
+        .card-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 32px;
+            flex-grow: 1;
+        }
+
+        .card-action-link {
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .nav-cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
         }
-    </script>
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
-        .glass-header { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px); }
-        .premium-card { background: #ffffff; border: 1px solid rgba(241, 245, 249, 0.8); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .premium-card:hover { transform: translateY(-2px); border-color: rgba(226, 232, 240, 0.8); }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen flex flex-col bg-[#f8fafc]">
+<body>
 
-    <header class="glass-header text-slate-100 p-4 sticky top-0 z-30 border-b border-slate-800 flex items-center justify-between shadow-premium">
-        <a href="dashboard.html" class="flex items-center space-x-3.5">
-            <div class="bg-gradient-to-br from-brand-500 to-emerald-600 text-white p-2.5 rounded-2xl shadow-lg">
-                <i class="fa-solid fa-vault text-lg"></i>
-            </div>
-            <div>
-                <span class="text-base font-extrabold tracking-tight text-white block">Susut<span class="text-brand-500">Nilai.My</span></span>
-                <span class="text-[9px] text-slate-400 font-semibold uppercase tracking-wider block">Smart SMB Asset Hub</span>
-            </div>
-        </a>
-        
-        <nav class="hidden md:flex items-center space-x-1 bg-slate-950 p-1.5 rounded-2xl border border-slate-800/80">
-            <a href="dashboard.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-brand-600 text-white">Dashboard</a>
-            <a href="servicereport.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Service Report</a>
-            <a href="invoicemanager.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Invoice Manager</a>
-            <a href="registernew.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Register New</a>
-            <a href="assetregister.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Asset Register</a>
-            <a href="depreciationschedule.html" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Depreciation Schedule</a>
-        </nav>
-
-        <div class="flex items-center space-x-3">
-            <div class="hidden sm:flex items-center space-x-2 bg-slate-900/80 px-3.5 py-2 rounded-xl border border-slate-800/80">
-                <i class="fa-solid fa-user-shield text-emerald-400 text-xs"></i>
-                <span id="user-display-id" class="text-[10px] font-bold text-white max-w-[80px] truncate">Guest</span>
-            </div>
-            <button onclick="logout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2.5 rounded-xl border border-red-500/20" title="Lock Session">
-                <i class="fa-solid fa-power-off text-base"></i>
-            </button>
+    <!-- TOP HEADER -->
+    <header>
+        <div class="brand-title">Susut Nilai Pro</div>
+        <div class="top-nav">
+            <a href="assetregister.html" class="nav-btn">
+                <span style="color:#d97706;">📋</span> Asset Register
+            </a>
+            <a href="registernew.html" class="nav-btn">
+                <span>+</span> Register New Asset
+            </a>
+            <a href="depreciationschedule.html" class="nav-btn">
+                <span style="color:#2563eb;">📊</span> Depreciation Schedule
+            </a>
+            <a href="index.html" class="nav-btn">Log Out</a>
         </div>
     </header>
 
-    <main class="flex-grow p-4 sm:p-8 pb-24 md:pb-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="premium-card bg-white p-6 rounded-3xl flex items-center justify-between">
+    <div class="container">
+        <!-- TOP AUTOMATED METRICS ROW -->
+        <div class="stats-grid">
+            <!-- 1. Total Asset Cost -->
+            <div class="stat-card">
                 <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Total Asset Cost</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900 mt-2 font-mono" id="stat-total-cost">RM 0.00</h3>
+                    <div class="stat-label">TOTAL ASSET COST</div>
+                    <div class="stat-value" style="color: #0f172a;" id="stat-total-cost">RM 0.00</div>
                 </div>
-                <div class="bg-emerald-50 text-emerald-600 p-3.5 rounded-2xl"><i class="fa-solid fa-coins text-xl"></i></div>
+                <div class="stat-icon-box" style="background-color: #dcfce7;">
+                    <svg width="24" height="24" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"></path><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
             </div>
-            <div class="premium-card bg-white p-6 rounded-3xl flex items-center justify-between">
+
+            <!-- 2. Current Book Value -->
+            <div class="stat-card">
                 <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Current Book Value</p>
-                    <h3 class="text-2xl font-extrabold text-brand-600 mt-2 font-mono" id="stat-current-value">RM 0.00</h3>
+                    <div class="stat-label">CURRENT BOOK VALUE</div>
+                    <div class="stat-value" style="color: #059669;" id="stat-book-value">RM 0.00</div>
                 </div>
-                <div class="bg-brand-50 text-brand-600 p-3.5 rounded-2xl"><i class="fa-solid fa-wallet text-xl"></i></div>
+                <div class="stat-icon-box" style="background-color: #d1fae5;">
+                    <svg width="24" height="24" fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                </div>
             </div>
-            <div class="premium-card bg-white p-6 rounded-3xl flex items-center justify-between">
+
+            <!-- 3. Accumulated Dep. -->
+            <div class="stat-card">
                 <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Accumulated Dep.</p>
-                    <h3 class="text-2xl font-extrabold text-rose-600 mt-2 font-mono" id="stat-total-dep">RM 0.00</h3>
+                    <div class="stat-label">ACCUMULATED DEP.</div>
+                    <div class="stat-value" style="color: #e11d48;" id="stat-accum-dep">RM 0.00</div>
                 </div>
-                <div class="bg-rose-50 text-rose-600 p-3.5 rounded-2xl"><i class="fa-solid fa-arrow-trend-down text-xl"></i></div>
+                <div class="stat-icon-box" style="background-color: #ffe4e6;">
+                    <svg width="24" height="24" fill="none" stroke="#e11d48" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>
+                </div>
             </div>
-            <div class="premium-card bg-white p-6 rounded-3xl flex items-center justify-between">
+
+            <!-- 4. Registered Assets -->
+            <div class="stat-card">
                 <div>
-                    <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Registered Assets</p>
-                    <h3 class="text-2xl font-extrabold text-slate-900 mt-2" id="stat-asset-count">0</h3>
+                    <div class="stat-label">REGISTERED ASSETS</div>
+                    <div class="stat-value" style="color: #0f172a;" id="stat-asset-count">0</div>
                 </div>
-                <div class="bg-indigo-50 text-indigo-600 p-3.5 rounded-2xl"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
+                <div class="stat-icon-box" style="background-color: #dbeafe;">
+                    <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
             </div>
         </div>
 
-        <section class="space-y-8">
-            <div class="bg-gradient-to-r from-slate-950 via-emerald-950 to-slate-900 text-white p-8 sm:p-12 rounded-[2.5rem] shadow-premium relative overflow-hidden">
-                <div class="relative z-10 max-w-3xl">
-                    <span class="bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-shield-halved mr-1.5"></i> Encrypted Vault Active</span>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold mt-4 leading-tight">Enterprise Asset Depreciation & Compliance Hub</h2>
-                    <p class="text-slate-300 mt-2 text-xs sm:text-sm leading-relaxed font-light">
-                        Your smart financial workspace is online. Process invoice parameters, audit property ledgers, or simulate future depreciation portfolios securely through our specialized operational modules.
-                    </p>
+        <!-- NAVIGATION MODULES -->
+        <div class="nav-cards-grid">
+            <a href="invoicemanager.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #dcfce7;">
+                    <svg width="22" height="22" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                 </div>
-            </div>
+                <div class="card-title">Invoice Manager</div>
+                <div class="card-description">Upload purchase receipts or invoices. Our smart AI scanner automatically extracts values, dates, and suggests classifications!</div>
+                <div class="card-action-link" style="color: #16a34a;">Manage Invoices &rarr;</div>
+            </a>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-                <a href="invoicemanager.html" class="group bg-white p-6 rounded-3xl border border-slate-200/70 shadow-premium hover:border-brand-500 transition-all flex flex-col justify-between h-64">
-                    <div>
-                        <div class="bg-emerald-50 text-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-file-invoice"></i></div>
-                        <h3 class="text-base font-extrabold text-slate-900">Invoice Manager</h3>
-                        <p class="text-xs text-slate-500 mt-2">Upload purchase receipts or invoices with OCR scanner.</p>
-                    </div>
-                    <span class="text-xs font-bold text-brand-600 flex items-center mt-4">Manage Invoices <i class="fa-solid fa-arrow-right ml-1.5"></i></span>
-                </a>
+            <a href="registernew.html" class="action-card highlight">
+                <div class="card-icon-box" style="background-color: #e0e7ff;">
+                    <svg width="22" height="22" fill="none" stroke="#4f46e5" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"></path></svg>
+                </div>
+                <div class="card-title" style="color: #4f46e5;">Register New Asset</div>
+                <div class="card-description">No receipt? Safely log any business asset manually by entering purchase costs, dates, and useful lifespans in seconds.</div>
+                <div class="card-action-link" style="color: #4f46e5;">Register Asset &rarr;</div>
+            </a>
 
-                <a href="registernew.html" class="group bg-white p-6 rounded-3xl border border-slate-200/70 shadow-premium hover:border-indigo-500 transition-all flex flex-col justify-between h-64">
-                    <div>
-                        <div class="bg-indigo-50 text-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-5"><i class="fa-solid fa-calculator"></i></div>
-                        <h3 class="text-base font-bold text-slate-955">Register New Asset</h3>
-                        <p class="text-xs text-slate-500 mt-2">Log any business asset manually in seconds.</p>
-                    </div>
-                    <span class="text-xs font-bold text-indigo-600 flex items-center mt-4">Register Asset <i class="fa-solid fa-arrow-right ml-1.5"></i></span>
-                </a>
+            <a href="assetregister.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #dbeafe;">
+                    <svg width="22" height="22" fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                </div>
+                <div class="card-title">Asset Register</div>
+                <div class="card-description">Your central assets library. Browse, search, filter, edit, or delete any of your registered business equipment at any time.</div>
+                <div class="card-action-link" style="color: #2563eb;">View Register &rarr;</div>
+            </a>
 
-                <a href="assetregister.html" class="group bg-white p-6 rounded-3xl border border-slate-200/70 shadow-premium hover:border-blue-500 transition-all flex flex-col justify-between h-64">
-                    <div>
-                        <div class="bg-blue-50 text-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-book-bookmark"></i></div>
-                        <h3 class="text-base font-bold text-slate-955">Asset Register</h3>
-                        <p class="text-xs text-slate-500 mt-2">Browse, search, filter, edit, or delete registered equipment.</p>
-                    </div>
-                    <span class="text-xs font-bold text-blue-600 flex items-center mt-4">View Register <i class="fa-solid fa-arrow-right ml-1.5"></i></span>
-                </a>
+            <a href="servicereport.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #ffe4e6;">
+                    <svg width="22" height="22" fill="none" stroke="#e11d48" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                </div>
+                <div class="card-title">Service Report</div>
+                <div class="card-description">Keep your assets in top shape! Monitor maintenance schedules, track equipment health status, and get alerts for overdue servicing.</div>
+                <div class="card-action-link" style="color: #e11d48;">View Service Desk &rarr;</div>
+            </a>
 
-                <a href="servicereport.html" class="group bg-white p-6 rounded-3xl border border-slate-200/70 shadow-premium hover:border-rose-500 transition-all flex flex-col justify-between h-64">
-                    <div>
-                        <div class="bg-rose-50 text-rose-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-toolbox"></i></div>
-                        <h3 class="text-base font-bold text-slate-955">Service Report</h3>
-                        <p class="text-xs text-slate-500 mt-2">Monitor maintenance schedules and equipment status.</p>
-                    </div>
-                    <span class="text-xs font-bold text-rose-600 flex items-center mt-4">View Service Desk <i class="fa-solid fa-arrow-right ml-1.5"></i></span>
-                </a>
+            <a href="depreciationschedule.html" class="action-card">
+                <div class="card-icon-box" style="background-color: #fef3c7;">
+                    <svg width="22" height="22" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                </div>
+                <div class="card-title">Depreciation Schedule</div>
+                <div class="card-description">View precise, GAAP-compliant valuation sheets year-by-year. Great for tax season, general ledger auditing, or exporting reports.</div>
+                <div class="card-action-link" style="color: #d97706;">Open Schedule &rarr;</div>
+            </a>
+        </div>
+    </div>
 
-                <a href="depreciationschedule.html" class="group bg-white p-6 rounded-3xl border border-slate-200/70 shadow-premium hover:border-amber-500 transition-all flex flex-col justify-between h-64">
-                    <div>
-                        <div class="bg-amber-50 text-amber-600 w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-table-list"></i></div>
-                        <h3 class="text-base font-bold text-slate-955">Depreciation Schedule</h3>
-                        <p class="text-xs text-slate-500 mt-2">View GAAP-compliant year-by-year valuation sheets.</p>
-                    </div>
-                    <span class="text-xs font-bold text-amber-600 flex items-center mt-4">Open Schedule <i class="fa-solid fa-arrow-right ml-1.5"></i></span>
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-white border-t border-slate-200 p-5 text-center text-xs text-slate-400 mt-auto">
-        &copy; 2026 SusutNilai.My. Designed to streamline SMB accounting workflow. Local sandbox processing.
-    </footer>
-
+    <!-- LOGIK PENGIRAAN AUTOMATIK KAD DARI LOCALSTORAGE -->
     <script>
-        const user = localStorage.getItem('activeVaultUser') || 'Guest';
-        document.getElementById('user-display-id').innerText = user;
+        const STORAGE_KEY_ASSETS = 'susut_nilai_assets';
 
-        function logout() {
-            localStorage.removeItem('activeVaultUser');
-            window.location.href = "index.html";
+        function parseNumber(val) {
+            if (val === undefined || val === null) return 0;
+            if (typeof val === 'number') return val;
+            const cleaned = String(val).replace(/[^0-9.-]+/g, '');
+            const num = parseFloat(cleaned);
+            return isNaN(num) ? 0 : num;
         }
+
+        function updateDashboardMetrics() {
+            const assets = JSON.parse(localStorage.getItem(STORAGE_KEY_ASSETS)) || [];
+            const currentYear = new Date().getFullYear();
+
+            let totalCost = 0;
+            let totalAccumDep = 0;
+
+            assets.forEach(asset => {
+                const cost = parseNumber(asset.cost !== undefined ? asset.cost : (asset.price || asset.purchasePrice || 0));
+                const lifespan = parseNumber(asset.usefulLife || asset.lifespan || 5) || 5;
+                const purchaseDate = asset.purchaseDate || asset.date || asset.tarikh || `${currentYear}-01-01`;
+                
+                const purchaseYear = new Date(purchaseDate).getFullYear() || currentYear;
+                const yearsElapsed = Math.max(0, currentYear - purchaseYear + 1);
+
+                // Susut nilai setahun = Total Cost / Useful Life
+                const annualDep = cost / lifespan;
+                // Terkumpul = Susut nilai setahun * tahun berlalu (dihadkan sehingga maksimum kos aset)
+                const accumDep = Math.min(cost, annualDep * yearsElapsed);
+
+                totalCost += cost;
+                totalAccumDep += accumDep;
+            });
+
+            // Nilai Buku Semasa = Total Cost - Accum Dep (tidak boleh kurang dari 0)
+            const currentBookValue = Math.max(0, totalCost - totalAccumDep);
+
+            // Kemaskini paparan kad
+            document.getElementById('stat-total-cost').innerText = 'RM ' + totalCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-book-value').innerText = 'RM ' + currentBookValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-accum-dep').innerText = 'RM ' + totalAccumDep.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('stat-asset-count').innerText = assets.length;
+        }
+
+        // Muat turun metrik semasa halaman dibuka atau apabila data dikemas kini
+        document.addEventListener('DOMContentLoaded', updateDashboardMetrics);
+        window.addEventListener('storage', updateDashboardMetrics);
     </script>
 </body>
 </html>
